@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+    db:
+        container_name: mysql
+        image: mysql:5.7
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: 'admin_dashboard'
+            MYSQL_USER: 'root'
+            MYSQL_PASSWORD: 'password'
+            MYSQL_ROOT_PASSWORD: '123456'
+        networks:
+            - common
+        restart: always
+    java:
+        container_name: java_env
+        image: openjdk:8
+        depends_on:
+            - db
+        volumes:
+            - ./data/java:/var/lib/java
+        restart: always
+networks:
+    common:
