@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import dashboard.controllers.responses.ProductCategoryResponse;
 import dashboard.entities.ProductCategory;
 import dashboard.repositories.ProductCategoryRepository;
 import dashboard.services.ProductCategoryService;
@@ -16,9 +17,17 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	ProductCategoryRepository productCategoryRepository;
 	
 	@Override
-	public Page<ProductCategory> getAllWithPagination(Pageable pageable) {
+	public ProductCategoryResponse getAllWithPagination(Pageable pageable) {
+		Page<ProductCategory> result = (Page<ProductCategory>) productCategoryRepository.findWithPageable(pageable);
 		
-		return (Page<ProductCategory>) productCategoryRepository.findWithPageable(pageable);
+		ProductCategoryResponse productCategoryResponse = new ProductCategoryResponse();
+		
+		productCategoryResponse.setPage(result.getNumber() + 1);
+		productCategoryResponse.setPageSize(result.getSize());
+		productCategoryResponse.setTotalPage(result.getTotalPages());
+		productCategoryResponse.setProductCategoryList(result.getContent());
+		
+		return productCategoryResponse;
 	}
 	
 	@Override

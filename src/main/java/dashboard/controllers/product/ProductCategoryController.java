@@ -1,22 +1,20 @@
 package dashboard.controllers.product;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import dashboard.controllers.responses.ProductCategoryResponse;
 import dashboard.entities.ProductCategory;
 import dashboard.enums.EntityStatus;
-import dashboard.enums.UserStatus;
 import dashboard.services.ProductCategoryService;
 
 @RestController
@@ -26,31 +24,31 @@ public class ProductCategoryController {
 	@Autowired
 	ProductCategoryService productCategoryService;
 	
-	@RequestMapping(
-		value = "", 
-		params = {"page", "size"},
-		method = RequestMethod.GET
-	)
-    public ResponseEntity<Page<ProductCategory>> index(
-    		@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-    		@RequestParam(name = "size", required = false, defaultValue = "0") Integer size,
+	@GetMapping("")
+    public ResponseEntity<ProductCategoryResponse> index(
+    		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+    		@RequestParam(name = "size", required = false, defaultValue = "2") Integer size,
     		@RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
 	    Sort sortable = sort.equals("ASC") ? Sort.by("id").ascending() : Sort.by("id").descending();
-
+	    page = page <= 1 ? 0 : (page - 1);
 		Pageable pageable = PageRequest.of(page, size, sortable);
-        Page<ProductCategory> productCategories= productCategoryService.getAllWithPagination(pageable);
-        
-        return ResponseEntity.ok(productCategories);
+		
+        return ResponseEntity.ok(productCategoryService.getAllWithPagination(pageable));
     }
     
-    @RequestMapping(value = "create/{name}", method = RequestMethod.GET)
-    public ResponseEntity<String> create(@PathVariable String name) {
+	@PostMapping("create")
+    public ResponseEntity<String> create(
+    		@RequestParam("name") String name,
+    		@RequestParam("active") Boolean active
+    ) {
     	ProductCategory productCategory = new ProductCategory();
     	productCategory.setName(name);
-    	productCategory.setStatus(EntityStatus.ACTIVE);
-    	return ResponseEntity.ok(EntityStatus.ACTIVE.getName());
-//		productCategoryService.create(productCategory);
-//		return ResponseEntity.ok("Done");
+    	productCategory.setSlugName(name);
+    	productCategory.setStatus(active ? EntityStatus.ACTIVE : EntityStatus.HIDDEN);
+
+		boolean result = productCategoryService.create(productCategory);
+		
+    	return ResponseEntity.ok(String.valueOf(result));
     }
 }
