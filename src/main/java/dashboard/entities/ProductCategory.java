@@ -2,6 +2,7 @@ package dashboard.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import dashboard.commons.StringUtils;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 
@@ -58,7 +59,8 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	}
 
 	public void setSlugName(String slugName) {
-		this.slugName = slugName;
+		this.slugName = (this.name != null && this.slugName == null) ?
+						StringUtils.makeSlug(name) : this.slugName;;
 	}
 
 	public EntityStatus getStatus() {

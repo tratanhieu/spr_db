@@ -1,22 +1,44 @@
 package dashboard.exceptions;
 
 public class ExceptionResponse {
-	private String errorMessage;
-	private String requestedURI;
-
-	public String getErrorMessage() {
-		return errorMessage;
+	private String code;
+	private String type;
+	private String message;
+	
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
 	}
-
-	public void setErrorMessage(final String errorMessage) {
-		this.errorMessage = errorMessage;
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
 	}
-
-	public String getRequestedURI() {
-		return requestedURI;
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
 	}
-
-	public void callerURL(final String requestedURI) {
-		this.requestedURI = requestedURI;
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
+	}
+	/**
+	 * @param message the message to set
+	 */
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

@@ -1,6 +1,8 @@
 package dashboard.controllers.responses.base;
 
-public abstract class BaseResponse {
+import java.util.List;
+
+public class BaseResponse<T> {
 	// Current page
 	private int page;
 	// Number of record display in one page
@@ -9,6 +11,17 @@ public abstract class BaseResponse {
 	private int totalPage;
 	// The message when response success
 	private String message;
+	// The response
+	private Class<T> data;
+	// The list to response
+	private List<T> listData;
+
+	public BaseResponse(Class<T> data) {
+		this.data = data;
+	}
+
+	public BaseResponse() {
+	}
 
 	/**
 	 * @return the page
@@ -64,5 +77,21 @@ public abstract class BaseResponse {
 	 */
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public Class<T> getData() {
+		return data;
+	}
+
+	public void setData(Class<T> data) {
+		this.data = data;
+	}
+
+	public List<T> getListData() {
+		return listData;
+	}
+
+	public void setListData(List<T> listData) {
+		this.listData = listData;
 	}
 }
