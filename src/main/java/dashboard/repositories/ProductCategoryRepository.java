@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import dashboard.entities.ProductCategory;
 
 @Repository
-public interface ProductCategoryRepository extends CrudRepository<ProductCategory, Integer> {
+public interface ProductCategoryRepository extends CrudRepository<ProductCategory, Long> {
 	  
 	@Query("SELECT productCategory FROM ProductCategory productCategory")
 	Page<ProductCategory> findWithPageable(Pageable pageable);

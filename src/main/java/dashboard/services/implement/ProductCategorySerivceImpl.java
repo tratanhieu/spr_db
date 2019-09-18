@@ -1,6 +1,7 @@
 package dashboard.services.implement;
 
-import dashboard.controllers.responses.base.BaseResponse;
+import dashboard.controllers.responses.base.ListEntityResponse;
+import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +18,10 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	ProductCategoryRepository productCategoryRepository;
 	
 	@Override
-	public BaseResponse<ProductCategory> getAllWithPagination(Pageable pageable) {
+	public ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable) {
 		Page<ProductCategory> result = productCategoryRepository.findWithPageable(pageable);
 
-		BaseResponse<ProductCategory> productCategoryResponse = new BaseResponse<>(ProductCategory.class);
+		ListEntityResponse<ProductCategory> productCategoryResponse = new ListEntityResponse<>(ProductCategory.class);
 
 		productCategoryResponse.setPage(result.getNumber() + 1);
 		productCategoryResponse.setPageSize(result.getSize());
@@ -29,15 +30,26 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 		
 		return productCategoryResponse;
 	}
-	
-	@Override
-	public BaseResponse<ProductCategory> create(ProductCategory productCategory, Pageable pageable) {
+
+    @Override
+    public ProductCategory getOne(Long productTypeId) throws ResourceNotFoundException {
+        ProductCategory productCategory = productCategoryRepository.findById(productTypeId).orElse(null);
+
+        if (productCategory == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return productCategory;
+    }
+
+    @Override
+	public ListEntityResponse<ProductCategory> create(ProductCategory productCategory, Pageable pageable) {
 		productCategoryRepository.save(productCategory);
 		return getAllWithPagination(pageable);
 	}
 
 	@Override
-	public BaseResponse<ProductCategory> update(ProductCategory productCategory, Pageable pageable) {
+	public ListEntityResponse<ProductCategory> update(ProductCategory productCategory, Pageable pageable) {
 		productCategoryRepository.save(productCategory);
 		return getAllWithPagination(pageable);
 	}

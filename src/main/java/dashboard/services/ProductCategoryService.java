@@ -1,15 +1,18 @@
 package dashboard.services;
 
-import dashboard.controllers.responses.base.BaseResponse;
+import dashboard.controllers.responses.base.ListEntityResponse;
+import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
 
 import dashboard.entities.ProductCategory;
 
 public interface ProductCategoryService {
 
-	BaseResponse<ProductCategory> getAllWithPagination(Pageable pageable);
+    ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable);
 
-	BaseResponse create(ProductCategory productCategory, Pageable pageable);
+    ProductCategory getOne(Long productTypeId) throws ResourceNotFoundException;
 
-	BaseResponse update(ProductCategory productCategory, Pageable pageable);
+	ListEntityResponse create(ProductCategory productCategory, Pageable pageable);
+
+	ListEntityResponse update(ProductCategory productCategory, Pageable pageable);
 }

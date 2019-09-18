@@ -1,6 +1,6 @@
 package dashboard.controllers.product;
 
-import dashboard.controllers.responses.base.BaseResponse;
+import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,7 @@ public class ProductCategoryController {
 	ProductCategoryService productCategoryService;
 	
 	@GetMapping("")
-    public ResponseEntity index(
+    public ResponseEntity index (
     		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
     		@RequestParam(name = "size", required = false, defaultValue = "2") Integer size,
 			@RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
@@ -30,6 +30,14 @@ public class ProductCategoryController {
 		Pageable pageable = PageRequest.of(page, size, sortable);
 		
         return ResponseEntity.ok(productCategoryService.getAllWithPagination(pageable));
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity getOne (
+            @PathVariable(name = "id") Long productTypeId
+    ) throws ResourceNotFoundException {
+        return ResponseEntity.ok(productCategoryService.getOne(productTypeId));
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
