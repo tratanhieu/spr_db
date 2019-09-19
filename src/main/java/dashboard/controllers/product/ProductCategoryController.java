@@ -1,5 +1,7 @@
 package dashboard.controllers.product;
 
+import dashboard.controllers.request.MultipleExecute;
+import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -7,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import dashboard.entities.ProductCategory;
@@ -22,7 +25,7 @@ public class ProductCategoryController {
 	@GetMapping("")
     public ResponseEntity index (
     		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-    		@RequestParam(name = "limit", required = false, defaultValue = "2") Integer size,
+    		@RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
 			@RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
 	    Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
@@ -33,8 +36,8 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne (@PathVariable(name = "id") Long productTypeId) throws ResourceNotFoundException {
-        return ResponseEntity.ok(productCategoryService.getOne(productTypeId));
+    public ResponseEntity getOne(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(productCategoryService.getOne(productCategoryId));
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -47,6 +50,19 @@ public class ProductCategoryController {
 	public ResponseEntity update(@RequestBody ProductCategory productCategory) {
 		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
 
-		return ResponseEntity.ok(productCategoryService.create(productCategory, pageable));
+		return ResponseEntity.ok(productCategoryService.update(productCategory, pageable));
 	}
+
+	@GetMapping(value = "delete/{id}")
+	public ResponseEntity delete(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
+		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
+
+		return ResponseEntity.ok(productCategoryService.delete(productCategoryId, pageable));
+	}
+
+    @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
+        return ResponseEntity.ok(productCategoryService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus(), pageable));
+    }
 }

@@ -2,6 +2,7 @@ package dashboard.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.commons.StringUtils;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
@@ -24,6 +25,7 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_category_id")
+	@JsonProperty("product_category_id")
     private Long productCategoryId;
 
     @NotNull(message = "Name is not null")
@@ -32,6 +34,7 @@ public class ProductCategory extends BaseEntity implements Serializable {
     
     @NotNull(message = "Slug name is not null")
     @Column(name = "slug_name", unique = true)
+	@JsonProperty("slug_name")
     private String slugName;
 
     @Column(name = "status")

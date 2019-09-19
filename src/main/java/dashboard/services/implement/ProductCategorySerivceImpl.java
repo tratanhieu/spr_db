@@ -1,6 +1,7 @@
 package dashboard.services.implement;
 
-import dashboard.controllers.responses.base.ListEntityResponse;
+import dashboard.controllers.response.ListEntityResponse;
+import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 import dashboard.entities.ProductCategory;
 import dashboard.repositories.ProductCategoryRepository;
 import dashboard.services.ProductCategoryService;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class ProductCategorySerivceImpl implements ProductCategoryService{
@@ -21,7 +25,7 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	public ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable) {
 		Page<ProductCategory> result = productCategoryRepository.findWithPageable(pageable);
 
-		ListEntityResponse<ProductCategory> productCategoryResponse = new ListEntityResponse<>(ProductCategory.class);
+		ListEntityResponse<ProductCategory> productCategoryResponse = new ListEntityResponse<>();
 
 		productCategoryResponse.setPage(result.getNumber() + 1);
 		productCategoryResponse.setPageSize(result.getSize());
@@ -32,8 +36,8 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	}
 
     @Override
-    public ProductCategory getOne(Long productTypeId) throws ResourceNotFoundException {
-        ProductCategory productCategory = productCategoryRepository.findById(productTypeId).orElse(null);
+    public ProductCategory getOne(Long productCategoryId) throws ResourceNotFoundException {
+        ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
 
         if (productCategory == null) {
             throw new ResourceNotFoundException();
@@ -53,4 +57,23 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 		productCategoryRepository.save(productCategory);
 		return getAllWithPagination(pageable);
 	}
+
+    @Override
+    public ListEntityResponse delete(Long productCategoryId, Pageable pageable) throws ResourceNotFoundException {
+        ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
+        if (productCategory == null) {
+            throw new ResourceNotFoundException();
+        }
+        productCategory.setStatus(EntityStatus.DELETED);
+        productCategory.setDeleteDate(new Date());
+	    productCategoryRepository.save(productCategory);
+
+	    return getAllWithPagination(pageable);
+    }
+
+    @Override
+    public ListEntityResponse updateStatusWithMultipleId(List<Long> listId, EntityStatus status, Pageable pageable) throws ResourceNotFoundException {
+        int res = productCategoryRepository.updateStatusByListId(listId, status);
+        return getAllWithPagination(pageable);
+    }
 }

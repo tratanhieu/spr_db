@@ -1,4 +1,4 @@
-package dashboard.controllers.responses.base;
+package dashboard.controllers.response;
 
 import java.util.List;
 
@@ -9,14 +9,8 @@ public class ListEntityResponse<T> {
 	private int pageSize;
 	// Total page
 	private int totalPage;
-	// The response
-	private Class<T> data;
 	// The list to response
 	private List<T> listData;
-
-	public ListEntityResponse(Class<T> data) {
-		this.data = data;
-	}
 
 	/**
 	 * @return the page
