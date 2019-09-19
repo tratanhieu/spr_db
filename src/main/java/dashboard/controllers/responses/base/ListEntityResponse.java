@@ -18,10 +18,6 @@ public class ListEntityResponse<T> {
 		this.data = data;
 	}
 
-	public ListEntityResponse() {
-
-	}
-
 	/**
 	 * @return the page
 	 */

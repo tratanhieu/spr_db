@@ -22,7 +22,7 @@ public class ProductCategoryController {
 	@GetMapping("")
     public ResponseEntity index (
     		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-    		@RequestParam(name = "size", required = false, defaultValue = "2") Integer size,
+    		@RequestParam(name = "limit", required = false, defaultValue = "2") Integer size,
 			@RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
 	    Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
@@ -32,26 +32,19 @@ public class ProductCategoryController {
         return ResponseEntity.ok(productCategoryService.getAllWithPagination(pageable));
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity getOne (
-            @PathVariable(name = "id") Long productTypeId
-    ) throws ResourceNotFoundException {
+    public ResponseEntity getOne (@PathVariable(name = "id") Long productTypeId) throws ResourceNotFoundException {
         return ResponseEntity.ok(productCategoryService.getOne(productTypeId));
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity create(
-    		@RequestBody ProductCategory productCategory
-    ) {
+    public ResponseEntity create(@RequestBody ProductCategory productCategory) {
 		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
     	return ResponseEntity.ok(productCategoryService.create(productCategory, pageable));
     }
 
 	@PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity update(
-			@RequestBody ProductCategory productCategory
-	) {
+	public ResponseEntity update(@RequestBody ProductCategory productCategory) {
 		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
 
 		return ResponseEntity.ok(productCategoryService.create(productCategory, pageable));
