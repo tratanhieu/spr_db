@@ -1,15 +1,17 @@
 package dashboard.controllers.product;
 
-import dashboard.controllers.request.MultipleExecute;
+import dashboard.constants.PusherConstants;
+import dashboard.generics.MultipleExecute;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.services.PusherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import dashboard.entities.ProductCategory;
@@ -18,10 +20,15 @@ import dashboard.services.ProductCategoryService;
 @RestController
 @RequestMapping("/product/category")
 public class ProductCategoryController {
-	
-	@Autowired
-	ProductCategoryService productCategoryService;
-	
+
+    @Autowired
+    ProductCategoryService productCategoryService;
+
+    @Autowired
+    PusherService pusherService;
+
+    private static final String CHANNEL = "PRODUCT_CATEGORY";
+
 	@GetMapping("")
     public ResponseEntity index (
     		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
@@ -29,9 +36,8 @@ public class ProductCategoryController {
 			@RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
 	    Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
-	    page = page <= 1 ? 0 : (page - 1);
+	    page = 1 >= page ? 0 : (page - 1);
 		Pageable pageable = PageRequest.of(page, size, sortable);
-		
         return ResponseEntity.ok(productCategoryService.getAllWithPagination(pageable));
     }
 
@@ -42,27 +48,29 @@ public class ProductCategoryController {
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody ProductCategory productCategory) {
-		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
-    	return ResponseEntity.ok(productCategoryService.create(productCategory, pageable));
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
+                PusherConstants.PUSHER_ACTION_CREATE);
+    	return ResponseEntity.ok(productCategoryService.create(productCategory));
     }
 
 	@PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity update(@RequestBody ProductCategory productCategory) {
-		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
-
-		return ResponseEntity.ok(productCategoryService.update(productCategory, pageable));
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
+                PusherConstants.PUSHER_ACTION_UPDATE);
+		return ResponseEntity.ok(productCategoryService.update(productCategory));
 	}
 
 	@GetMapping(value = "delete/{id}")
-	public ResponseEntity delete(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
-		Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
-
-		return ResponseEntity.ok(productCategoryService.delete(productCategoryId, pageable));
+	public HttpStatus delete(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
+                PusherConstants.PUSHER_ACTION_DELETE);
+		return HttpStatus.OK;
 	}
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("createDate").descending());
-        return ResponseEntity.ok(productCategoryService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus(), pageable));
+	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
+                PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
+        return ResponseEntity.ok(productCategoryService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus()));
     }
 }

@@ -1,6 +1,6 @@
 package dashboard.services.implement;
 
-import dashboard.controllers.response.ListEntityResponse;
+import dashboard.generics.ListEntityResponse;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,19 +47,19 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
     }
 
     @Override
-	public ListEntityResponse<ProductCategory> create(ProductCategory productCategory, Pageable pageable) {
+	public boolean create(ProductCategory productCategory) {
 		productCategoryRepository.save(productCategory);
-		return getAllWithPagination(pageable);
+		return true;
 	}
 
 	@Override
-	public ListEntityResponse<ProductCategory> update(ProductCategory productCategory, Pageable pageable) {
+	public boolean update(ProductCategory productCategory) {
 		productCategoryRepository.save(productCategory);
-		return getAllWithPagination(pageable);
+		return true;
 	}
 
     @Override
-    public ListEntityResponse delete(Long productCategoryId, Pageable pageable) throws ResourceNotFoundException {
+    public boolean delete(Long productCategoryId) throws ResourceNotFoundException {
         ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
         if (productCategory == null) {
             throw new ResourceNotFoundException();
@@ -68,12 +68,12 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
         productCategory.setDeleteDate(new Date());
 	    productCategoryRepository.save(productCategory);
 
-	    return getAllWithPagination(pageable);
+	    return true;
     }
 
     @Override
-    public ListEntityResponse updateStatusWithMultipleId(List<Long> listId, EntityStatus status, Pageable pageable) throws ResourceNotFoundException {
+    public boolean updateStatusWithMultipleId(List<Long> listId, EntityStatus status) throws ResourceNotFoundException {
         int res = productCategoryRepository.updateStatusByListId(listId, status);
-        return getAllWithPagination(pageable);
+        return res == 1;
     }
 }
