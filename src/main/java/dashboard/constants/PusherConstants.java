@@ -14,6 +14,7 @@ public class PusherConstants {
 
     public static final String PUSHER_CHANNEL_PRODUCT_CATEGORY = "PRODUCT_CATEGORY";
     public static final String PUSHER_CHANNEL_PRODUCT_TYPE = "PRODUCT_TYPE";
+    public static final String PUSHER_CHANNEL_PRODUCT_BRAND = "PRODUCT_BRAND";
 
 
 
