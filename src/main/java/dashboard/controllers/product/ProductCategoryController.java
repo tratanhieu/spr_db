@@ -47,10 +47,11 @@ public class ProductCategoryController {
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity create(@RequestBody ProductCategory productCategory) {
+    public HttpStatus create(@RequestBody ProductCategory productCategory) {
+        productCategoryService.create(productCategory);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_CREATE);
-    	return ResponseEntity.ok(productCategoryService.create(productCategory));
+    	return HttpStatus.OK;
     }
 
 	@PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
