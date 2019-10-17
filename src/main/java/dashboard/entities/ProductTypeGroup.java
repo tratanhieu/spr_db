@@ -1,23 +1,20 @@
 package dashboard.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "product_type_group")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
-        allowGetters = true)
-public class ProductTypeGroup extends BaseEntity {
+public class ProductTypeGroup extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,12 +24,12 @@ public class ProductTypeGroup extends BaseEntity {
     @JsonProperty("product_type_group_id")
     private  Long productTypeGroupId;
 
-    @Column(name = "name")
-    @NotNull(message = "Name is not null ")
+    @Column(name = "name", unique = true)
+    @NotNull(message = "Name is not null")
     @JsonProperty("name")
     private String name;
 
-    @Column(name = "slug_name")
+    @Column(name = "slug_name", unique = true)
     @JsonProperty("slug_name")
     private String slugName;
 
@@ -68,15 +65,19 @@ public class ProductTypeGroup extends BaseEntity {
         this.slugName = slugName;
     }
 
-    public ProductCategory getProductCategory() {
-        return productCategory;
+    @JsonProperty("product_category")
+    public Map<String, String> getProductCategory() {
+        Map<String, String> map = new HashMap<>();
+        map.put("product_category_id", String.valueOf(productCategory.getProductCategoryId()));
+        map.put("product_category_name", productCategory.getName());
+        return map;
     }
 
-    //    @JsonIgnore
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
 
+    // Cách này là cách thứ 2 để hiển thị thông tin của bảng 1
 //    @JsonProperty("product_category_name")
 //    public String getProductCategoryName() {
 //        return productCategory.getName();

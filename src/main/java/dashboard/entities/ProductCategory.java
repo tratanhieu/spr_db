@@ -1,8 +1,6 @@
 package dashboard.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.commons.StringUtils;
 import dashboard.entities.base.BaseEntity;
@@ -14,14 +12,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "product_category")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"}, 
-        allowGetters = true)
 public class ProductCategory extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

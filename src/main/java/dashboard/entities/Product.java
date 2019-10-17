@@ -1,7 +1,5 @@
 package dashboard.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import dashboard.entities.base.BaseEntity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,8 +11,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "product")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"}, 
-        allowGetters = true)
 public class Product extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
