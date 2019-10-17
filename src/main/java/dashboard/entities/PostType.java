@@ -2,52 +2,49 @@ package dashboard.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "product_type_group")
+@Table( name = "post_type")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
         allowGetters = true)
-public class ProductTypeGroup {
+public class PostType extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_type_group_id")
-    @JsonProperty("product_type_group_id")
-    private  Long productTypeGroupId;
+    @Column(name = "post_type_id")
+    @JsonProperty("post_type_id")
+    private Long  postTypeId;
 
+    @NotNull(message = "Name is not null")
     @Column(name = "name")
-    @NotNull(message = "Name is not null ")
     @JsonProperty("name")
     private String name;
 
+    @NotNull(message = "Slug_name is not null")
     @Column(name = "slug_name")
     @JsonProperty("slug_name")
     private String slugName;
 
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @Column(name = "product_category_id")
-    @JsonProperty("product_category_id")
-    private ProductCategory productCategoryId;
-
-    @Column( name = "status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    public Long getProductTypeGroupId() {
-        return productTypeGroupId;
+    public Long getPostTypeId() {
+        return postTypeId;
     }
 
-    public void setProductTypeGroupId(Long productTypeGroupId) {
-        this.productTypeGroupId = productTypeGroupId;
+    public void setPostTypeId(Long postTypeId) {
+        this.postTypeId = postTypeId;
     }
 
     public String getName() {
@@ -66,14 +63,6 @@ public class ProductTypeGroup {
         this.slugName = slugName;
     }
 
-    public ProductCategory getProductCategory() {
-        return productCategoryId;
-    }
-
-    public void setProductCategory(ProductCategory productCategory) {
-        this.productCategoryId = productCategory;
-    }
-
     public EntityStatus getStatus() {
         return status;
     }
@@ -82,3 +71,4 @@ public class ProductTypeGroup {
         this.status = status;
     }
 }
+
