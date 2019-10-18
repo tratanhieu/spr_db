@@ -1,5 +1,6 @@
 package dashboard.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
@@ -81,8 +82,14 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
         return map;
     }
 
+    @JsonProperty("product_category")
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
+    }
+
+    @JsonIgnore
+    public Long getProductCategoryId() {
+        return productCategory.getProductCategoryId();
     }
 
     // Cách này là cách thứ 2 để hiển thị thông tin của bảng 1

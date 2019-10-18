@@ -54,16 +54,14 @@ public class ProductTypeGroupController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long productCategoryId)
+    public ResponseEntity getOne(@PathVariable(name = "id") Long productTypeGroupId)
             throws ResourceNotFoundException {
-	    return ResponseEntity.ok(productTypeGroupService.getOne(productCategoryId));
+	    return ResponseEntity.ok(productTypeGroupService.getOne(productTypeGroupId));
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody ProductTypeGroup productTypeGroup) {
-	    ProductCategory pr = new ProductCategory();
-	    pr.setProductCategoryId(1L);
-	    productTypeGroup.setProductCategory(pr);
+	    // Save
         productTypeGroupService.create(productTypeGroup);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_CREATE);
