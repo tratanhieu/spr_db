@@ -1,10 +1,11 @@
 package dashboard.services;
 
-import dashboard.entities.ProductCategory;
 import dashboard.generics.ListEntityResponse;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
+
+import dashboard.entities.ProductCategory;
 
 import java.util.List;
 
@@ -14,11 +15,11 @@ public interface ProductCategoryService {
 
     ProductCategory getOne(Long productCategoryId) throws ResourceNotFoundException;
 
-    void create(ProductCategory productCategory);
+    int create(ProductCategory productCategory);
 
-    void update(ProductCategory productCategory);
+    int update(ProductCategory productCategory);
 
-    void delete(Long productCategoryId) throws ResourceNotFoundException;
+    int delete(Long productCategoryId) throws ResourceNotFoundException;
 
-    void updateStatusWithMultipleId(List<Long> productCategoryListId, EntityStatus status) throws ResourceNotFoundException;
+    int updateStatusWithMultipleId(List<Long> productCategoryListId, EntityStatus status) throws ResourceNotFoundException;
 }

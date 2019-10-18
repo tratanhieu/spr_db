@@ -42,40 +42,36 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long productCategoryId)
-            throws ResourceNotFoundException {
-	    return ResponseEntity.ok(productCategoryService.getOne(productCategoryId));
+    public ResponseEntity getOne(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(productCategoryService.getOne(productCategoryId));
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody ProductCategory productCategory) {
         productCategoryService.create(productCategory);
-	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_CREATE);
     	return HttpStatus.OK;
     }
 
 	@PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public HttpStatus update(@RequestBody ProductCategory productCategory) {
-        productCategoryService.update(productCategory);
-	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
+	public ResponseEntity update(@RequestBody ProductCategory productCategory) {
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_UPDATE);
-		return HttpStatus.OK;
+		return ResponseEntity.ok(productCategoryService.update(productCategory));
 	}
 
 	@GetMapping(value = "delete/{id}")
 	public HttpStatus delete(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
-	    productCategoryService.delete(productCategoryId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_DELETE);
 		return HttpStatus.OK;
 	}
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
-        productCategoryService.updateStatusWithMultipleId(multipleExecute.getListId(), multipleExecute.getStatus());
+    public ResponseEntity execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
-        return HttpStatus.OK;
+        return ResponseEntity.ok(productCategoryService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus()));
     }
 }
