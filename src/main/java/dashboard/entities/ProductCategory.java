@@ -1,23 +1,22 @@
 package dashboard.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dashboard.commons.StringUtils;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_category")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"}, 
-        allowGetters = true)
 public class ProductCategory extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -28,16 +27,24 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	@JsonProperty("product_category_id")
     private Long productCategoryId;
 
-    @NotNull(message = "Name is not null")
+    @NotBlank(message = "Tên Danh mục Sản phẩm không được bỏ trống")
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "name", unique = true)
     private String name;
-    
-    @NotNull(message = "Slug name is not null")
+
     @Column(name = "slug_name", unique = true)
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
 	@JsonProperty("slug_name")
     private String slugName;
 
+    @OneToMany(mappedBy = "productCategory", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ProductTypeGroup> productTypeGroups;
+
     @Column(name = "status")
+    @NotNull(message = "Tình trạng không được rỗng")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
@@ -62,11 +69,18 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	}
 
 	public void setSlugName(String slugName) {
-		this.slugName = (this.name != null && this.slugName == null) ?
-						StringUtils.makeSlug(name) : this.slugName;;
+		this.slugName = slugName;
 	}
 
-	public EntityStatus getStatus() {
+    public Set<ProductTypeGroup> getProductTypeGroups() {
+        return productTypeGroups;
+    }
+
+    public void setProductTypeGroups(Set<ProductTypeGroup> productTypeGroups) {
+        this.productTypeGroups = productTypeGroups;
+    }
+
+    public EntityStatus getStatus() {
 		return status;
 	}
 

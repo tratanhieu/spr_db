@@ -47,19 +47,17 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
     }
 
     @Override
-	public int create(ProductCategory productCategory) {
+	public void create(ProductCategory productCategory) {
 		productCategoryRepository.save(productCategory);
-		return 1;
 	}
 
 	@Override
-	public int update(ProductCategory productCategory) {
+	public void update(ProductCategory productCategory) {
 		productCategoryRepository.save(productCategory);
-		return 1;
 	}
 
     @Override
-    public int delete(Long productCategoryId) throws ResourceNotFoundException {
+    public void delete(Long productCategoryId) throws ResourceNotFoundException {
         ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
         if (productCategory == null) {
             throw new ResourceNotFoundException();
@@ -67,13 +65,10 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
         productCategory.setStatus(EntityStatus.DELETED);
         productCategory.setDeleteDate(new Date());
 	    productCategoryRepository.save(productCategory);
-
-	    return 1;
     }
 
     @Override
-    public int updateStatusWithMultipleId(List<Long> listId, EntityStatus status) throws ResourceNotFoundException {
+    public void updateStatusWithMultipleId(List<Long> listId, EntityStatus status) {
         int res = productCategoryRepository.updateStatusByListId(listId, status);
-        return res;
     }
 }
