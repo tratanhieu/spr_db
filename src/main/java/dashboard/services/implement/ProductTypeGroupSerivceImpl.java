@@ -64,7 +64,7 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	    if (StringUtils.isEmpty(productTypeGroup.getSlugName())) {
             productTypeGroup.setSlugName(DataUtils.makeSlug(productTypeGroup.getName()));
         }
-//	    productTypeGroupRepository.save(productTypeGroup);
+	    productTypeGroupRepository.save(productTypeGroup);
 	}
 
 	@Override
