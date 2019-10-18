@@ -12,21 +12,21 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
+import javax.persistence.SqlResultSetMapping;
 import java.util.List;
-
 
 @Repository
 public interface ProductTypeGroupRepository extends CrudRepository<ProductTypeGroup, Long> {
-
-    @Query("SELECT ptg FROM ProductTypeGroup ptg WHERE ptg.status != 'DELETED'")
-    Page<ProductTypeGroup> findWithPageable(Pageable pageable);
-
-    @Query(value = "SELECT pgt FROM ProductTypeGroup pgt where pgt.status != 'DELETE' AND pgt.productCategoryId = :productCategory.productCategoryId ")
-    Page<ProductTypeGroup> findByProductCategoryId(ProductCategory productCategory, Pageable pageable);
+	  
+	@Query("SELECT pt " +
+			"FROM ProductTypeGroup pt JOIN pt.productCategory pc " +
+			"WHERE pt.status != 'DELETED'")
+	Page<ProductTypeGroup> findWithPageable(Pageable pageable);
 
     @Modifying
-    @Transactional
-    @Query(value = "UPDATE ProductTypeGroup ptg SET ptg.status = :status WHERE pc.productTypeGroup IN (:listId)")
-    int updateStatusByListId(@Param("listId") List<Long> listId, @Param("status") EntityStatus status);
-
+	@Transactional
+	@Query(value = "UPDATE ProductCategory pc SET pc.status = :status WHERE pc.productCategoryId IN (:listId)")
+	int updateStatusByListId(@Param("listId") List<Long> listId, @Param("status") EntityStatus status);
 }

@@ -1,6 +1,5 @@
 package dashboard.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
@@ -13,8 +12,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "product_brand")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
-        allowGetters = true)
 public class ProductBrand extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
