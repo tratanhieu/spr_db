@@ -43,14 +43,14 @@ public class ProductTypeGroupController {
 	    Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
 	    page = 1 >= page ? 0 : (page - 1);
 		Pageable pageable = PageRequest.of(page, size, sortable);
-//        return ResponseEntity.ok(productTypeGroupService.getAllWithPagination(pageable));
-		try {
-            Page<ProductTypeGroup> pageRes = productTypeGroupRepository.findWithPageable(pageable);
-			List<ProductTypeGroup> ds = (List<ProductTypeGroup>) productTypeGroupRepository.findAll();
-			return ResponseEntity.ok(ds);
-		} catch (Exception ex) {
-			throw ex;
-		}
+        return ResponseEntity.ok(productTypeGroupService.getAllWithPagination(pageable));
+//		try {
+//            Page<ProductTypeGroup> pageRes = productTypeGroupRepository.findWithPageable(pageable);
+//			List<ProductTypeGroup> ds = (List<ProductTypeGroup>) pageRes.getContent();
+//			return ResponseEntity.ok(ds);
+//		} catch (Exception ex) {
+//			throw ex;
+//		}
     }
 
     @GetMapping("/{id}")

@@ -6,7 +6,9 @@ import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +27,15 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     private  Long productTypeGroupId;
 
     @Column(name = "name", unique = true)
-    @NotNull(message = "Name is not null")
+    @NotBlank(message = "Name is not null")
+    @Size(min = 2, message = "DDooj dai phai lon hon 2")
+    @Size(max = 50, message = "Max of name is 50")
     @JsonProperty("name")
     private String name;
 
     @Column(name = "slug_name", unique = true)
+    @Size(min = 2, message = "Min of slugname is 2")
+    @Size(max = 50, message = "Max of slugname is 50")
     @JsonProperty("slug_name")
     private String slugName;
 
@@ -38,6 +44,7 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     private ProductCategory productCategory;
 
     @Column( name = "status")
+    @NotNull(message = "Status is not null")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
@@ -69,7 +76,8 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     public Map<String, String> getProductCategory() {
         Map<String, String> map = new HashMap<>();
         map.put("product_category_id", String.valueOf(productCategory.getProductCategoryId()));
-        map.put("product_category_name", productCategory.getName());
+        map.put("name", productCategory.getName());
+        map.put("slug_name", productCategory.getSlugName());
         return map;
     }
 

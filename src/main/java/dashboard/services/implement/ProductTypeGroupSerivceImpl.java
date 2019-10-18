@@ -1,43 +1,47 @@
 package dashboard.services.implement;
 
-import dashboard.entities.ProductCategory;
+import dashboard.commons.DataUtils;
 import dashboard.entities.ProductTypeGroup;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
-import dashboard.repositories.ProductCategoryRepository;
 import dashboard.repositories.ProductTypeGroupRepository;
-import dashboard.services.ProductCategoryService;
 import dashboard.services.ProductTypeGroupService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.validation.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	
 	@Autowired
 	ProductTypeGroupRepository productTypeGroupRepository;
-	
+
+    Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+//    @Autowired
+//    Validator validator;
+
 	@Override
 	public ListEntityResponse<ProductTypeGroup> getAllWithPagination(Pageable pageable) {
-//		Page<ProductTypeGroup> result = productTypeGroupRepository.findWithPageable(pageable);
-//
-//		ListEntityResponse<ProductTypeGroup> productTypeGroupResponse = new ListEntityResponse<>();
-//
-//        productTypeGroupResponse.setPage(result.getNumber() + 1);
-//        productTypeGroupResponse.setPageSize(result.getSize());
-//        productTypeGroupResponse.setTotalPage(result.getTotalPages());
-//        productTypeGroupResponse.setListData(result.getContent());
-//
-//		return productTypeGroupResponse;
-        ListEntityResponse<ProductTypeGroup> list = new ListEntityResponse<>();
-        list.setListData((List<ProductTypeGroup>) productTypeGroupRepository.findWithPageable(pageable));
-        return list;
+		Page<ProductTypeGroup> result = productTypeGroupRepository.findWithPageable(pageable);
+
+		ListEntityResponse<ProductTypeGroup> productTypeGroupResponse = new ListEntityResponse<>();
+
+        productTypeGroupResponse.setPage(result.getNumber() + 1);
+        productTypeGroupResponse.setPageSize(result.getSize());
+        productTypeGroupResponse.setTotalPage(result.getTotalPages());
+        productTypeGroupResponse.setListData(result.getContent());
+
+		return productTypeGroupResponse;
 	}
 
     @Override
@@ -53,7 +57,14 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 
     @Override
 	public void create(ProductTypeGroup productTypeGroup) {
-        productTypeGroupRepository.save(productTypeGroup);
+        Set<ConstraintViolation<ProductTypeGroup>> violations = validator.validate(productTypeGroup);
+        if (violations.size()  > 0) {
+            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+        }
+	    if (StringUtils.isEmpty(productTypeGroup.getSlugName())) {
+            productTypeGroup.setSlugName(DataUtils.makeSlug(productTypeGroup.getName()));
+        }
+//	    productTypeGroupRepository.save(productTypeGroup);
 	}
 
 	@Override
@@ -68,7 +79,7 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
             throw new ResourceNotFoundException();
         }
         productTypeGroup.setStatus(EntityStatus.DELETED);
-//        productTypeGroup.setDeleteDate(new Date());
+        productTypeGroup.setDeleteDate(DataUtils.getSystemDate());
         productTypeGroupRepository.save(productTypeGroup);
     }
 
