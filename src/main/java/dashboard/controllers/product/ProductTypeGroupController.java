@@ -62,7 +62,7 @@ public class ProductTypeGroupController {
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody ProductTypeGroup productTypeGroup) {
 	    ProductCategory pr = new ProductCategory();
-	    pr.setProductCategoryId(10L);
+	    pr.setProductCategoryId(1L);
 	    productTypeGroup.setProductCategory(pr);
         productTypeGroupService.create(productTypeGroup);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
