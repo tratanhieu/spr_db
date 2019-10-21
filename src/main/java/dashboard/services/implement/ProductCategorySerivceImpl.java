@@ -22,8 +22,19 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	ProductCategoryRepository productCategoryRepository;
 	
 	@Override
-	public ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable) {
-		Page<ProductCategory> result = productCategoryRepository.findWithPageable(pageable);
+	public ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
+//        if (search != null) {
+//            if (status != null) {
+//                result = productCategoryRepository.findWithPageableAndSearch(pageable, search, status);
+//            }
+//        } else {
+//            if (status != null) {
+//                result = productCategoryRepository.findWithPageableAndFilterByStatus(pageable, status);
+//            }
+//        }
+//        result = productCategoryRepository.findWithPageable(pageable);
+
+        Page<ProductCategory> result = productCategoryRepository.findWithPageableAndSearch(pageable, search, status);
 
 		ListEntityResponse<ProductCategory> productCategoryResponse = new ListEntityResponse<>();
 

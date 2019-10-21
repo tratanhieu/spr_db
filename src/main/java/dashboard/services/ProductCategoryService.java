@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProductCategoryService {
 
-    ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable);
+    ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable, String search, EntityStatus status);
 
     ProductCategory getOne(Long productCategoryId) throws ResourceNotFoundException;
 
