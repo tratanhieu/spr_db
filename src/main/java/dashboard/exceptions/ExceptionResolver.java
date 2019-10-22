@@ -52,7 +52,7 @@ public class ExceptionResolver {
 //		return errors;
 //	}
 //
-	@ExceptionHandler(ConstraintViolationException.class)
+	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
 	public @ResponseBody Map<String, String> handleConstraintViolationExceptions(
 			javax.validation.ConstraintViolationException ex) {
 		Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
