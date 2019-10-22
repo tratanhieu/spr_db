@@ -1,8 +1,11 @@
 package dashboard.exceptions;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -26,15 +29,21 @@ public class EntityExceptionResolver extends ResponseEntityExceptionHandler{
 //	}
     
     // SQLIntegrityConstraintViolationException
-    @ExceptionHandler(ConstraintViolationException.class)
-	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public ExceptionResponse sqlExceptions(Exception ex,
-    		HttpServletRequest request) {
-    	
-		ExceptionResponse error = new ExceptionResponse();
-		error.setType(ex.getCause().toString());
-		error.setMessage(ex.getMessage());
-		return error;
-    }
+//    @ExceptionHandler(ConstraintViolationException.class)
+//	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ResponseBody
+//    public ExceptionResponse sqlExceptions(
+//			ConstraintViolation ex,
+//    		HttpServletRequest request
+//	) {
+////		ExceptionResponse error = new ExceptionResponse();
+////		error.setType(ex.getCause().toString());
+////		error.setMessage(ex.getMessage());
+////		return error;
+//		List<String> errors = new ArrayList<String>();
+//		for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+//			errors.add(violation.getRootBeanClass().getName() + " " +
+//					violation.getPropertyPath() + ": " + violation.getMessage());
+//		}
+//    }
 }

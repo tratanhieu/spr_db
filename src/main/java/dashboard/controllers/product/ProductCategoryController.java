@@ -1,6 +1,7 @@
 package dashboard.controllers.product;
 
 import dashboard.commons.ActionUtils;
+import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
 import dashboard.generics.MultipleExecute;
 import dashboard.enums.EntityStatus;
@@ -43,30 +44,45 @@ public class ProductCategoryController {
         return ResponseEntity.ok(productCategoryService.getAllWithPagination(pageable, search, status));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long productCategoryId)
+    @GetMapping("{productCategoryId}")
+    public ResponseEntity getOne(@PathVariable(name = "productCategoryId") Long productCategoryId)
             throws ResourceNotFoundException {
 	    return ResponseEntity.ok(productCategoryService.getOne(productCategoryId));
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody ProductCategory productCategory) {
+	    // Check validate entity
+        ValidationUtils.validateEntity(productCategory);
+        // Save
         productCategoryService.create(productCategory);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_CREATE);
     	return HttpStatus.OK;
     }
 
-	@PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public HttpStatus update(@RequestBody ProductCategory productCategory) {
+	@PostMapping(value = "{productCategoryId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public HttpStatus update(
+            @PathVariable(name = "productCategoryId") Long productCategoryId,
+	        @RequestBody ProductCategory productCategoryParams
+    ) throws ResourceNotFoundException {
+	    ProductCategory productCategory = productCategoryService.getOne(productCategoryId);
+
+	    if (productCategory.equals(productCategoryParams)) {
+	        return HttpStatus.NOT_MODIFIED;
+        }
+	    // set params to update
+        productCategory.setName(productCategoryParams.getName());
+        productCategory.setSlugName(productCategoryParams.getSlugName());
+        productCategory.setStatus(productCategoryParams.getStatus());
         productCategoryService.update(productCategory);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_UPDATE);
 		return HttpStatus.OK;
 	}
 
-	@GetMapping(value = "delete/{id}")
-	public HttpStatus delete(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
+	@GetMapping(value = "{productCategoryId}/delete")
+	public HttpStatus delete(@PathVariable(name = "productCategoryId") Long productCategoryId) throws ResourceNotFoundException {
 	    productCategoryService.delete(productCategoryId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_DELETE);

@@ -15,7 +15,12 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-@Table(name = "product_category")
+@Table(name = "product_category",
+		uniqueConstraints = {
+			@UniqueConstraint(name="UK_name", columnNames = "name"),
+			@UniqueConstraint(name="UK_slugName", columnNames = "slug_name")
+		}
+)
 @EntityListeners(AuditingEntityListener.class)
 public class ProductCategory extends BaseEntity implements Serializable {
 	
@@ -30,16 +35,16 @@ public class ProductCategory extends BaseEntity implements Serializable {
     @NotBlank(message = "Tên Danh mục Sản phẩm không được bỏ trống")
     @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
     @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
-    @Column(name = "name", unique = true)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "slug_name", unique = true)
+    @Column(name = "slug_name")
     @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
     @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
 	@JsonProperty("slug_name")
     private String slugName;
 
-    @OneToMany(mappedBy = "productCategory", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productCategory", cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Set<ProductTypeGroup> productTypeGroups;
 
@@ -47,6 +52,16 @@ public class ProductCategory extends BaseEntity implements Serializable {
     @NotNull(message = "Tình trạng không được rỗng")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    public ProductCategory() {
+    	super();
+	}
+
+	public ProductCategory(String name, String slugName, EntityStatus status) {
+		this.name = name;
+		this.slugName = slugName;
+		this.status = status;
+	}
 
 	public Long getProductCategoryId() {
 		return productCategoryId;

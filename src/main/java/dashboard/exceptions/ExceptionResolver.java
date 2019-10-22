@@ -1,14 +1,15 @@
 package dashboard.exceptions;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+
+import org.hibernate.exception.ConstraintViolationException;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,14 +28,16 @@ public class ExceptionResolver {
 	}
     
     // SQLIntegrityConstraintViolationException
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-	public @ResponseBody ExceptionResponse sqlExceptions(Exception ex,
-    		HttpServletRequest request) {
-    	
-		ExceptionResponse error = new ExceptionResponse();
-		error.setType(ex.getCause().toString());
-		error.setMessage(ex.getMessage());
-		return error;
+    @ExceptionHandler(DataIntegrityViolationException.class)
+	public @ResponseBody Map<String, String> dataIntegrityViolationException(DataIntegrityViolationException ex) {
+		Map<String, String> errorsReturn = new HashMap<>();
+		ConstraintViolationException constraintViolation = (ConstraintViolationException) ex.getCause();
+		String[] constraintName = constraintViolation.getConstraintName().split("_");
+		errorsReturn.put("error_type", "form");
+		if (constraintName.length == 2) {
+			errorsReturn.put(constraintName[1], "Dữ liệu này đã tồn tại");
+		}
+		return errorsReturn;
     }
 //
 //	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -51,9 +54,10 @@ public class ExceptionResolver {
 //
 	@ExceptionHandler(ConstraintViolationException.class)
 	public @ResponseBody Map<String, String> handleConstraintViolationExceptions(
-			ConstraintViolationException ex) {
+			javax.validation.ConstraintViolationException ex) {
 		Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
 		Map<String, String> errorsReturn = new HashMap<>();
+		errorsReturn.put("error_type", "form");
 		errors.forEach(error -> errorsReturn.put(error.getPropertyPath().toString(), error.getMessage()));
 		return errorsReturn;
 	}

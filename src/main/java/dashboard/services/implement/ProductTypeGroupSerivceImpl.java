@@ -26,10 +26,6 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	@Autowired
 	ProductTypeGroupRepository productTypeGroupRepository;
 
-    Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-//    @Autowired
-//    Validator validator;
-
 	@Override
 	public ListEntityResponse<ProductTypeGroup> getAllWithPagination(Pageable pageable) {
 		Page<ProductTypeGroup> result = productTypeGroupRepository.findWithPageable(pageable);
@@ -57,10 +53,6 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 
     @Override
 	public void create(ProductTypeGroup productTypeGroup) {
-        Set<ConstraintViolation<ProductTypeGroup>> violations = validator.validate(productTypeGroup);
-        if (violations.size()  > 0) {
-            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-        }
 	    if (StringUtils.isEmpty(productTypeGroup.getSlugName())) {
             productTypeGroup.setSlugName(DataUtils.makeSlug(productTypeGroup.getName()));
         }
