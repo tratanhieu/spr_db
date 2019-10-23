@@ -30,7 +30,7 @@ public interface ProductCategoryRepository extends CrudRepository<ProductCategor
 
 	@Query("SELECT pc FROM ProductCategory pc " +
             "WHERE pc.status != 'DELETED' " +
-            "AND (:name = '' OR pc.name LIKE %:name%) " +
+            "AND (:name = NULL OR pc.name LIKE %:name%) " +
             "AND (:status = NULL OR pc.status = :status)")
 	Page<ProductCategory> findWithPageableAndSearch(
         Pageable pageable,
