@@ -23,17 +23,6 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	
 	@Override
 	public ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
-//        if (search != null) {
-//            if (status != null) {
-//                result = productCategoryRepository.findWithPageableAndSearch(pageable, search, status);
-//            }
-//        } else {
-//            if (status != null) {
-//                result = productCategoryRepository.findWithPageableAndFilterByStatus(pageable, status);
-//            }
-//        }
-//        result = productCategoryRepository.findWithPageable(pageable);
-
         Page<ProductCategory> result = productCategoryRepository.findWithPageableAndSearch(pageable, search, status);
 
 		ListEntityResponse<ProductCategory> productCategoryResponse = new ListEntityResponse<>();
@@ -50,7 +39,7 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
     public ProductCategory getOne(Long productCategoryId) throws ResourceNotFoundException {
         ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
 
-        if (productCategory == null) {
+        if (productCategory == null || productCategory.getStatus().equals(EntityStatus.DELETED)) {
             throw new ResourceNotFoundException();
         }
 

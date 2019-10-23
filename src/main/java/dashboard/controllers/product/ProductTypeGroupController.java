@@ -28,11 +28,9 @@ public class ProductTypeGroupController {
     @Autowired
     ProductTypeGroupService productTypeGroupService;
     @Autowired
-    ProductTypeGroupRepository productTypeGroupRepository;
-    @Autowired
     PusherService pusherService;
 
-    private static final String CHANNEL = "PRODUCT_CATEGORY";
+    private static final String CHANNEL = "PRODUCT_TYPE_GROUP";
 
     @GetMapping("")
     public ResponseEntity index (
@@ -46,8 +44,8 @@ public class ProductTypeGroupController {
         return ResponseEntity.ok(productTypeGroupService.getAllWithPagination(pageable));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long productTypeGroupId)
+    @GetMapping("{productTypeGroupId}")
+    public ResponseEntity getOne(@PathVariable(name = "productTypeGroupId") Long productTypeGroupId)
             throws ResourceNotFoundException {
         return ResponseEntity.ok(productTypeGroupService.getOne(productTypeGroupId));
     }
@@ -61,16 +59,20 @@ public class ProductTypeGroupController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(@RequestBody ProductTypeGroup productTypeGroup) {
+    @PostMapping(value = "{productTypeGroupId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus update(
+            @PathVariable(name = "productTypeGroupId") Long productTypeGroupId,
+            @RequestBody ProductTypeGroup productTypeGroup
+    ) {
+        productTypeGroup.setProductTypeGroupId(productTypeGroupId);
         productTypeGroupService.update(productTypeGroup);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_UPDATE);
         return HttpStatus.OK;
     }
 
-    @GetMapping(value = "delete/{id}")
-    public HttpStatus delete(@PathVariable(name = "id") Long productCategoryId) throws ResourceNotFoundException {
+    @GetMapping(value = "{productTypeGroupId}/delete")
+    public HttpStatus delete(@PathVariable(name = "productTypeGroupId") Long productCategoryId) throws ResourceNotFoundException {
         productTypeGroupService.delete(productCategoryId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
                 PusherConstants.PUSHER_ACTION_DELETE);
