@@ -1,7 +1,7 @@
 package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
-import dashboard.entities.ProductTypeGroup;
+import dashboard.entities.product.ProductTypeGroup;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
@@ -14,11 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.validation.*;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {

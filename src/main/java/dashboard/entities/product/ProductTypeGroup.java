@@ -1,4 +1,4 @@
-package dashboard.entities;
+package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

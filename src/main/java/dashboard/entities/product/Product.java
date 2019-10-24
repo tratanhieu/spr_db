@@ -1,4 +1,4 @@
-package dashboard.entities;
+package dashboard.entities.product;
 
 import dashboard.entities.base.BaseEntity;
 
