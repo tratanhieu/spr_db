@@ -1,7 +1,7 @@
 package dashboard.controllers.product;
 
 import dashboard.constants.PusherConstants;
-import dashboard.entities.ProductBrand;
+import dashboard.entities.product.ProductBrand;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.MultipleExecute;

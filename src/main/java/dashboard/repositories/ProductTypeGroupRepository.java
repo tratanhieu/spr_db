@@ -1,7 +1,6 @@
 package dashboard.repositories;
 
-import dashboard.entities.ProductCategory;
-import dashboard.entities.ProductTypeGroup;
+import dashboard.entities.product.ProductTypeGroup;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +11,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityResult;
-import javax.persistence.FieldResult;
-import javax.persistence.SqlResultSetMapping;
 import java.util.List;
 
 @Repository

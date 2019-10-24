@@ -1,6 +1,6 @@
 package dashboard.services;
 
-import dashboard.entities.ProductCategory;
+import dashboard.entities.product.ProductCategory;
 import dashboard.generics.ListEntityResponse;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;

@@ -1,7 +1,5 @@
 package dashboard.commons;
 
-import dashboard.entities.ProductTypeGroup;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
