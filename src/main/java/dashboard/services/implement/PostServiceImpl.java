@@ -1,6 +1,6 @@
 package dashboard.services.implement;
 
-import dashboard.entities.Post;
+import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;

@@ -1,14 +1,18 @@
-package dashboard.entities;
+package dashboard.entities.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.entities.User;
 import dashboard.entities.base.BaseEntity;
+import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
@@ -26,16 +30,21 @@ public class Post extends BaseEntity implements Serializable {
     @JsonProperty("post_id")
     private Long postId;
 
-    @NotNull(message = "Title is not null")
+    @NotBlank(message = "Tiêu đề bài viết không được để trống")
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "title")
     @JsonProperty("title")
     private String title;
 
-    @NotNull(message = "Title_slug is not null")
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "slug_title")
     @JsonProperty("slug_title")
     private String slugTitle;
 
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "content")
     @JsonProperty("content")
     private String content;
@@ -48,6 +57,8 @@ public class Post extends BaseEntity implements Serializable {
     @JoinColumn(name = "post_type_id")
     private PostType postType;
 
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "description")
     @JsonProperty("description")
     private String description;
@@ -56,6 +67,8 @@ public class Post extends BaseEntity implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
+    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "Status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
