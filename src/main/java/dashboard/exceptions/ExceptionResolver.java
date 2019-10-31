@@ -1,6 +1,7 @@
 package dashboard.exceptions;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +10,8 @@ import javax.validation.ConstraintViolation;
 
 import org.hibernate.exception.ConstraintViolationException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 public class ExceptionResolver {
+
+	@Autowired
+	MessageSource messageSource;
 
 	@ExceptionHandler(Exception.class)
 	public @ResponseBody
@@ -54,11 +60,27 @@ public class ExceptionResolver {
 //
 	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
 	public @ResponseBody Map<String, String> handleConstraintViolationExceptions(
-			javax.validation.ConstraintViolationException ex) {
+			HttpServletRequest request,
+			javax.validation.ConstraintViolationException ex
+	) {
 		Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
 		Map<String, String> errorsReturn = new HashMap<>();
 		errorsReturn.put("error_type", "form");
-		errors.forEach(error -> errorsReturn.put(error.getPropertyPath().toString(), error.getMessage()));
+		errors.forEach(error -> {
+			final String message = error.getMessage();
+			final Locale currentLocale = request.getLocale();
+
+			if (message.startsWith("{") && message.endsWith("}")) {
+				errorsReturn.put(error.getPropertyPath().toString(),
+						messageSource.getMessage(
+								message.substring(1, message.length() - 1)
+								, null
+								, Locale.forLanguageTag("vi"))
+				);
+			} else {
+				errorsReturn.put(error.getPropertyPath().toString(), message);
+			}
+		});
 		return errorsReturn;
 	}
 }

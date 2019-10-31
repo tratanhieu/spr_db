@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import dashboard.entities.product.ProductCategory;
 import dashboard.services.ProductCategoryService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/product/category")
 public class ProductCategoryController {
@@ -49,9 +51,9 @@ public class ProductCategoryController {
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody ProductCategory productCategory) {
+    public HttpStatus create(@RequestBody ProductCategory productCategory) throws Exception{
 	    // Check validate entity
-        ValidationUtils.validateEntity(productCategory);
+//        ValidationUtils.validateEntity(productCategory);
         // Save
         productCategoryService.create(productCategory);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,

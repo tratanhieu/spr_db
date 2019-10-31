@@ -12,6 +12,7 @@ import dashboard.entities.product.ProductCategory;
 import dashboard.repositories.ProductCategoryRepository;
 import dashboard.services.ProductCategoryService;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
     }
 
     @Override
-	public void create(ProductCategory productCategory) {
+	public void create(@Valid ProductCategory productCategory) {
 		productCategoryRepository.save(productCategory);
 	}
 
