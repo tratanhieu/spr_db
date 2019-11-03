@@ -16,7 +16,12 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "post")
+@Table(name = "post",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "UK_title", columnNames = "title"),
+                @UniqueConstraint(name = "UK_slugTitle", columnNames = "slug_title")
+
+        })
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
         allowGetters = true)
@@ -30,21 +35,19 @@ public class Post extends BaseEntity implements Serializable {
     @JsonProperty("post_id")
     private Long postId;
 
-    @NotBlank(message = "Tiêu đề bài viết không được để trống")
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
+    @NotBlank(message = "{validation.title.notBlank}")
+    @Size(min = 2, message = "{validation.minLength}")
+    @Size(max = 50, message = "{validation.maxLength}")
     @Column(name = "title")
     @JsonProperty("title")
     private String title;
 
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
+    @Size(min = 2, message = "{validation.minLength}")
+    @Size(max = 50, message = "{validation.maxLength}")
     @Column(name = "slug_title")
     @JsonProperty("slug_title")
     private String slugTitle;
 
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "content")
     @JsonProperty("content")
     private String content;
@@ -57,18 +60,16 @@ public class Post extends BaseEntity implements Serializable {
     @JoinColumn(name = "post_type_id")
     private PostType postType;
 
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
     @Column(name = "description")
     @JsonProperty("description")
     private String description;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
+    @NotNull(message = "{validation.status.notBlank}")
     @Column(name = "Status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;

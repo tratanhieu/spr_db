@@ -21,6 +21,14 @@ public interface PostRepository extends CrudRepository<Post, Long> {
             "WHERE p.status != 'DELETED'")
     Page<Post> findWithPageable(Pageable pageable);
 
+    @Query("SELECT p FROM Post p " +
+            "WHERE p.status != 'DELETED' " +
+            "AND p.status = :status")
+    Page<Post> findWithPageableAndFilterByStatus(
+            Pageable pageable,
+            @Param("status") EntityStatus status
+    );
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE Post p SET p.status = :status WHERE p.postId IN (:listId)")
