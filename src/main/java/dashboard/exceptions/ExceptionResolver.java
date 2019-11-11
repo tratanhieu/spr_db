@@ -14,6 +14,8 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,17 +27,20 @@ public class ExceptionResolver {
 	CommonService commonService;
 
 	@ExceptionHandler(Exception.class)
-	public @ResponseBody ExceptionResponse handleException(
+	public @ResponseBody ResponseEntity handleException(
 			Exception ex,
 			HttpServletRequest request
 	) {
 		ex.printStackTrace();
-		return new ExceptionResponse(commonService.getMessageSource("system.error.undefined"));
+
+		return ResponseEntity
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new ExceptionResponse(commonService.getMessageSource("system.error.undefined")));
 	}
     
     // SQLIntegrityConstraintViolationException
     @ExceptionHandler(DataIntegrityViolationException.class)
-	public @ResponseBody Map<String, String> dataIntegrityViolationException(DataIntegrityViolationException ex) {
+	public @ResponseBody ResponseEntity dataIntegrityViolationException(DataIntegrityViolationException ex) {
 		Map<String, String> errorsReturn = new HashMap<>();
 		ConstraintViolationException constraintViolation = (ConstraintViolationException) ex.getCause();
 		String[] constraintName = constraintViolation.getConstraintName().split("_");
@@ -43,17 +48,19 @@ public class ExceptionResolver {
 		if (constraintName.length == 2) {
 			errorsReturn.put(constraintName[1], commonService.getMessageSource("message.entity.exist"));
 		}
-		return errorsReturn;
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorsReturn);
     }
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public @ResponseBody ExceptionResponse resourceNotFoundException() {
-		return new ExceptionResponse(commonService.getMessageSource("message.entity.notFound"));
+	public @ResponseBody ResponseEntity<ExceptionResponse> resourceNotFoundException() {
+		return ResponseEntity
+				.status(HttpStatus.FORBIDDEN)
+				.body(new ExceptionResponse(commonService.getMessageSource("message.entity.notFound")));
 	}
 
     // Handle @Valid in services
 	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
-	public @ResponseBody Map<String, String> handleConstraintViolationExceptions(
+	public @ResponseBody ResponseEntity handleConstraintViolationExceptions(
 			HttpServletRequest request,
 			javax.validation.ConstraintViolationException ex
 	) {
@@ -72,6 +79,7 @@ public class ExceptionResolver {
 				errorsReturn.put(error.getPropertyPath().toString(), message);
 			}
 		});
-		return errorsReturn;
+
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorsReturn);
 	}
 }

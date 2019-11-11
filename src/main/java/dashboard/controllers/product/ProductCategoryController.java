@@ -35,11 +35,10 @@ public class ProductCategoryController {
     public ResponseEntity index (
     		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
     		@RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
-            @RequestParam(name = "sort", required = false, defaultValue = "createDate,ASC") String sort,
+            @RequestParam(name = "sort", required = false, defaultValue = "createDate,DESC") String sort,
             @RequestParam(name = "search", required = false) String search,
 			@RequestParam(name = "status", required = false) EntityStatus status
     ) {
-//	    int str = filter.length;
         Pageable pageable = ActionUtils.preparePageable(sort, page, size);
         return ResponseEntity.ok(productCategoryService.getAllWithPagination(pageable, search, status));
     }
