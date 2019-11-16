@@ -7,6 +7,7 @@
 <head>
 </head>
 <body>
+    ${path}
     <h1>Ok</h1>
 </body>
 </html>
