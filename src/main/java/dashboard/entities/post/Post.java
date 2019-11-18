@@ -1,10 +1,10 @@
 package dashboard.entities.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.User;
 import dashboard.entities.base.BaseEntity;
-import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "post",
@@ -64,7 +65,6 @@ public class Post extends BaseEntity implements Serializable {
     @JsonProperty("description")
     private String description;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -73,6 +73,11 @@ public class Post extends BaseEntity implements Serializable {
     @Column(name = "Status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private Set<PostTag> postTags ;
+
 
     public Long getPostId() {
         return postId;
@@ -145,4 +150,13 @@ public class Post extends BaseEntity implements Serializable {
     public void setStatus(EntityStatus status) {
         this.status = status;
     }
+
+    public Set<PostTag> getPostTags() {
+        return postTags;
+    }
+
+    public void setPostTags(Set<PostTag> postTags) {
+        this.postTags = postTags;
+    }
+
 }
