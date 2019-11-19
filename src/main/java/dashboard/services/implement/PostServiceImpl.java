@@ -22,16 +22,21 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ListEntityResponse<Post> getAllWithPagination(Pageable pageable) {
-        Page<Post>  result = postRepository.findWithPageable(pageable);
+        try {
+            Page<Post> result = postRepository.findWithPageable(pageable);
 
-        ListEntityResponse<Post> postRespone = new ListEntityResponse<>();
+            ListEntityResponse<Post> postRespone = new ListEntityResponse<>();
 
-        postRespone.setPage(result.getNumber() +1);
-        postRespone.setPageSize(result.getSize());
-        postRespone.setTotalPage(result.getTotalPages());
-        postRespone.setListData(result.getContent());
+            postRespone.setPage(result.getNumber() + 1);
+            postRespone.setPageSize(result.getSize());
+            postRespone.setTotalPage(result.getTotalPages());
+            postRespone.setListData(result.getContent());
 
-        return postRespone;
+            return postRespone;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+return null;
 
     }
 

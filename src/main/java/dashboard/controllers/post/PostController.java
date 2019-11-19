@@ -6,6 +6,7 @@ import dashboard.constants.PusherConstants;
 import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.generics.ListEntityResponse;
 import dashboard.generics.MultipleExecute;
 import dashboard.services.PostService;
 import dashboard.services.PusherService;
@@ -42,7 +43,8 @@ public class PostController {
             @RequestParam(name = "status", required = false) EntityStatus status
     ) {
         Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        return ResponseEntity.ok(postService.getAllWithPagination(pageable));
+        ListEntityResponse res = postService.getAllWithPagination(pageable);
+        return ResponseEntity.ok(res.getListData());
     }
 
     @GetMapping("{postId}")

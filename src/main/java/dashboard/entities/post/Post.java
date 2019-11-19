@@ -70,13 +70,12 @@ public class Post extends BaseEntity implements Serializable {
     private User user;
 
     @NotNull(message = "{validation.status.notBlank}")
-    @Column(name = "Status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
-    @JsonIgnore
-    private Set<PostTag> postTags ;
+    private Set<PostTag> postTags;
 
 
     public Long getPostId() {

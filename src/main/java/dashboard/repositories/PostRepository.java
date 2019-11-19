@@ -17,7 +17,7 @@ import java.util.List;
 public interface PostRepository extends CrudRepository<Post, Long> {
 
     @Query("SELECT p " +
-            "FROM Post p JOIN p.postType pt " +
+            "FROM Post p JOIN p.postType pt JOIN p.user pu " +
             "WHERE p.status != 'DELETED'")
     Page<Post> findWithPageable(Pageable pageable);
 
