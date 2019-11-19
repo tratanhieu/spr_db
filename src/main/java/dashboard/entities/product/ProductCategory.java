@@ -1,10 +1,12 @@
-package dashboard.entities;
+package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -32,15 +34,15 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	@JsonProperty("product_category_id")
     private Long productCategoryId;
 
-    @NotBlank(message = "Tên Danh mục Sản phẩm không được bỏ trống")
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
+	@NotBlank(message = "{validation.name.notBlank}")
+    @Size(min = 2, message = "{validation.minLength}")
+    @Size(max = 50, message = "{validation.maxLength}")
     @Column(name = "name")
     private String name;
 
     @Column(name = "slug_name")
-    @Size(min = 2, message = "Độ dài tối thiểu là 2 ký tự")
-    @Size(max = 50, message = "Độ dài tối đa là 50 ký tự")
+	@Size(min = 2, message = "{validation.minLength}")
+	@Size(max = 50, message = "{validation.maxLength}")
 	@JsonProperty("slug_name")
     private String slugName;
 
@@ -49,8 +51,8 @@ public class ProductCategory extends BaseEntity implements Serializable {
     private Set<ProductTypeGroup> productTypeGroups;
 
     @Column(name = "status")
-    @NotNull(message = "Tình trạng không được rỗng")
-    @Enumerated(EnumType.STRING)
+    @NotNull(message = "{validation.status.notBlank}")
+	@Enumerated(EnumType.STRING)
     private EntityStatus status;
 
     public ProductCategory() {

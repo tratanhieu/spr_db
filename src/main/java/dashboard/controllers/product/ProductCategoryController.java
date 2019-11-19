@@ -8,16 +8,16 @@ import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.services.PusherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import dashboard.entities.ProductCategory;
+import dashboard.entities.product.ProductCategory;
 import dashboard.services.ProductCategoryService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/product/category")
@@ -51,9 +51,9 @@ public class ProductCategoryController {
     }
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody ProductCategory productCategory) {
+    public HttpStatus create(@RequestBody ProductCategory productCategory) throws Exception{
 	    // Check validate entity
-        ValidationUtils.validateEntity(productCategory);
+//        ValidationUtils.validateEntity(productCategory);
         // Save
         productCategoryService.create(productCategory);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,

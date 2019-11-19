@@ -1,43 +1,39 @@
 package dashboard.exceptions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ExceptionResponse {
-	private String code;
-	private String type;
+
+	@JsonProperty(value = "error_type")
+	private String errorType;
 	private String message;
-	
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
+
+	public ExceptionResponse() {
+		super();
 	}
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
+
+	public ExceptionResponse(String message) {
+		this.errorType = "modal";
+		this.message = message;
 	}
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
+
+	public ExceptionResponse(String errorType, String message) {
+		this.errorType = errorType;
+		this.message = message;
 	}
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
+
+	public String getErrorType() {
+		return errorType;
 	}
-	/**
-	 * @return the message
-	 */
+
+	public void setErrorType(String errorType) {
+		this.errorType = errorType;
+	}
+
 	public String getMessage() {
 		return message;
 	}
-	/**
-	 * @param message the message to set
-	 */
+
 	public void setMessage(String message) {
 		this.message = message;
 	}

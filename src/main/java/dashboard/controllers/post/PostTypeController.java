@@ -1,7 +1,7 @@
 package dashboard.controllers.post;
 
 import dashboard.constants.PusherConstants;
-import dashboard.entities.PostType;
+import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.MultipleExecute;
@@ -15,11 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.SimpleTimeZone;
-import java.util.logging.SimpleFormatter;
 
 @RestController
 @RequestMapping("/postType")

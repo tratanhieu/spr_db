@@ -1,6 +1,6 @@
 package dashboard.repositories;
 
-import dashboard.entities.PostType;
+import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

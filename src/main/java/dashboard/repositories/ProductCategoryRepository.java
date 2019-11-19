@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import dashboard.entities.ProductCategory;
+import dashboard.entities.product.ProductCategory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public interface ProductCategoryRepository extends CrudRepository<ProductCategor
 
 	@Query("SELECT pc FROM ProductCategory pc " +
             "WHERE pc.status != 'DELETED' " +
-            "AND (:name = '' OR pc.name LIKE %:name%) " +
+            "AND (:name = NULL OR pc.name LIKE %:name%) " +
             "AND (:status = NULL OR pc.status = :status)")
 	Page<ProductCategory> findWithPageableAndSearch(
         Pageable pageable,
