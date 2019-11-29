@@ -44,7 +44,6 @@ public class ExceptionResolver {
 		Map<String, String> errorsReturn = new HashMap<>();
 		ConstraintViolationException constraintViolation = (ConstraintViolationException) ex.getCause();
 		String[] constraintName = constraintViolation.getConstraintName().split("_");
-		errorsReturn.put("error_type", "form");
 		if (constraintName.length == 2) {
 			errorsReturn.put(constraintName[1], commonService.getMessageSource("message.entity.exist"));
 		}
@@ -66,7 +65,6 @@ public class ExceptionResolver {
 	) {
 		Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
 		Map<String, String> errorsReturn = new HashMap<>();
-		errorsReturn.put("error_type", "form");
 		errors.forEach(error -> {
 			final String message = error.getMessage();
 //			final Locale currentLocale = request.getLocale();

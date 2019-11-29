@@ -49,8 +49,8 @@ public class ProductTypeGroupController {
     public HttpStatus create(@RequestBody ProductTypeGroup productTypeGroup) {
         // Save
         productTypeGroupService.create(productTypeGroup);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_CREATE);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
         return HttpStatus.OK;
     }
 
@@ -61,24 +61,24 @@ public class ProductTypeGroupController {
     ) {
         productTypeGroup.setProductTypeGroupId(productTypeGroupId);
         productTypeGroupService.update(productTypeGroup);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_UPDATE);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
         return HttpStatus.OK;
     }
 
     @GetMapping(value = "{productTypeGroupId}/delete")
     public HttpStatus delete(@PathVariable(name = "productTypeGroupId") Long productCategoryId) throws ResourceNotFoundException {
         productTypeGroupService.delete(productCategoryId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_DELETE);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
         return HttpStatus.OK;
     }
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
         productTypeGroupService.updateStatusWithMultipleId(multipleExecute.getListId(), multipleExecute.getStatus());
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
         return HttpStatus.OK;
     }
 }

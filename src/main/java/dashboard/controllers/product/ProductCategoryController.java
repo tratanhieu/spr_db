@@ -55,8 +55,8 @@ public class ProductCategoryController {
 //        ValidationUtils.validateEntity(productCategory);
         // Save
         productCategoryService.create(productCategory);
-	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_CREATE);
+	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
     	return HttpStatus.OK;
     }
 
@@ -75,24 +75,25 @@ public class ProductCategoryController {
         productCategory.setSlugName(productCategoryParams.getSlugName());
         productCategory.setStatus(productCategoryParams.getStatus());
         productCategoryService.update(productCategory);
-	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_UPDATE);
-		return HttpStatus.OK;
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
+        return HttpStatus.OK;
 	}
 
 	@GetMapping(value = "{productCategoryId}/delete")
 	public HttpStatus delete(@PathVariable(name = "productCategoryId") Long productCategoryId) throws ResourceNotFoundException {
 	    productCategoryService.delete(productCategoryId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_DELETE);
-		return HttpStatus.OK;
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
+        return HttpStatus.OK;
 	}
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
         productCategoryService.updateStatusWithMultipleId(multipleExecute.getListId(), multipleExecute.getStatus());
-	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_CATEGORY,
-                PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
+
         return HttpStatus.OK;
     }
 }

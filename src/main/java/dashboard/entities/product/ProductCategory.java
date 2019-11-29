@@ -31,7 +31,6 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_category_id")
-	@JsonProperty("product_category_id")
     private Long productCategoryId;
 
 	@NotBlank(message = "{validation.name.notBlank}")
@@ -43,7 +42,6 @@ public class ProductCategory extends BaseEntity implements Serializable {
     @Column(name = "slug_name")
 	@Size(min = 2, message = "{validation.minLength}")
 	@Size(max = 50, message = "{validation.maxLength}")
-	@JsonProperty("slug_name")
     private String slugName;
 
     @OneToMany(mappedBy = "productCategory", cascade = CascadeType.PERSIST)

@@ -1,5 +1,6 @@
 package dashboard.services.implement;
 
+import dashboard.commons.DataUtils;
 import dashboard.generics.ListEntityResponse;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -49,6 +50,9 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 
     @Override
 	public void create(@Valid ProductCategory productCategory) {
+	    if (productCategory.getSlugName() == null) {
+	        productCategory.setSlugName(DataUtils.makeSlug(productCategory.getName()));
+        }
 		productCategoryRepository.save(productCategory);
 	}
 

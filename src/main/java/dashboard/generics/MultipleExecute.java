@@ -12,7 +12,6 @@ public class MultipleExecute<T, E> {
     @Enumerated(EnumType.STRING)
     private E status;
     // The list data
-    @JsonProperty("list_id")
     private List<T> listId;
 
     public E getStatus() {

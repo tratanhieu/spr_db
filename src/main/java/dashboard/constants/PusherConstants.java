@@ -12,7 +12,8 @@ public class PusherConstants {
     public static final String PUSHER_ACTION_DELETE = "DELETE";
     public static final String PUSHER_ACTION_UPDATE_STATUS_MULTIPLE = "UPDATE_STATUS";
 
-    public static final String PUSHER_CHANNEL_PRODUCT_CATEGORY = "PRODUCT_CATEGORY";
+    public static final String PUSHER_CHANNEL_RELOAD_LIST = "RELOAD";
+    public static final String PUSHER_DATA_PRODUCT_CATEGORY = "PRODUCT_CATEGORY";
     public static final String PUSHER_CHANNEL_PRODUCT_TYPE = "PRODUCT_TYPE";
     public static final String PUSHER_CHANNEL_PRODUCT_BRAND = "PRODUCT_BRAND";
 
