@@ -25,7 +25,7 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_type_group_id")
-    @JsonProperty("product_type_group_id")
+    @JsonProperty("productTypeGroupId")
     private  Long productTypeGroupId;
 
     @Column(name = "name", unique = true)
@@ -38,7 +38,7 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @Column(name = "slug_name", unique = true)
     @Size(min = 2, message = "Min of slugname is 2")
     @Size(max = 50, message = "Max of slugname is 50")
-    @JsonProperty("slug_name")
+    @JsonProperty("slugName")
     private String slugName;
 
     @ManyToOne
@@ -78,23 +78,26 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
         this.slugName = slugName;
     }
 
-    @JsonProperty("product_category")
+    @JsonProperty("productCategory")
     public Map<String, String> getProductCategory() {
         Map<String, String> map = new HashMap<>();
-        map.put("product_category_id", String.valueOf(productCategory.getProductCategoryId()));
+        map.put("productCategoryId", String.valueOf(productCategory.getProductCategoryId()));
         map.put("name", productCategory.getName());
-        map.put("slug_name", productCategory.getSlugName());
+        map.put("slugName", productCategory.getSlugName());
         return map;
     }
 
-    @JsonProperty("product_category")
+    @JsonProperty("productCategory")
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
 
-    @JsonIgnore
-    public Long getProductCategoryId() {
-        return productCategory.getProductCategoryId();
+    public Set<ProductType> getProductTypes() {
+        return productTypes;
+    }
+
+    public void setProductTypes(Set<ProductType> productTypes) {
+        this.productTypes = productTypes;
     }
 
     // Cách này là cách thứ 2 để hiển thị thông tin của bảng 1

@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "product_type")
@@ -22,7 +24,7 @@ public class ProductType extends BaseEntity implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_type_id")
-    @JsonProperty("product_type_id")
+    @JsonProperty("productTypeId")
     private  Long productTypeId;
 
     @Column(name = "name", unique = true)
@@ -35,12 +37,12 @@ public class ProductType extends BaseEntity implements Serializable{
     @Column(name = "slug_name", unique = true)
     @Size(min = 2, message = "Min of slugname is 2")
     @Size(max = 50, message = "Max of slugname is 50")
-    @JsonProperty("slug_name")
+    @JsonProperty("slugName")
     private String slugName;
 
     @ManyToOne
     @JoinColumn(name = "product_type_group_id")
-    @JsonProperty("product_type_group_id")
+    @JsonProperty("productTypeGroup")
     private ProductTypeGroup productTypeGroup;
 
     @Column(name = "status")
@@ -90,8 +92,12 @@ public class ProductType extends BaseEntity implements Serializable{
         this.status = status;
     }
 
-    public ProductTypeGroup getProductTypeGroup() {
-        return productTypeGroup;
+    public Map<String, String> getProductTypeGroup() {
+        Map<String, String> map = new HashMap<>();
+        map.put("productTypeGroupId", String.valueOf(productTypeGroup.getProductTypeGroupId()));
+        map.put("name", productTypeGroup.getName());
+        map.put("slugName", productTypeGroup.getSlugName());
+        return map;
     }
 
     public void setProductTypeGroup(ProductTypeGroup productTypeGroup) {
