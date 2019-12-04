@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_type_group")
@@ -43,6 +44,10 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "product_category_id")
     private ProductCategory productCategory;
+
+    @OneToMany(mappedBy = "productTypeGroup", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private Set<ProductType> productTypes;
 
     @Column( name = "status")
     @NotNull(message = "Status is not null")
