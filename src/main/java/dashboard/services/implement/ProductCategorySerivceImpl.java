@@ -57,7 +57,7 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	}
 
 	@Override
-	public void update(ProductCategory productCategory) {
+	public void update(@Valid ProductCategory productCategory) {
 		productCategoryRepository.save(productCategory);
 	}
 

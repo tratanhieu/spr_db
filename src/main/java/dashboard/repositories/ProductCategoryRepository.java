@@ -17,16 +17,16 @@ import java.util.List;
 @Repository
 public interface ProductCategoryRepository extends CrudRepository<ProductCategory, Long> {
 	  
-	@Query("SELECT pc FROM ProductCategory pc WHERE pc.status != 'DELETED'")
-	Page<ProductCategory> findWithPageable(Pageable pageable);
+//	@Query("SELECT pc FROM ProductCategory pc WHERE pc.status != 'DELETED'")
+//	Page<ProductCategory> findWithPageable(Pageable pageable);
 
-	@Query("SELECT pc FROM ProductCategory pc " +
-            "WHERE pc.status != 'DELETED' " +
-            "AND pc.status = :status")
-	Page<ProductCategory> findWithPageableAndFilterByStatus(
-        Pageable pageable,
-        @Param("status") EntityStatus status
-    );
+//	@Query("SELECT pc FROM ProductCategory pc " +
+//            "WHERE pc.status != 'DELETED' " +
+//            "AND pc.status = :status")
+//	Page<ProductCategory> findWithPageableAndFilterByStatus(
+//        Pageable pageable,
+//        @Param("status") EntityStatus status
+//    );
 
 	@Query("SELECT pc FROM ProductCategory pc " +
             "WHERE pc.status != 'DELETED' " +
@@ -37,6 +37,7 @@ public interface ProductCategoryRepository extends CrudRepository<ProductCategor
         @Param("name") String name,
         @Param("status") EntityStatus status
     );
+
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE ProductCategory pc " +

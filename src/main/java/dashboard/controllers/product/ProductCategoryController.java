@@ -29,8 +29,6 @@ public class ProductCategoryController {
     @Autowired
     PusherService pusherService;
 
-    private static final String CHANNEL = "PRODUCT_CATEGORY";
-
 	@GetMapping("")
     public ResponseEntity index (
     		@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
