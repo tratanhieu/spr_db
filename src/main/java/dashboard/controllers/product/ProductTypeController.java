@@ -1,8 +1,11 @@
 package dashboard.controllers.product;
 
 import dashboard.constants.PusherConstants;
-import dashboard.entities.product.ProductCategory;
+import dashboard.entities.product.ProductBrand;
 import dashboard.entities.product.ProductType;
+import dashboard.enums.EntityStatus;
+import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.generics.MultipleExecute;
 import dashboard.services.ProductTypeService;
 import dashboard.services.PusherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +40,40 @@ public class ProductTypeController {
         return ResponseEntity.ok(productTypeService.getAllWithPagination(pageable));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity getOne(@PathVariable(name = "id") Long productTypeId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(productTypeService.getOne(productTypeId));
+    }
+
     @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody ProductType productType) {
         productTypeService.create(productType);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_TYPE,
                 PusherConstants.PUSHER_ACTION_CREATE);
         return HttpStatus.OK;
+    }
+
+    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus update(@RequestBody ProductType productType) throws ResourceNotFoundException{
+        productTypeService.update(productType);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_TYPE,
+                PusherConstants.PUSHER_ACTION_UPDATE);
+        return HttpStatus.OK;
+    }
+
+    @GetMapping(value = "delete/{id}")
+    public HttpStatus delete(@PathVariable(name = "id") Long productTypeId) throws ResourceNotFoundException {
+        productTypeService.delete(productTypeId);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_TYPE,
+                PusherConstants.PUSHER_ACTION_DELETE);
+        return HttpStatus.OK;
+    }
+
+    @PostMapping(value = "bulk-update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
+                PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
+        return ResponseEntity.ok(productTypeService.updateStatusByListId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus()));
     }
 
 }
