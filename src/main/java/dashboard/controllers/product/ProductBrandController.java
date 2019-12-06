@@ -51,16 +51,26 @@ public class ProductBrandController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(@RequestBody ProductBrand productBrand) {
-        productBrandService.update(productBrand);
+    @PostMapping(value = "{productBrandId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus update(
+            @PathVariable Long productBrandId,
+            @RequestBody ProductBrand productBrandParam
+    ) throws ResourceNotFoundException {
+        ProductBrand productBrand = productBrandService.getOne(productBrandId);
+
+        if (productBrand.isEquals(productBrandParam)) {
+            return HttpStatus.NOT_MODIFIED;
+        }
+
+        productBrandService.update(productBrandParam);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
                 PusherConstants.PUSHER_ACTION_UPDATE);
         return HttpStatus.OK;
     }
 
-    @GetMapping(value = "delete/{id}")
-    public HttpStatus delete(@PathVariable(name = "id") Long productBrandId) throws ResourceNotFoundException {
+    @GetMapping(value = "{productBrandId}/delete")
+    public HttpStatus delete(@PathVariable(name = "productBrandId") Long productBrandId) throws ResourceNotFoundException {
+        productBrandService.delete(productBrandId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
                 PusherConstants.PUSHER_ACTION_DELETE);
         return HttpStatus.OK;
