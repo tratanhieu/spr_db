@@ -19,7 +19,7 @@ public class ProductBrand extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_brand_id")
-    @JsonProperty("product_brand_id")
+    @JsonProperty("productBrandId")
     private Long productBrandId;
 
     @NotNull(message = "Name is not null")
@@ -29,7 +29,7 @@ public class ProductBrand extends BaseEntity implements Serializable {
 
     @NotNull(message = "Slug name is not null")
     @Column(name = "slug_name")
-    @JsonProperty("slug_name")
+    @JsonProperty("slugName")
     private String slugName;
 
     @Column(name = "image")
@@ -40,12 +40,12 @@ public class ProductBrand extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    public Long getProductBrandID() {
+    public Long getProductBrandId() {
         return productBrandId;
     }
 
-    public void setProductBrandID(Long productBrandID) {
-        this.productBrandId = productBrandID;
+    public void setProductBrandId(Long productBrandId) {
+        this.productBrandId = productBrandId;
     }
 
     public String getName() {
@@ -78,5 +78,12 @@ public class ProductBrand extends BaseEntity implements Serializable {
 
     public void setStatus(EntityStatus status) {
         this.status = status;
+    }
+
+    public boolean isEquals(ProductBrand productBrand) {
+        return (this.name.equals(productBrand.name)
+                && this.slugName.equals(productBrand.slugName)
+                && this.image.equals(productBrand.image)
+                && this.status.equals(productBrand.status));
     }
 }

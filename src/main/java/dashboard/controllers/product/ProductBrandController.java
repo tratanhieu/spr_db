@@ -1,5 +1,6 @@
 package dashboard.controllers.product;
 
+import dashboard.commons.ActionUtils;
 import dashboard.constants.PusherConstants;
 import dashboard.entities.product.ProductBrand;
 import dashboard.enums.EntityStatus;
@@ -7,6 +8,7 @@ import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.MultipleExecute;
 import dashboard.services.ProductBrandService;
 import dashboard.services.PusherService;
+import org.springframework.beans.ExtendedBeanInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +32,13 @@ public class ProductBrandController {
     public ResponseEntity index (
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
-            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
-    ) {
-        Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
-        page = 1 >= page ? 0 : (page - 1);
-        Pageable pageable = PageRequest.of(page, size, sortable);
-        return ResponseEntity.ok(productBrandService.getAllWithPagination(pageable));
+            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "status", required = false) EntityStatus status
+            ) {
+
+        Pageable pageable = ActionUtils.preparePageable(sort, page, size);
+        return ResponseEntity.ok(productBrandService.getAllWithPagination(pageable,search, status ));
     }
 
     @GetMapping("/{id}")
@@ -51,16 +54,26 @@ public class ProductBrandController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(@RequestBody ProductBrand productBrand) {
-        productBrandService.update(productBrand);
+    @PostMapping(value = "{productBrandId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus update(
+            @PathVariable Long productBrandId,
+            @RequestBody ProductBrand productBrandParam
+    ) throws ResourceNotFoundException {
+        ProductBrand productBrand = productBrandService.getOne(productBrandId);
+
+        if (productBrand.isEquals(productBrandParam)) {
+            return HttpStatus.NOT_MODIFIED;
+        }
+
+        productBrandService.update(productBrandParam);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
                 PusherConstants.PUSHER_ACTION_UPDATE);
         return HttpStatus.OK;
     }
 
-    @GetMapping(value = "delete/{id}")
-    public HttpStatus delete(@PathVariable(name = "id") Long productBrandId) throws ResourceNotFoundException {
+    @GetMapping(value = "{productBrandId}/delete")
+    public HttpStatus delete(@PathVariable(name = "productBrandId") Long productBrandId) throws ResourceNotFoundException {
+        productBrandService.delete(productBrandId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
                 PusherConstants.PUSHER_ACTION_DELETE);
         return HttpStatus.OK;
