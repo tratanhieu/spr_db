@@ -20,8 +20,8 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
     ProductBrandRepository productBrandRepository;
 
     @Override
-    public ListEntityResponse<ProductBrand> getAllWithPagination(Pageable pageable) {
-        Page<ProductBrand> result = productBrandRepository.findWithPageable(pageable);
+    public ListEntityResponse<ProductBrand> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
+        Page<ProductBrand> result = productBrandRepository.findWithPageableAndSearch(pageable, search, status);
 
         ListEntityResponse<ProductBrand> productBrandResponse = new ListEntityResponse<>();
 

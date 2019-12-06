@@ -17,8 +17,17 @@ import java.util.List;
 @Repository
 public interface ProductBrandRepository extends CrudRepository<ProductBrand, Long> {
 
-    @Query("SELECT pd FROM ProductBrand pd WHERE pd.status != 'DELETED'")
-    Page<ProductBrand> findWithPageable(Pageable pageable);
+    //@Query("SELECT pd FROM ProductBrand pd WHERE pd.status != 'DELETED'")
+    //Page<ProductBrand> findWithPageable(Pageable pageable);
+    @Query("SELECT pb FROM ProductBrand pb " +
+            "WHERE pb.status != 'DELETED' " +
+            "AND (:name = NULL OR pb.name LIKE %:name%) " +
+            "AND (:status = NULL OR pb.status = :status)")
+    Page<ProductBrand> findWithPageableAndSearch(
+            Pageable pageable,
+            @Param("name") String name,
+            @Param("status") EntityStatus status
+    );
 
     @Modifying
     @Transactional
