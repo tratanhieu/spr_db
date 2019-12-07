@@ -23,7 +23,7 @@ public class PostTypeServiceImpl implements PostTypeService {
     PostTypeRepository postTypeRepository;
 
     @Override
-    public ListEntityResponse<PostType> getAllWithPagination(Pageable pageable, String search, String status) {
+    public ListEntityResponse<PostType> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
         Page<PostType> result = postTypeRepository.findWithPageable(pageable, search, status);
 
         ListEntityResponse<PostType> postTypeResponse = new ListEntityResponse<>();

@@ -24,7 +24,7 @@ public interface PostTypeRepository extends CrudRepository<PostType, Long> {
     Page<PostType> findWithPageable(
             Pageable pageable,
             @Param("name") String name,
-            @Param("status") String status);
+            @Param("status") EntityStatus status);
 
     @Query("SELECT pt FROM PostType pt WHERE pt.status != 'DELETED' AND pt.createDate = :createDate ")
     Page<PostType> findWithCreateDate(Date createDate, Pageable pageable);

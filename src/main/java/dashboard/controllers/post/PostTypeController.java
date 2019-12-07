@@ -33,7 +33,7 @@ public class PostTypeController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
             @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort,
             @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "status", required = false) String status
+            @RequestParam(name = "status", required = false) EntityStatus status
     ) {
         Pageable pageable = ActionUtils.preparePageable(sort,page, size);
         return ResponseEntity.ok(postTypeService.getAllWithPagination(pageable, search,status));
