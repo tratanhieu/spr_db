@@ -7,10 +7,12 @@ import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.PostTypeRepository;
 import dashboard.services.PostTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +23,8 @@ public class PostTypeServiceImpl implements PostTypeService {
     PostTypeRepository postTypeRepository;
 
     @Override
-    public ListEntityResponse<PostType> getAllWithPagination(Pageable pageable) {
-        Page<PostType> result = postTypeRepository.findWithPageable(pageable);
+    public ListEntityResponse<PostType> getAllWithPagination(Pageable pageable, String search, String status) {
+        Page<PostType> result = postTypeRepository.findWithPageable(pageable, search, status);
 
         ListEntityResponse<PostType> postTypeResponse = new ListEntityResponse<>();
 
@@ -46,7 +48,7 @@ public class PostTypeServiceImpl implements PostTypeService {
     }
 
     @Override
-    public int create(PostType postType) {
+    public int create(@Valid PostType postType) {
         postTypeRepository.save(postType);
         return 1;
     }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PostTypeService {
 
-    ListEntityResponse<PostType> getAllWithPagination(Pageable pageable);
+    ListEntityResponse<PostType> getAllWithPagination(Pageable pageable, String search, String name);
 
     PostType getOne(Long postTypeId) throws ResourceNotFoundException;
 

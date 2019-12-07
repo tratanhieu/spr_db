@@ -1,5 +1,6 @@
 package dashboard.controllers.post;
 
+import dashboard.commons.ActionUtils;
 import dashboard.constants.PusherConstants;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
@@ -17,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/postType")
+@RequestMapping("/post/type")
 public class PostTypeController {
 
     @Autowired
@@ -30,17 +31,17 @@ public class PostTypeController {
     public ResponseEntity index (
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
-            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
+            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "status", required = false) String status
     ) {
-        Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
-        page = 1 >= page ? 0 : (page - 1);
-        Pageable pageable = PageRequest.of(page, size, sortable);
-        return ResponseEntity.ok(postTypeService.getAllWithPagination(pageable));
+        Pageable pageable = ActionUtils.preparePageable(sort,page, size);
+        return ResponseEntity.ok(postTypeService.getAllWithPagination(pageable, search,status));
     }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long postTypeId) throws ResourceNotFoundException {
+    @GetMapping("/{postTypeId}")
+    public ResponseEntity getOne(@PathVariable(name = "postTypeId") Long postTypeId) throws ResourceNotFoundException {
         return ResponseEntity.ok(postTypeService.getOne(postTypeId));
     }
 
@@ -52,25 +53,35 @@ public class PostTypeController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(@RequestBody PostType postType) {
-        postTypeService.update(postType);
+    @PostMapping(value = "{postTypeId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus update(
+            @RequestBody PostType postTypeParam,
+            @PathVariable( name = "postTypeId") Long postTypeId
+    ) throws ResourceNotFoundException{
+        PostType postType = postTypeService.getOne(postTypeId);
+
+        if (postType.isEquals(postTypeParam)) {
+            return HttpStatus.NOT_MODIFIED;
+        }
+        postTypeService.update(postTypeParam);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
                 PusherConstants.PUSHER_ACTION_UPDATE);
         return HttpStatus.OK;
     }
 
-    @GetMapping(value = "delete/{id}")
-    public HttpStatus delete(@PathVariable(name = "id") Long postTypeId) throws ResourceNotFoundException {
+    @GetMapping(value = "{postTypeId}/delete")
+    public HttpStatus delete(@PathVariable(name = "postTypeId") Long postTypeId) throws ResourceNotFoundException {
+        postTypeService.delete(postTypeId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
                 PusherConstants.PUSHER_ACTION_DELETE);
         return HttpStatus.OK;
     }
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
+    public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
+        postTypeService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus());
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
                 PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
-        return ResponseEntity.ok(postTypeService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus()));
+        return HttpStatus.OK;
     }
 }
