@@ -18,4 +18,6 @@ public class PusherConstants {
     public static final String PUSHER_CHANNEL_PRODUCT_BRAND = "PRODUCT_BRAND";
 
     public static final String PUSHER_CHANNEL_POST_TYPE = "POST_TYPE";
+
+    public static final String PUSHER_CHANNEL_USER_GROUP_FEATURES = "USER_GROUP_FEATURES";
 }
