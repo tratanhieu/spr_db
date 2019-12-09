@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_type_group")
@@ -24,7 +25,7 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_type_group_id")
-    @JsonProperty("product_type_group_id")
+    @JsonProperty("productTypeGroupId")
     private  Long productTypeGroupId;
 
     @Column(name = "name", unique = true)
@@ -37,12 +38,16 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @Column(name = "slug_name", unique = true)
     @Size(min = 2, message = "Min of slugname is 2")
     @Size(max = 50, message = "Max of slugname is 50")
-    @JsonProperty("slug_name")
+    @JsonProperty("slugName")
     private String slugName;
 
     @ManyToOne
     @JoinColumn(name = "product_category_id")
     private ProductCategory productCategory;
+
+    @OneToMany(mappedBy = "productTypeGroup", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private Set<ProductType> productTypes;
 
     @Column( name = "status")
     @NotNull(message = "Status is not null")
@@ -76,20 +81,23 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @JsonProperty("productCategory")
     public Map<String, String> getProductCategory() {
         Map<String, String> map = new HashMap<>();
-        map.put("productCategoryd", String.valueOf(productCategory.getProductCategoryId()));
+        map.put("productCategoryId", String.valueOf(productCategory.getProductCategoryId()));
         map.put("name", productCategory.getName());
         map.put("slugName", productCategory.getSlugName());
         return map;
     }
 
-    @JsonProperty("product_category")
+    @JsonProperty("productCategory")
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
 
-    @JsonIgnore
-    public Long getProductCategoryId() {
-        return productCategory.getProductCategoryId();
+    public Set<ProductType> getProductTypes() {
+        return productTypes;
+    }
+
+    public void setProductTypes(Set<ProductType> productTypes) {
+        this.productTypes = productTypes;
     }
 
     // Cách này là cách thứ 2 để hiển thị thông tin của bảng 1
