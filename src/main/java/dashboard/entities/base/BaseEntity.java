@@ -18,13 +18,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 @MappedSuperclass
 public class BaseEntity {
 
-    @JsonIgnore
     @Column(name = "create_date", updatable = false)
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @JsonIgnore
     @Column(name = "update_date")
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp

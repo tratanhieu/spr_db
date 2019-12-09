@@ -1,7 +1,6 @@
 package dashboard.controllers.product;
 
 import dashboard.commons.ActionUtils;
-import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
 import dashboard.generics.MultipleExecute;
 import dashboard.enums.EntityStatus;
@@ -49,9 +48,6 @@ public class ProductCategoryController {
 
 	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody ProductCategory productCategory) throws Exception{
-	    // Check validate entity
-//        ValidationUtils.validateEntity(productCategory);
-        // Save
         productCategoryService.create(productCategory);
 	    pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
                 PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
@@ -65,7 +61,7 @@ public class ProductCategoryController {
     ) throws ResourceNotFoundException {
 	    ProductCategory productCategory = productCategoryService.getOne(productCategoryId);
 
-	    if (productCategory.equals(productCategoryParams)) {
+	    if (productCategory.isEquals(productCategoryParams)) {
 	        return HttpStatus.NOT_MODIFIED;
         }
 	    // set params to update

@@ -102,4 +102,10 @@ public class ProductCategory extends BaseEntity implements Serializable {
 	public void setStatus(EntityStatus active) {
 		this.status = active;
 	}
+
+	public boolean isEquals(ProductCategory productCategory) {
+    	return this.name.equals(productCategory.name)
+			&& this.slugName.equals(productCategory.slugName)
+			&& this.status.equals((productCategory.status));
+	}
 }

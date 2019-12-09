@@ -73,12 +73,12 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
         this.slugName = slugName;
     }
 
-    @JsonProperty("product_category")
+    @JsonProperty("productCategory")
     public Map<String, String> getProductCategory() {
         Map<String, String> map = new HashMap<>();
-        map.put("product_category_id", String.valueOf(productCategory.getProductCategoryId()));
+        map.put("productCategoryd", String.valueOf(productCategory.getProductCategoryId()));
         map.put("name", productCategory.getName());
-        map.put("slug_name", productCategory.getSlugName());
+        map.put("slugName", productCategory.getSlugName());
         return map;
     }
 
