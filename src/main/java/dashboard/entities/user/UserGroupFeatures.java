@@ -3,115 +3,96 @@ package dashboard.entities.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
-import dashboard.entities.embedded.UserGroupFeaturesId;
-import dashboard.enums.FeaturesStatus;
+import dashboard.entities.embedded.UserGroupFeaturesIdentity;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
-@IdClass(UserGroupFeaturesId.class)
 @Table(name = "user_group_features")
 @EntityListeners(AuditingEntityListener.class)
-public class UserGroupFeatures extends BaseEntity implements Serializable {
+public class UserGroupFeatures implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "user_group_id")
-    private UserGroup userGroup;
-
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "features_id")
-    private UserFeatures userFeatures;
+    @EmbeddedId
+    @JsonIgnore
+    private UserGroupFeaturesIdentity userGroupFeaturesIdentity;
 
     @Column(name = "read_permission")
     @JsonProperty("read")
-    @Enumerated(EnumType.STRING)
-    private FeaturesStatus read;
+    private Boolean read;
 
     @Column(name = "create_permission")
     @JsonProperty("create")
-    @Enumerated(EnumType.STRING)
-    private FeaturesStatus create;
+    private Boolean create;
 
     @Column(name = "update_permission")
     @JsonProperty("update")
-    @Enumerated(EnumType.STRING)
-    private FeaturesStatus update;
+    private Boolean update;
 
     @Column(name = "delete_permission")
     @JsonProperty("delete")
-    @Enumerated(EnumType.STRING)
-    private FeaturesStatus delete;
+    private Boolean delete;
 
     public UserGroupFeatures() {
-        super();
+        this.read = false;
+        this.create = false;
+        this.update = false;
+        this.delete = false;
     }
 
-    public UserGroupFeatures(FeaturesStatus read, FeaturesStatus create, FeaturesStatus update, FeaturesStatus delete) {
+    public UserGroupFeatures(Boolean read, Boolean create, Boolean update, Boolean delete) {
         this.read = read;
         this.create = create;
         this.update = update;
         this.delete = delete;
     }
 
-    public Map<String, String> getUserGroup() {
-        Map<String, String> map = new HashMap<>();
-        map.put("userGroupId", String.valueOf(userGroup.getUserGroupId()));
-        map.put("name", userGroup.getName());
-        return map;
+    public void setUserGroupFeaturesIdentity(UserGroupFeaturesIdentity userGroupFeaturesIdentity) {
+        this.userGroupFeaturesIdentity = userGroupFeaturesIdentity;
     }
 
-    public void setUserGroup(UserGroup userGroup) {
-        this.userGroup = userGroup;
+    @JsonProperty(value = "featureId")
+    public String getUserFeatureId() {
+        return userGroupFeaturesIdentity.getUserFeatures().getFeaturesId();
     }
 
-    public Map<String, String> getUserFeatures() {
-        Map<String, String> map = new HashMap<>();
-        map.put("featuresId", userFeatures.getFeaturesId());
-        map.put("name", userFeatures.getName());
-        return map;
+    @JsonProperty(value = "featureName")
+    public String getUserFeatureName() {
+        return userGroupFeaturesIdentity.getUserFeatures().getName();
     }
 
-    public void setUserFeatures(UserFeatures userFeatures) {
-        this.userFeatures = userFeatures;
-    }
-
-    public FeaturesStatus getRead() {
+    public Boolean getRead() {
         return read;
     }
 
-    public void setRead(FeaturesStatus read) {
+    public void setRead(Boolean read) {
         this.read = read;
     }
 
-    public FeaturesStatus getCreate() {
+    public Boolean getCreate() {
         return create;
     }
 
-    public void setCreate(FeaturesStatus create) {
+    public void setCreate(Boolean create) {
         this.create = create;
     }
 
-    public FeaturesStatus getUpdate() {
+    public Boolean getUpdate() {
         return update;
     }
 
-    public void setUpdate(FeaturesStatus update) {
+    public void setUpdate(Boolean update) {
         this.update = update;
     }
 
-    public FeaturesStatus getDelete() {
+    public Boolean getDelete() {
         return delete;
     }
 
-    public void setDelete(FeaturesStatus delete) {
+    public void setDelete(Boolean delete) {
         this.delete = delete;
     }
 }

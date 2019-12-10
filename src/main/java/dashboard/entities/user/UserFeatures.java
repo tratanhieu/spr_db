@@ -30,12 +30,15 @@ public class UserFeatures extends BaseEntity implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @OneToMany(mappedBy = "userFeatures", cascade = CascadeType.PERSIST)
-    @JsonIgnore
+    @OneToMany(mappedBy = "userGroupFeaturesIdentity.userFeatures", fetch = FetchType.EAGER)
     private Set<UserGroupFeatures> userGroupFeatures;
 
     public UserFeatures() {
         super();
+    }
+
+    public UserFeatures(String featuresId) {
+        this.featuresId = featuresId;
     }
 
     public UserFeatures(String featuresId, String name) {
@@ -57,5 +60,13 @@ public class UserFeatures extends BaseEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<UserGroupFeatures> getUserGroupFeatures() {
+        return userGroupFeatures;
+    }
+
+    public void setUserGroupFeatures(Set<UserGroupFeatures> userGroupFeatures) {
+        this.userGroupFeatures = userGroupFeatures;
     }
 }

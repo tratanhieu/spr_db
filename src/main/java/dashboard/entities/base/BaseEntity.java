@@ -37,7 +37,7 @@ public class BaseEntity {
         return createDate;
     }
 
-    @JsonProperty("create_date")
+    @JsonProperty("createDate")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public String getCreateDateString() {
         return convertToStringDateTime(createDate);
@@ -51,7 +51,7 @@ public class BaseEntity {
         return updateDate;
     }
 
-    @JsonProperty("update_date")
+    @JsonProperty("updateDate")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public String getUpdateDateString() {
         return convertToStringDateTime(updateDate);
@@ -65,7 +65,7 @@ public class BaseEntity {
         return deleteDate;
     }
 
-    @JsonProperty("delete_date")
+    @JsonProperty("deleteDate")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public String getDeleteDateString() {
         return deleteDate != null ? convertToStringDateTime(deleteDate) : null;

@@ -40,12 +40,17 @@ public class UserGroup extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.PERSIST)
-    @JsonIgnore
+    @OneToMany(mappedBy = "userGroupFeaturesIdentity.userGroup",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private Set<UserGroupFeatures> userGroupFeatures;
 
     public UserGroup() {
         super();
+    }
+
+    public UserGroup(Long userGroupId) {
+        this.userGroupId = userGroupId;
     }
 
     public UserGroup(Long userGroupId, String name, EntityStatus status) {
