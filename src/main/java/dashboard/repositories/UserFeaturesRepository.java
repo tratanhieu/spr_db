@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface UserFeaturesRepository extends CrudRepository<UserFeatures, String> {
 
     @Query("SELECT uf " +
-            "FROM UserFeatures uf ")
+            "FROM UserFeatures uf " +
+            "WHERE uf.status != 'DELETED'")
     Page<UserFeatures> findWithPageable(Pageable pageable);
 }
