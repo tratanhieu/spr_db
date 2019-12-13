@@ -7,7 +7,6 @@ import dashboard.entities.user.UserFeatures;
 import dashboard.entities.user.UserGroup;
 import dashboard.entities.user.UserGroupFeatures;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.repositories.UserFeaturesRepositiory;
 import dashboard.repositories.UserGroupFeaturesRepository;
 import dashboard.repositories.UserGroupRepository;
 import dashboard.services.PusherService;
@@ -29,8 +28,6 @@ public class UserGroupController {
     PusherService pusherService;
     @Autowired
     UserGroupRepository userGroupRepository;
-    @Autowired
-    UserFeaturesRepositiory userFeaturesRepositiory;
     @Autowired
     UserGroupFeaturesRepository userGroupFeaturesRepository;
 
@@ -95,4 +92,5 @@ public class UserGroupController {
                 PusherConstants.PUSHER_CHANNEL_USER_GROUP_FEATURES);
         return HttpStatus.OK;
     }
+
 }
