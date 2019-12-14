@@ -1,7 +1,6 @@
 package dashboard.repositories;
 
 import dashboard.entities.user.UserGroup;
-import dashboard.enums.EntityStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
