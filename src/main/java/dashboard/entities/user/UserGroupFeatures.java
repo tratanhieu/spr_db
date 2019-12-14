@@ -17,7 +17,6 @@ public class UserGroupFeatures implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    @JsonIgnore
     private UserGroupFeaturesIdentity userGroupFeaturesIdentity;
 
     @Column(name = "read_permission")
@@ -36,6 +35,10 @@ public class UserGroupFeatures implements Serializable {
     @JsonProperty("delete")
     private Boolean delete;
 
+    @Transient
+    @JsonProperty(value = "featureId")
+    private String featureId;
+
     public UserGroupFeatures() {
         this.read = false;
         this.create = false;
@@ -50,11 +53,26 @@ public class UserGroupFeatures implements Serializable {
         this.delete = delete;
     }
 
+    @JsonIgnore
+    public UserGroupFeaturesIdentity getUserGroupFeaturesIdentity() {
+        return userGroupFeaturesIdentity;
+    }
+
+    @JsonProperty("userGroupFeaturesIdentity")
     public void setUserGroupFeaturesIdentity(UserGroupFeaturesIdentity userGroupFeaturesIdentity) {
         this.userGroupFeaturesIdentity = userGroupFeaturesIdentity;
     }
 
-    @JsonProperty(value = "featureId")
+    @JsonIgnore
+    public String getFeatureId() {
+        return featureId;
+    }
+
+    public void setFeatureId(String featureId) {
+        this.featureId = featureId;
+    }
+
+    @JsonProperty("featureId")
     public String getUserFeatureId() {
         return userGroupFeaturesIdentity.getUserFeatures().getFeaturesId();
     }

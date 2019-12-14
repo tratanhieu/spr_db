@@ -30,7 +30,7 @@ public class UserFeatures extends BaseEntity implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @OneToMany(mappedBy = "userGroupFeaturesIdentity.userFeatures", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userGroupFeaturesIdentity.userFeatures")
     private Set<UserGroupFeatures> userGroupFeatures;
 
     public UserFeatures() {

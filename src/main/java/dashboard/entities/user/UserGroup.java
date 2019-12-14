@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -16,7 +18,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "user_group")
+@Table(name = "user_group",
+        uniqueConstraints = {
+        @UniqueConstraint(name="UK_name", columnNames = "name"),
+})
 @EntityListeners(AuditingEntityListener.class)
 public class UserGroup extends BaseEntity implements Serializable {
 

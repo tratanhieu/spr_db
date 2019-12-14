@@ -17,10 +17,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/user/group")
+
+@Transactional
 public class UserGroupController {
 
     @Autowired
@@ -51,26 +58,9 @@ public class UserGroupController {
         return ResponseEntity.ok(userGroupService.getOne(userGroupId));
     }
 
-    @PostMapping(value = "{featureId}/createUserGroup", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@PathVariable(name = "featureId") String featureId, @RequestBody UserGroup userGroup) {
-//        userFeaturesRepositiory.save(new UserFeatures("MANAGE_USER", "Manage User"));
-//        userGroupRepository.save(new UserGroup(1L, "Seller", EntityStatus.ACTIVE));
-//        UserGroupFeatures userGroupFeatures = new UserGroupFeatures();
-//
-//        UserGroupFeaturesIdentity userGroupFeaturesIdentity = new UserGroupFeaturesIdentity(userGroupRepository.findById(1L).orElse(null), new UserFeatures("MANAGE_USER"));
-//
-//        userGroupFeatures.setUserGroupFeaturesIdentity(userGroupFeaturesIdentity);
-//        userGroupFeaturesRepository.save(userGroupFeatures);
-        userGroupService.create(userGroup);
-
-        UserGroupFeatures userGroupFeatures = new UserGroupFeatures();
-        Long userGroupId = userGroupRepository.getInserted(userGroup.getName());
-        userGroup.setUserGroupId(userGroupId);
-        UserFeatures userFeatures = new UserFeatures(featureId);
-        UserGroupFeaturesIdentity userGroupFeaturesIdentity = new UserGroupFeaturesIdentity(userGroup, userFeatures);
-        userGroupFeatures.setUserGroupFeaturesIdentity(userGroupFeaturesIdentity);
-        userGroupFeaturesRepository.save(userGroupFeatures);
-
+    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus create(@RequestBody UserGroup userGroupParams) {
+        userGroupService.create(userGroupParams);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
                 PusherConstants.PUSHER_CHANNEL_USER_GROUP_FEATURES);
         return HttpStatus.OK;

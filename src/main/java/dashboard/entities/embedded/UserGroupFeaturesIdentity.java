@@ -1,5 +1,6 @@
 package dashboard.entities.embedded;
 
+import dashboard.entities.User;
 import dashboard.entities.user.UserFeatures;
 import dashboard.entities.user.UserGroup;
 
@@ -10,15 +11,20 @@ import java.util.Objects;
 @Embeddable
 public class UserGroupFeaturesIdentity implements Serializable {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_group_id")
     private UserGroup userGroup;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_features_id")
     private UserFeatures userFeatures;
 
     public UserGroupFeaturesIdentity() {
+    }
+
+    public UserGroupFeaturesIdentity(Long userGroupId, String userFeatureId) {
+        userGroup.setUserGroupId(userGroupId);
+        userFeatures.setFeaturesId(userFeatureId);
     }
 
     public UserGroupFeaturesIdentity(UserGroup userGroup, UserFeatures userFeatures) {

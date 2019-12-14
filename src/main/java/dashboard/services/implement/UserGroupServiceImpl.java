@@ -1,23 +1,35 @@
 package dashboard.services.implement;
 
+import dashboard.entities.embedded.UserGroupFeaturesIdentity;
+import dashboard.entities.user.UserFeatures;
 import dashboard.entities.user.UserGroup;
+import dashboard.entities.user.UserGroupFeatures;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
+import dashboard.repositories.UserGroupFeaturesRepository;
 import dashboard.repositories.UserGroupRepository;
 import dashboard.services.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Service
+@Transactional
 public class UserGroupServiceImpl implements UserGroupService {
 
     @Autowired
     UserGroupRepository userGroupRepository;
+
+    @Autowired
+    UserGroupFeaturesRepository userGroupFeaturesRepository;
 
     @Override
     public ListEntityResponse<UserGroup> getAllWithPagination(Pageable pageable) {
@@ -44,9 +56,23 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public int create(UserGroup userGroup) {
+    public void create(UserGroup userGroupParams) {
+        UserGroup userGroup = new UserGroup();
+        userGroup.setName(userGroupParams.getName());
+        userGroup.setStatus(userGroupParams.getStatus());
         userGroupRepository.save(userGroup);
-        return 1;
+        List<UserGroupFeatures> userGroupFeatureList = new ArrayList<>();
+
+        Set<UserGroupFeatures> userGroupFeatures = userGroupParams.getUserGroupFeatures();
+        UserGroupFeaturesIdentity userGroupFeaturesIdentity;
+        for (UserGroupFeatures userGroupFeature : userGroupFeatures) {
+            userGroupFeaturesIdentity = new UserGroupFeaturesIdentity(
+                    userGroup, new UserFeatures(userGroupFeature.getFeatureId())
+            );
+            userGroupFeature.setUserGroupFeaturesIdentity(userGroupFeaturesIdentity);
+            userGroupFeatureList.add(userGroupFeature);
+        }
+        userGroupFeaturesRepository.saveAll(userGroupFeatureList);
     }
 
     @Override
