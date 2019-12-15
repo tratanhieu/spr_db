@@ -6,7 +6,6 @@ import dashboard.constants.PusherConstants;
 import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
 import dashboard.generics.MultipleExecute;
 import dashboard.services.PostService;
 import dashboard.services.PusherService;
@@ -43,8 +42,7 @@ public class PostController {
             @RequestParam(name = "status", required = false) EntityStatus status
     ) {
         Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        ListEntityResponse res = postService.getAllWithPagination(pageable);
-        return ResponseEntity.ok(res.getListData());
+        return ResponseEntity.ok(postService.getAllWithPagination(pageable, search, status));
     }
 
     @GetMapping("{postId}")
@@ -57,9 +55,6 @@ public class PostController {
     public HttpStatus create(
             @RequestBody Post post
     ) {
-        //validate
-        ValidationUtils.validateEntity(post);
-        //save
         postService.create(post);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
                 PusherConstants.PUSHER_ACTION_CREATE);
@@ -78,8 +73,8 @@ public class PostController {
             return HttpStatus.NOT_MODIFIED;
         }
 
-        post.setSlugTitle(postParams.getTitle());
-        post.setSlugTitle(postParams.getSlugTitle());
+        post.setName(postParams.getName());
+        post.setSlugName(postParams.getSlugName());
         post.setImage(postParams.getImage());
         post.setContent(postParams.getContent());
         post.setStatus(postParams.getStatus());
@@ -92,7 +87,7 @@ public class PostController {
         return HttpStatus.OK;
     }
 
-    @GetMapping("/delete/{postId}")
+    @GetMapping("{postId}/delete")
     public HttpStatus delete(
         @PathVariable(name = "postId") Long postId
     ) throws ResourceNotFoundException {

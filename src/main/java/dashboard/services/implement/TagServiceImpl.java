@@ -1,12 +1,8 @@
 package dashboard.services.implement;
 
-import dashboard.commons.DataUtils;
-import dashboard.entities.post.Post;
 import dashboard.entities.post.PostTag;
 import dashboard.entities.product.ProductTag;
 import dashboard.entities.tag.Tag;
-import dashboard.enums.EntityStatus;
-import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.PostTagRepository;
 import dashboard.repositories.ProductTagRepository;
@@ -17,7 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -47,14 +44,25 @@ public class TagServiceImpl  implements  TagService{
     }
 
     @Override
+    public Tag getOne(String slugName) {
+
+        return tagRepository.findById(slugName).orElse(null);
+    }
+
+    @Override
     public void create(Tag tag) {
 
         tagRepository.save(tag);
     }
 
     @Override
-    public void createPostTag(PostTag postTag) {
-        postTagRepository.save(postTag);
+    public void createPostTag(List<PostTag> postTags) {
+        postTagRepository.saveAll(postTags);
+    }
+
+    @Override
+    public ArrayList<PostTag> getAllPostTag(){
+        return (ArrayList<PostTag>) postTagRepository.findAll();
     }
 
     @Override
@@ -64,7 +72,7 @@ public class TagServiceImpl  implements  TagService{
 
     @Override
     public void deletePostTag(Long postTagId) {
-        postTagRepository.deleteById(postTagId);
+        postTagRepository.deleteByPostId(postTagId);
     }
 
     @Override
@@ -72,5 +80,8 @@ public class TagServiceImpl  implements  TagService{
         productTagRepository.deleteById(productTagId);
     }
 
+    @Override
+    public void deletePostTagByPostId(Long postId) {
 
+    }
 }

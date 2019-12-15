@@ -7,14 +7,21 @@ import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 public interface TagService {
 
     ListEntityResponse<Tag> getAllWithPagination(Pageable pageable);
+    Tag getOne(String slugName);
     void create(Tag tag);
-    void createPostTag(PostTag postTag);
+    void createPostTag( List<PostTag> postTags);
+    ArrayList<PostTag> getAllPostTag();
     void createProductTag(ProductTag productTag);
     void deletePostTag(Long postTagId);
+    void deletePostTagByPostId(Long postId);
     void deleteProductTag(Long productTagId);
 
 }

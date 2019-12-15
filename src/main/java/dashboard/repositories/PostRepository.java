@@ -1,6 +1,7 @@
 package dashboard.repositories;
 
 import dashboard.entities.post.Post;
+import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,18 +17,14 @@ import java.util.List;
 @Repository
 public interface PostRepository extends CrudRepository<Post, Long> {
 
-    @Query("SELECT p " +
-            "FROM Post p JOIN p.postType pt JOIN p.user pu " +
-            "WHERE p.status != 'DELETED'")
-    Page<Post> findWithPageable(Pageable pageable);
-
     @Query("SELECT p FROM Post p " +
-            "WHERE p.status != 'DELETED' " +
-            "AND p.status = :status")
-    Page<Post> findWithPageableAndFilterByStatus(
+            "WHERE p.status != 'DELETED'" +
+            "AND :name = NULL OR pt.name LIKE %:name% " +
+            "AND :status = NULL OR pt.status = :status")
+    Page<Post> findWithPageable(
             Pageable pageable,
-            @Param("status") EntityStatus status
-    );
+            @Param("name") String name,
+            @Param("status") EntityStatus status);
 
     @Modifying
     @Transactional

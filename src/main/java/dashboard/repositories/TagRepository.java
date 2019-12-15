@@ -11,10 +11,9 @@ import org.springframework.stereotype.Repository;
 public interface TagRepository extends CrudRepository<Tag, String> {
 
 
-    @Query("SELECT t " +
-            "FROM Tag t " +
-            "WHERE t.status != 'DELETED'")
+    @Query("SELECT tag FROM Tag tag")
     Page<Tag> findWithPageable(Pageable pageable);
+    
 
     @Query("SELECT t FROM Tag t WHERE t.slugName = :slugName")
     Tag findBySlugName(String slugName);

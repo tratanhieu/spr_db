@@ -1,16 +1,23 @@
 package dashboard.services.implement;
 
+import dashboard.commons.DataUtils;
+import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.post.Post;
+import dashboard.entities.post.PostTag;
+import dashboard.entities.tag.Tag;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.PostRepository;
+import dashboard.repositories.PostTagRepository;
+import dashboard.repositories.TagRepository;
 import dashboard.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,23 +27,24 @@ public class PostServiceImpl implements PostService {
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    TagRepository tagRepository;
+
+    @Autowired
+    PostTagRepository postTagRepository;
+
     @Override
-    public ListEntityResponse<Post> getAllWithPagination(Pageable pageable) {
-        try {
-            Page<Post> result = postRepository.findWithPageable(pageable);
+    public ListEntityResponse<Post> getAllWithPagination(Pageable pageable,String name, EntityStatus status) {
+        Page<Post>  result = postRepository.findWithPageable(pageable, name, status);
 
-            ListEntityResponse<Post> postRespone = new ListEntityResponse<>();
+        ListEntityResponse<Post> postRespone = new ListEntityResponse<>();
 
-            postRespone.setPage(result.getNumber() + 1);
-            postRespone.setPageSize(result.getSize());
-            postRespone.setTotalPage(result.getTotalPages());
-            postRespone.setListData(result.getContent());
+        postRespone.setPage(result.getNumber() +1);
+        postRespone.setPageSize(result.getSize());
+        postRespone.setTotalPage(result.getTotalPages());
+        postRespone.setListData(result.getContent());
 
-            return postRespone;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-return null;
+        return postRespone;
 
     }
 
@@ -55,7 +63,32 @@ return null;
     @Override
     public void create(Post post) {
 
+        // create post
         postRepository.save(post);
+        // end
+        Tag tag;
+        PostTagIdentity postTagIdentity;
+        List<PostTag> postTags = new ArrayList<>();
+        String[] tags = post.getTags();
+        String tagSlugName;
+
+        for(String tagName : tags){
+            // create tag
+            tagSlugName = DataUtils.makeSlug(tagName);
+            tag = new Tag(tagSlugName, tagName);
+            tagRepository.save(tag);
+
+            // add dât for postTags
+            postTagIdentity = new PostTagIdentity(post, tag);
+            PostTag postTag = new PostTag();
+            postTag.setPostTagIdentity(postTagIdentity);
+
+            postTags.add(postTag);
+        }
+
+        // create PostTag
+        postTagRepository.saveAll(postTags);
+
     }
 
     @Override
