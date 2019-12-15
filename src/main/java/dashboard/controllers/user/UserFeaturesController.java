@@ -34,7 +34,7 @@ public class UserFeaturesController {
         return ResponseEntity.ok(userFeaturesService.getAllWithPagination(pageable));
     }
 
-    @PostMapping(value = "/createUserFeatures", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(@RequestBody UserFeatures userFeatures) {
         userFeaturesService.create(userFeatures);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
@@ -42,7 +42,7 @@ public class UserFeaturesController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(value = "{userFeaturesId}/updateUserFeatures", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "{userFeaturesId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus update(
             @PathVariable(name = "userFeaturesId") String userFeaturesId,
             @RequestBody UserFeatures userFeatures

@@ -1,10 +1,11 @@
 package dashboard.entities.embedded;
 
-import dashboard.entities.User;
 import dashboard.entities.user.UserFeatures;
 import dashboard.entities.user.UserGroup;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
