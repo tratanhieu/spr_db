@@ -22,7 +22,7 @@ public class PostType extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_type_id")
-    @JsonProperty("post_type_id")
+    @JsonProperty("postTypeId")
     private Long  postTypeId;
 
     @NotNull(message = "Name is not null")
@@ -32,7 +32,7 @@ public class PostType extends BaseEntity implements Serializable {
 
     @NotNull(message = "Slug_name is not null")
     @Column(name = "slug_name")
-    @JsonProperty("slug_name")
+    @JsonProperty("slugName")
     private String slugName;
 
     @Column(name = "status")
@@ -69,5 +69,11 @@ public class PostType extends BaseEntity implements Serializable {
 
     public void setStatus(EntityStatus status) {
         this.status = status;
+    }
+
+    public Boolean isEquals(PostType postType){
+        return (this.name.equals(postType.name)
+                && this.slugName.equals(postType.slugName)
+                && this.status.equals(postType.status));
     }
 }
