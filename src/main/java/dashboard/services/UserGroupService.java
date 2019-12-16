@@ -12,8 +12,8 @@ public interface UserGroupService {
     UserGroup getOne(Long userGroupId) throws ResourceNotFoundException;
 
     void create(UserGroup userGroup);
-
-    int update(UserGroup userGroup) throws ResourceNotFoundException;
+void
+     update(UserGroup userGroup) throws ResourceNotFoundException;
 
     int delete(Long userGroupId) throws ResourceNotFoundException;
 

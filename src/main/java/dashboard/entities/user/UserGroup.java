@@ -41,8 +41,8 @@ public class UserGroup extends BaseEntity implements Serializable {
     private EntityStatus status;
 
     @OneToMany(mappedBy = "userGroupFeaturesIdentity.userGroup",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = CascadeType.ALL
+            /*orphanRemoval = true*/)
     private Set<UserGroupFeatures> userGroupFeatures;
 
     public UserGroup() {
