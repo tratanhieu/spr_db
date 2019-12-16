@@ -31,6 +31,7 @@ public class PostTag implements Serializable {
         return postTagIdentity;
     }
 
+    @JsonIgnore
     public Tag getTag(){
         return postTagIdentity.getTag();
     }
@@ -38,4 +39,15 @@ public class PostTag implements Serializable {
     public void setPostTagIdentity(PostTagIdentity postTagIdentity) {
         this.postTagIdentity = postTagIdentity;
     }
+
+    @JsonProperty("slugName")
+    public String getTagSlugName(){
+        return postTagIdentity.getTag().getSlugName();
+    }
+
+    @JsonProperty("name")
+    public String getTagName(){
+        return postTagIdentity.getTag().getName();
+    }
+
 }

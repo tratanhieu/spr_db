@@ -1,5 +1,6 @@
 package dashboard.entities.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.User;
@@ -21,8 +22,8 @@ import java.util.Set;
 @Entity
 @Table(name = "post",
         uniqueConstraints = {
-                @UniqueConstraint(name = "UK_title", columnNames = "title"),
-                @UniqueConstraint(name = "UK_slugTitle", columnNames = "slug_title")
+                @UniqueConstraint(name = "UK_name ", columnNames = "name"),
+                @UniqueConstraint(name = "UK_slugName", columnNames = "slug_name")
 
         })
 @EntityListeners(AuditingEntityListener.class)
@@ -167,10 +168,22 @@ public class Post extends BaseEntity implements Serializable {
         this.status = status;
     }
 
+    @JsonProperty("tags")
+    public Set<PostTag> getPostTags() {
+        return postTags;
+    }
+
+    @JsonIgnore
+    public void setPostTags(Set<PostTag> postTags) {
+        this.postTags = postTags;
+    }
+
+    @JsonIgnore
     public String[] getTags() {
         return tags;
     }
 
+    @JsonProperty("tags")
     public void setTags(String[] tags) {
         this.tags = tags;
     }

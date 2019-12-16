@@ -9,6 +9,7 @@ import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.MultipleExecute;
 import dashboard.services.PostService;
 import dashboard.services.PusherService;
+import dashboard.services.TagService;
 import org.apache.coyote.http2.HPackHuffman;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableMBeanExport;
@@ -30,6 +31,8 @@ public class PostController {
     @Autowired
     PostService postService;
 
+    @Autowired
+    TagService tagService;
     @Autowired
     PusherService pusherService;
 
@@ -92,6 +95,7 @@ public class PostController {
         @PathVariable(name = "postId") Long postId
     ) throws ResourceNotFoundException {
 
+        tagService.deletePostTag(postId);
         postService.delete(postId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
                 PusherConstants.PUSHER_ACTION_DELETE);
