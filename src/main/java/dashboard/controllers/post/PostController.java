@@ -76,12 +76,14 @@ public class PostController {
             return HttpStatus.NOT_MODIFIED;
         }
 
+
         post.setName(postParams.getName());
         post.setSlugName(postParams.getSlugName());
         post.setImage(postParams.getImage());
         post.setContent(postParams.getContent());
         post.setStatus(postParams.getStatus());
         post.setUpdateDate(new Date());
+        post.setTags(postParams.getTags());
 
         postService.update(post);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,

@@ -17,9 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -94,7 +93,65 @@ public class PostServiceImpl implements PostService {
     @Override
     public void update(Post post) {
 
+        // update post
         postRepository.save(post);
+
+        boolean  indexOfTag;
+        String tagName;
+        String slugName;
+        PostTagIdentity postTagIdentity;
+        Tag tag;
+        List<PostTag> postTagDelete = new ArrayList<>();
+        List<String> tags = Arrays.asList(post.getTags());
+        List<PostTag> postTags = new ArrayList<>();
+        Iterator<Tag> rstTag = postTagRepository.getAllByPostId(post.getPostId()).iterator();
+        int i;
+        int length = tags.size();
+
+        //filter new and old tag
+        while (rstTag.hasNext()) {
+            tagName = rstTag.next().getName();
+            indexOfTag = tags.contains(tagName);
+            if (indexOfTag ) {
+                rstTag.remove();
+                tags.remove(tags.indexOf(tagName));
+            }
+        }
+
+        // set value for list postTags
+        for(i = 0; i < length; i++){
+
+            //create tag
+            slugName = DataUtils.makeSlug(tags.get(i));
+            tag = new Tag(slugName,tags.get(i));
+            tagRepository.save(tag);
+
+            //create postTag
+            postTagIdentity = new PostTagIdentity(post, tag);
+            PostTag postTag = new PostTag();
+            postTag.setPostTagIdentity(postTagIdentity);
+
+            //set value for list postTags
+            postTags.add(postTag);
+        }
+
+        // Insert new postTag
+        postTagRepository.saveAll(postTags);
+
+        while (rstTag.hasNext()){
+
+            postTagIdentity = new PostTagIdentity(post, rstTag.next());
+            PostTag postT  = new PostTag();
+            postT.setPostTagIdentity(postTagIdentity);
+
+            postTagDelete.add(postT);
+
+        }
+
+        postTagRepository.deleteAll(postTagDelete);
+
+
+
     }
 
     @Override
