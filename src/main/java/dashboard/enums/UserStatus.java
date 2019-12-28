@@ -4,19 +4,25 @@ public enum UserStatus {
 	ACTIVE("ACTIVE") {
 		@Override
 		public String getLabel() {
-			return "Hiển thị";
+			return "Hoạt động";
 		}
 	},
 	BLOCK("BLOCK") {
 		@Override
 		public String getLabel() {
-			return "Bị ẩn";
+			return "Bị khoá";
+		}
+	},
+	INACTIVE("INACTIVE") {
+		@Override
+		public String getLabel() {
+			return "Không hoạt động";
 		}
 	},
 	DELETED("DELETED") {
 		@Override
 		public String getLabel() {
-			return "Bị ẩn";
+			return "Bị xoá";
 		}
 	};
 	
