@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 
+import dashboard.entities.promotion.ProductPromotion;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -41,6 +42,9 @@ public class Product extends BaseEntity implements Serializable {
     @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
 	@JsonIgnore
 	private Set<ProductTag> productTags;
+
+    @OneToMany(mappedBy = "ProductPromotionIdentity.product_Id")
+	private Set<ProductPromotion> productPromotions;
 
 	public Long getProduct_id() {
 		return product_id;
