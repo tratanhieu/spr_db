@@ -5,13 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 
-import dashboard.entities.promotion.ProductPromotion;
+import dashboard.entities.promotion.Promotion;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -27,7 +28,7 @@ public class Product extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
 	@JsonProperty("product_id")
-    private Long product_id;
+    private Long productId;
 
     @NotBlank
     @Column(name = "name", unique = true)
@@ -43,15 +44,16 @@ public class Product extends BaseEntity implements Serializable {
 	@JsonIgnore
 	private Set<ProductTag> productTags;
 
-    @OneToMany(mappedBy = "ProductPromotionIdentity.product_Id")
-	private Set<ProductPromotion> productPromotions;
+    @ManyToOne
+	@JoinColumn(name = "promotion_id")
+	private Promotion promotion;
 
-	public Long getProduct_id() {
-		return product_id;
+	public Long getProductId() {
+		return productId;
 	}
 
-	public void setProduct_id(Long product_id) {
-		this.product_id = product_id;
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 
 	public String getName() {
@@ -76,5 +78,20 @@ public class Product extends BaseEntity implements Serializable {
 
 	public void setProductTags(Set<ProductTag> productTags) {
 		this.productTags = productTags;
+	}
+
+	@JsonProperty("promotion")
+	public Map<String, String> getPromotion() {
+		Map map = new HashMap<String,String>();
+		map.put("promotionId", String.valueOf(promotion.getPromotionId()));
+		map.put("promotionName", promotion.getName());
+		map.put("startDate", promotion.getFromDate());
+		map.put("endDate", promotion.getToDate());
+		return map;
+	}
+
+	@JsonProperty("promotion")
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
 	}
 }

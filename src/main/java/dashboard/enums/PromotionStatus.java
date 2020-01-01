@@ -16,7 +16,7 @@ public enum PromotionStatus {
     STOP("STOP"){
         @Override
         public String getLabel(){
-            return "kết thuc";
+            return "kết thúc";
         }
     };
 

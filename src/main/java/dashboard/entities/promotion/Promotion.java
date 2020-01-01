@@ -3,6 +3,7 @@ package dashboard.entities.promotion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
+import dashboard.entities.product.Product;
 import dashboard.enums.PromotionStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -35,7 +36,7 @@ public class Promotion extends BaseEntity implements Serializable {
 
     @Column(name = "percent")
     @JsonProperty("percent")
-    private String percent;
+    private int percent;
 
     @Column(name = "from_date")
     @JsonProperty("fromDate")
@@ -49,11 +50,20 @@ public class Promotion extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private PromotionStatus status;
 
-    @OneToOne(mappedBy = "promotion", cascade = CascadeType.ALL)
-    private PromotionCode promotionCode;
+    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
+    private Set<PromotionCode> promotionCodes;
 
-    @OneToMany(mappedBy = "productPromotionIdentity.postId")
-    private Set<ProductPromotion> productPromotions;
+    @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL)
+    private Set<Product> products;
+
+    @Transient
+    private Boolean allProduct;
+
+    @Transient
+    private Long[] listProductId;
+
+    @Transient
+    private PromotionCode[] promotionCodeArray;
 
     public Long getPromotionId() {
         return promotionId;
@@ -71,11 +81,11 @@ public class Promotion extends BaseEntity implements Serializable {
         this.name = name;
     }
 
-    public String getPercent() {
+    public int getPercent() {
         return percent;
     }
 
-    public void setPercent(String percent) {
+    public void setPercent(int percent) {
         this.percent = percent;
     }
 
@@ -103,23 +113,63 @@ public class Promotion extends BaseEntity implements Serializable {
         this.status = status;
     }
 
-    @JsonProperty("promotionCode")
-    public PromotionCode getPromotionCode() {
-        return promotionCode;
+
+    @JsonProperty("promotionCodes")
+    public Set<PromotionCode> getPromotionCodes() {
+        return promotionCodes;
     }
 
-
-    public void setPromotionCode(PromotionCode promotionCode) {
-        this.promotionCode = promotionCode;
+    @JsonIgnore
+    public void setPromotionCodes(Set<PromotionCode> promotionCodes) {
+        this.promotionCodes = promotionCodes;
     }
 
-    @JsonProperty("product")
-    public Set<ProductPromotion> getProductPromotions() {
-        return productPromotions;
+    @JsonProperty("products")
+    public Set<Product> getProducts() {
+        return products;
     }
 
-
-    public void setProductPromotions(Set<ProductPromotion> productPromotions) {
-        this.productPromotions = productPromotions;
+    @JsonIgnore
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
+
+    @JsonIgnore
+    public Boolean getAllProduct() {
+        return allProduct;
+    }
+
+    @JsonProperty("allProduct")
+    public void setAllProduct(Boolean allProduct) {
+        this.allProduct = allProduct;
+    }
+
+    @JsonIgnore
+    public Long[] getListProductId() {
+        return listProductId;
+    }
+
+    @JsonProperty("listProductId")
+    public void setListProductId(Long[] listProductId) {
+        this.listProductId = listProductId;
+    }
+
+    @JsonIgnore
+    public PromotionCode[] getPromotionCodeArray() {
+        return promotionCodeArray;
+    }
+
+    @JsonProperty("promotionCodeArray")
+    public void setPromotionCodeArray(PromotionCode[] promotionCodeArray) {
+        this.promotionCodeArray = promotionCodeArray;
+    }
+
+    public Boolean isEquals(Promotion promotion) {
+        return this.name.equals(promotion.getName())
+                && this.percent == promotion.percent
+                && this.fromDate.equals(promotion.getFromDate())
+                && this.toDate.equals(promotion.getToDate())
+                && this.status.equals(promotion.getStatus());
+    }
+
 }
