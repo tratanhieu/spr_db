@@ -16,7 +16,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     final String DISTRICT = "quan-huyen";
     final String WARD = "xa-phuong";
 
-    private File jsonFile = new File("src/main/resources/ProvinceInfo.json");
+    private File jsonFile = new File("src/main/resources/province-list.json");
 
     private Map<String, Object> mapAll = new HashMap<>();
 
