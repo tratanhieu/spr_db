@@ -76,16 +76,31 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public int update(UserGroup userGroup) throws ResourceNotFoundException {
-        UserGroup userGroupId = userGroupRepository.findById(userGroup.getUserGroupId()).orElse(null);
+    public void update(UserGroup userGroupParams) throws ResourceNotFoundException {
+        UserGroup userGroupId = userGroupRepository.findById(userGroupParams.getUserGroupId()).orElse(null);
 
         if (userGroupId == null) {
             throw new ResourceNotFoundException();
         }
 
+        UserGroup userGroup = new UserGroup();
+        userGroup.setUserGroupId(userGroupParams.getUserGroupId());
+        userGroup.setName(userGroupParams.getName());
+        userGroup.setStatus(userGroupParams.getStatus());
         userGroupRepository.save(userGroup);
+        List<UserGroupFeatures> userGroupFeatureList = new ArrayList<>();
 
-        return 1;
+        Set<UserGroupFeatures> userGroupFeatures = userGroupParams.getUserGroupFeatures();
+        UserGroupFeaturesIdentity userGroupFeaturesIdentity;
+        for (UserGroupFeatures userGroupFeature : userGroupFeatures) {
+            userGroupFeaturesIdentity = new UserGroupFeaturesIdentity(
+                    userGroup, new UserFeatures(userGroupFeature.getFeatureId())
+            );
+            userGroupFeature.setUserGroupFeaturesIdentity(userGroupFeaturesIdentity);
+            userGroupFeatureList.add(userGroupFeature);
+        }
+        userGroupFeaturesRepository.saveAll(userGroupFeatureList);
+
     }
 
     @Override
@@ -99,6 +114,8 @@ public class UserGroupServiceImpl implements UserGroupService {
         userGroupIdToDelete.setStatus(EntityStatus.DELETED);
         userGroupIdToDelete.setDeleteDate(new Date());
         userGroupRepository.save(userGroupIdToDelete);
+        userGroupRepository.deleteUserGroupFeatures(userGroupId);
+        userGroupRepository.removeUserGroupFromUser(userGroupId);
 
         return 1;
     }

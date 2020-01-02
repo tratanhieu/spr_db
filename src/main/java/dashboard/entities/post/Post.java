@@ -1,14 +1,12 @@
 package dashboard.entities.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dashboard.entities.User;
 import dashboard.entities.base.BaseEntity;
 import dashboard.entities.post.PostType;
+import dashboard.entities.user.User;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

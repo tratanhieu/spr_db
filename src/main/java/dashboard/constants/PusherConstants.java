@@ -22,4 +22,5 @@ public class PusherConstants {
 
     public static final String PUSHER_CHANNEL_USER_GROUP_FEATURES = "USER_GROUP_FEATURES";
     public static final String PUSHER_CHANNEL_USER_FEATURES = "USER_FEATURES";
+    public static final String PUSHER_CHANNEL_USER = "USER";
 }

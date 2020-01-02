@@ -21,6 +21,9 @@ public interface PostTypeRepository extends CrudRepository<PostType, Long> {
             "WHERE pt.status != 'DELETED' " +
             "AND (:name = NULL OR pt.name LIKE %:name%) " +
             "AND (:status = NULL OR pt.status = :status)")
+            "WHERE pt.status != 'DELETED'" +
+            "AND :name = NULL OR pt.name LIKE %:name% " +
+            "AND :status = NULL OR pt.status = :status")
     Page<PostType> findWithPageable(
             Pageable pageable,
             @Param("name") String name,

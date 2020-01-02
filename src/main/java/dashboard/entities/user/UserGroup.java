@@ -1,12 +1,8 @@
 package dashboard.entities.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -14,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -46,8 +41,8 @@ public class UserGroup extends BaseEntity implements Serializable {
     private EntityStatus status;
 
     @OneToMany(mappedBy = "userGroupFeaturesIdentity.userGroup",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            cascade = CascadeType.ALL
+            /*orphanRemoval = true*/)
     private Set<UserGroupFeatures> userGroupFeatures;
 
     public UserGroup() {
@@ -95,4 +90,5 @@ public class UserGroup extends BaseEntity implements Serializable {
     public void setUserGroupFeatures(Set<UserGroupFeatures> userGroupFeatures) {
         this.userGroupFeatures = userGroupFeatures;
     }
+
 }
