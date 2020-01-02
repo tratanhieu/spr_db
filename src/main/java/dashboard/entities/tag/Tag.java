@@ -16,9 +16,8 @@ import java.util.Set;
 @Entity
 @Table(name = "tag")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
-        allowGetters = true)
-public class Tag extends BaseEntity implements Serializable {
+
+public class Tag implements Serializable {
 
     private static final Long serialVersionUID = 1L;
 
@@ -31,7 +30,7 @@ public class Tag extends BaseEntity implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "postTagIdentity.tag", cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Set<PostTag> postTags;
 
@@ -39,9 +38,13 @@ public class Tag extends BaseEntity implements Serializable {
     @JsonIgnore
     private Set<ProductTag> productTags;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private EntityStatus status;
+    public Tag(){}
+
+    public Tag(String slugName, String name){
+
+        this.slugName = slugName;
+        this.name = name;
+    }
 
     public String getSlugName() {
         return slugName;
@@ -67,11 +70,4 @@ public class Tag extends BaseEntity implements Serializable {
         this.postTags = postTags;
     }
 
-    public EntityStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(EntityStatus status) {
-        this.status = status;
-    }
 }

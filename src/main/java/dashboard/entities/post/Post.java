@@ -3,6 +3,7 @@ package dashboard.entities.post;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
+import dashboard.entities.post.PostType;
 import dashboard.entities.user.User;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,13 +13,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
 @Table(name = "post",
         uniqueConstraints = {
-                @UniqueConstraint(name = "UK_title", columnNames = "title"),
-                @UniqueConstraint(name = "UK_slugTitle", columnNames = "slug_title")
+                @UniqueConstraint(name = "UK_name ", columnNames = "name"),
+                @UniqueConstraint(name = "UK_slugName", columnNames = "slug_name")
 
         })
 @EntityListeners(AuditingEntityListener.class)
@@ -37,15 +40,15 @@ public class Post extends BaseEntity implements Serializable {
     @NotBlank(message = "{validation.title.notBlank}")
     @Size(min = 2, message = "{validation.minLength}")
     @Size(max = 50, message = "{validation.maxLength}")
-    @Column(name = "title")
-    @JsonProperty("title")
-    private String title;
+    @Column(name = "name")
+    @JsonProperty("name")
+    private String name;
 
     @Size(min = 2, message = "{validation.minLength}")
     @Size(max = 50, message = "{validation.maxLength}")
-    @Column(name = "slug_title")
-    @JsonProperty("slug_title")
-    private String slugTitle;
+    @Column(name = "slug_name")
+    @JsonProperty("slugName")
+    private String slugName;
 
     @Column(name = "content")
     @JsonProperty("content")
@@ -63,18 +66,21 @@ public class Post extends BaseEntity implements Serializable {
     @JsonProperty("description")
     private String description;
 
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @NotNull(message = "{validation.status.notBlank}")
-    @Column(name = "status")
+    @Column(name = "Status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "postTagIdentity.post",cascade = CascadeType.PERSIST)
     private Set<PostTag> postTags;
 
+    @Transient
+    private String[] tags;
 
     public Long getPostId() {
         return postId;
@@ -84,20 +90,20 @@ public class Post extends BaseEntity implements Serializable {
         this.postId = postId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getSlugTitle() {
-        return slugTitle;
+    public String getSlugName() {
+        return slugName;
     }
 
-    public void setSlugTitle(String slugTitle) {
-        this.slugTitle = slugTitle;
+    public void setSlugName(String slugName) {
+        this.slugName = slugName;
     }
 
     public String getContent() {
@@ -116,10 +122,16 @@ public class Post extends BaseEntity implements Serializable {
         this.image = image;
     }
 
-    public PostType getPostType() {
-        return postType;
+    @JsonProperty("postType")
+    public Map<String,String> getPostType() {
+        Map<String, String> map = new HashMap<>();
+        map.put("postTypeId", String.valueOf(postType.getPostTypeId()));
+        map.put("name", postType.getName());
+        map.put("slugName", postType.getName());
+        return map;
     }
 
+    @JsonProperty("postType")
     public void setPostType(PostType postType) {
         this.postType = postType;
     }
@@ -132,10 +144,16 @@ public class Post extends BaseEntity implements Serializable {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    @JsonProperty("user")
+    public Map<String, String> getUser() {
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", String.valueOf(user.getUserId()));
+        map.put("name", user.getName());
+
+        return map;
     }
 
+    @JsonProperty("user")
     public void setUser(User user) {
         this.user = user;
     }
@@ -148,12 +166,23 @@ public class Post extends BaseEntity implements Serializable {
         this.status = status;
     }
 
+    @JsonProperty("tags")
     public Set<PostTag> getPostTags() {
         return postTags;
     }
 
+    @JsonIgnore
     public void setPostTags(Set<PostTag> postTags) {
         this.postTags = postTags;
     }
 
+    @JsonIgnore
+    public String[] getTags() {
+        return tags;
+    }
+
+    @JsonProperty("tags")
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
 }

@@ -11,7 +11,11 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
-@Table( name = "post_type")
+@Table( name = "post_type",
+        uniqueConstraints = {
+        @UniqueConstraint(name = "Uk_name", columnNames = "name"),
+        @UniqueConstraint(name = "UK_slugName", columnNames = "slug_name") }
+)
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
         allowGetters = true)

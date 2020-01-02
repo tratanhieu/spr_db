@@ -1,72 +1,53 @@
 package dashboard.entities.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.entities.base.BaseEntity;
 
+import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.tag.Tag;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
-@Table( name = "pos_tag")
+@Table( name = "post_tag")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
-        allowGetters = true)
-public class PostTag extends BaseEntity implements Serializable {
+public class PostTag implements Serializable {
 
     private static final Long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "post_tag_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("post_tag_id")
-    private Long post_tag_id;
+    @EmbeddedId
+    @JsonIgnore
+    PostTagIdentity postTagIdentity;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private EntityStatus status;
-
-    public Long getPost_tag_id() {
-        return post_tag_id;
+    public PostTagIdentity getPostTagIdentity() {
+        return postTagIdentity;
     }
 
-    public void setPost_tag_id(Long post_tag_id) {
-        this.post_tag_id = post_tag_id;
+    @JsonIgnore
+    public Tag getTag(){
+        return postTagIdentity.getTag();
     }
 
-    public Post getPost() {
-        return post;
+    public void setPostTagIdentity(PostTagIdentity postTagIdentity) {
+        this.postTagIdentity = postTagIdentity;
     }
 
-    public void setPost(Post post) {
-        this.post = post;
+    @JsonProperty("slugName")
+    public String getTagSlugName(){
+        return postTagIdentity.getTag().getSlugName();
     }
 
-    public Tag getTag() {
-        return tag;
+    @JsonProperty("name")
+    public String getTagName(){
+        return postTagIdentity.getTag().getName();
     }
 
-    public void setTag(Tag tag) {
-        this.tag = tag;
-    }
-
-    public EntityStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(EntityStatus status) {
-        this.status = status;
-    }
 }
