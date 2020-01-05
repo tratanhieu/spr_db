@@ -3,7 +3,7 @@ package dashboard.dto.post;
 import dashboard.dto.BaseEntityDto;
 
 import java.math.BigInteger;
-import java.util.Date;
+import java.util.*;
 
 public class PostDto extends BaseEntityDto {
     private BigInteger postId;
@@ -96,8 +96,20 @@ public class PostDto extends BaseEntityDto {
         this.content = content;
     }
 
-    public String getTags() {
-        return tags;
+    public List getTags() {
+        String[] mapTags = tags.split(",");
+        String[] tagArr;
+        List<Map> result = new ArrayList<>();
+        Map<String, String> map = new HashMap<>();
+        for (String tag: mapTags) {
+            tagArr = tag.split("#");
+            if (tagArr.length == 2) {
+                map.put("slugName", tagArr[0]);
+                map.put("name", tagArr[1]);
+                result.add(map);
+            }
+        }
+        return result;
     }
 
     public void setTags(String tags) {
