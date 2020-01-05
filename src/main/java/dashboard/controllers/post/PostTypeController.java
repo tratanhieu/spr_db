@@ -36,7 +36,7 @@ public class PostTypeController {
             @RequestParam(name = "status", required = false) EntityStatus status
     ) {
         Pageable pageable = ActionUtils.preparePageable(sort,page, size);
-        return ResponseEntity.ok(postTypeService.getAllWithPagination(pageable, search,status));
+        return ResponseEntity.ok(postTypeService.getAll());
     }
 
 

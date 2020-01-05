@@ -3,15 +3,12 @@ package dashboard.services.implement;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.PostTypeRepository;
 import dashboard.services.PostTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.*;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
@@ -22,18 +19,20 @@ public class PostTypeServiceImpl implements PostTypeService {
     @Autowired
     PostTypeRepository postTypeRepository;
 
+    @PersistenceContext
+    EntityManager em;
+
     @Override
-    public ListEntityResponse<PostType> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
-        Page<PostType> result = postTypeRepository.findWithPageable(pageable, search, status);
-
-        ListEntityResponse<PostType> postTypeResponse = new ListEntityResponse<>();
-
-        postTypeResponse.setPage(result.getNumber() +1);
-        postTypeResponse.setPageSize(result.getSize());
-        postTypeResponse.setTotalPage(result.getTotalPages());
-        postTypeResponse.setListData(result.getContent());
-
-        return postTypeResponse;
+    public List getAll() {
+        String sqlQuery = "SELECT " +
+                "pt.*, " +
+                "(SELECT " +
+                    "COUNT(p.post_id) " +
+                "FROM post p " +
+                    "WHERE p.post_type_id = pt.post_type_id) AS totalPost " +
+                "FROM post_type pt " +
+                "WHERE pt.status <> 'DELETE'";
+        return em.createNativeQuery(sqlQuery, "listPostTypeMapping").getResultList();
     }
 
     @Override

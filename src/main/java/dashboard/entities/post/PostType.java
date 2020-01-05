@@ -2,6 +2,7 @@ package dashboard.entities.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,15 +10,35 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 
 @Entity
+@SqlResultSetMapping(
+        name="listPostTypeMapping",
+        classes={
+                @ConstructorResult(
+                        targetClass= PostTypeDto.class,
+                        columns={
+                                @ColumnResult(name="post_type_id", type = BigInteger.class),
+                                @ColumnResult(name="name"),
+                                @ColumnResult(name="slug_name"),
+                                @ColumnResult(name="totalPost", type = BigInteger.class),
+                                @ColumnResult(name="status"),
+                                @ColumnResult(name="create_date", type = Date.class),
+                                @ColumnResult(name="update_date", type = Date.class),
+                                @ColumnResult(name="delete_date", type = Date.class)
+                        }
+                )
+        }
+)
 @Table( name = "post_type",
         uniqueConstraints = {
         @UniqueConstraint(name = "Uk_name", columnNames = "name"),
         @UniqueConstraint(name = "UK_slugName", columnNames = "slug_name") }
 )
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
+@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleteDate"},
         allowGetters = true)
 public class PostType extends BaseEntity implements Serializable {
 

@@ -17,11 +17,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.xml.crypto.Data;
 import java.util.*;
 
 @Service
 public class PostServiceImpl implements PostService {
+
+    @PersistenceContext
+    EntityManager em;
 
     @Autowired
     PostRepository postRepository;
@@ -33,23 +38,21 @@ public class PostServiceImpl implements PostService {
     PostTagRepository postTagRepository;
 
     @Override
-    public ListEntityResponse<Post> getAllWithPagination(Pageable pageable,String name, EntityStatus status) {
-        Page<Post>  result = postRepository.findWithPageable(pageable, name, status);
-
-        ListEntityResponse<Post> postRespone = new ListEntityResponse<>();
-
-        postRespone.setPage(result.getNumber() +1);
-        postRespone.setPageSize(result.getSize());
-        postRespone.setTotalPage(result.getTotalPages());
-        postRespone.setListData(result.getContent());
-
-        return postRespone;
-
+    public List getAll() {
+        String sqlQueryPost = "SELECT " +
+                "p.*, " +
+                "pt.name AS postTypeName, " +
+                "CONCAT(u.first_name, ' ', u.middle_name, ' ', u.last_name) AS author, " +
+                "(SELECT GROUP_CONCAT(t.slug_name, '#', t.name) FROM post_tag pt INNER JOIN tag t ON pt.slug_name = t.slug_name WHERE pt.post_id = p.post_id) AS tags " +
+                "FROM post p " +
+                "INNER JOIN user u ON p.user_id = u.user_id " +
+                "INNER JOIN post_type pt ON p.post_type_id = pt.post_type_id";
+        return em.createNativeQuery(sqlQueryPost, "listPostMapping").getResultList();
     }
 
     @Override
     public Post getOne(Long postId) throws ResourceNotFoundException {
-
+        String sqlQueryPostTag = "SELECT t.* FROM post_tag pt INNER JOIN tag t ON pt.slug_name = t.slug_name WHERE pt.post_id = ?";
         Post postRespone = postRepository.findById(postId).orElse(null);
 
         if (postRespone == null) {

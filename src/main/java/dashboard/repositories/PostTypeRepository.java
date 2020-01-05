@@ -1,5 +1,6 @@
 package dashboard.repositories;
 
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.domain.Page;
@@ -16,22 +17,6 @@ import java.util.List;
 
 @Repository
 public interface PostTypeRepository extends CrudRepository<PostType, Long> {
-
-    @Query("SELECT pt FROM PostType pt " +
-            "WHERE pt.status != 'DELETED' " +
-            "AND (:name = NULL OR pt.name LIKE %:name%) " +
-            "AND (:status = NULL OR pt.status = :status)")
-            "WHERE pt.status != 'DELETED'" +
-            "AND :name = NULL OR pt.name LIKE %:name% " +
-            "AND :status = NULL OR pt.status = :status")
-    Page<PostType> findWithPageable(
-            Pageable pageable,
-            @Param("name") String name,
-            @Param("status") EntityStatus status);
-
-    @Query("SELECT pt FROM PostType pt WHERE pt.status != 'DELETED' AND pt.createDate = :createDate ")
-    Page<PostType> findWithCreateDate(Date createDate, Pageable pageable);
-
     @Modifying
     @Transactional
     @Query(value = "UPDATE PostType pt SET pt.status = :status WHERE pt.postTypeId IN (:listId)")

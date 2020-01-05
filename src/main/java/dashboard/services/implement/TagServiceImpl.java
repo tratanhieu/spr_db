@@ -13,12 +13,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Service
 public class TagServiceImpl  implements  TagService{
+
+    @PersistenceContext
+    EntityManager em;
 
     @Autowired
     TagRepository tagRepository;

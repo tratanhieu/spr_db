@@ -3,6 +3,8 @@ package dashboard.entities.post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.TagDto;
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.base.BaseEntity;
 
 import dashboard.entities.embedded.PostTagIdentity;
@@ -12,11 +14,25 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-@Table( name = "post_tag")
+@SqlResultSetMapping(
+        name="listPostTagMapping",
+        classes={
+                @ConstructorResult(
+                        targetClass= TagDto.class,
+                        columns={
+                                @ColumnResult(name="slugName"),
+                                @ColumnResult(name="name")
+                        }
+                )
+        }
+)
+@Table(name = "post_tag")
 @EntityListeners(AuditingEntityListener.class)
 public class PostTag implements Serializable {
 

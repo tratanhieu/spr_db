@@ -1,7 +1,10 @@
 package dashboard.entities.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.post.PostDto;
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.base.BaseEntity;
 import dashboard.entities.post.PostType;
 import dashboard.entities.user.User;
@@ -13,11 +16,36 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 @Entity
+@SqlResultSetMapping(
+        name="listPostMapping",
+        classes={
+                @ConstructorResult(
+                        targetClass= PostDto.class,
+                        columns={
+                                @ColumnResult(name="post_id", type = BigInteger.class),
+                                @ColumnResult(name="name"),
+                                @ColumnResult(name="slug_name"),
+                                @ColumnResult(name="description"),
+                                @ColumnResult(name="content"),
+                                @ColumnResult(name="tags"),
+                                @ColumnResult(name="image"),
+                                @ColumnResult(name="postTypeName"),
+                                @ColumnResult(name="author"),
+                                @ColumnResult(name="status"),
+                                @ColumnResult(name="create_date", type = Date.class),
+                                @ColumnResult(name="update_date", type = Date.class),
+                                @ColumnResult(name="delete_date", type = Date.class)
+                        }
+                )
+        }
+)
 @Table(name = "post",
         uniqueConstraints = {
                 @UniqueConstraint(name = "UK_name ", columnNames = "name"),
@@ -148,7 +176,7 @@ public class Post extends BaseEntity implements Serializable {
     public Map<String, String> getUser() {
         Map<String, String> map = new HashMap<>();
         map.put("userId", String.valueOf(user.getUserId()));
-        map.put("name", user.getName());
+//        map.put("name", user.getName());
 
         return map;
     }

@@ -13,7 +13,6 @@ public class CommonServiceImpl implements CommonService {
     @Autowired
     private MessageSource messageSource;
 
-
     @Override
     public String getMessageSource(String key) {
         return messageSource.getMessage(key, null, null);

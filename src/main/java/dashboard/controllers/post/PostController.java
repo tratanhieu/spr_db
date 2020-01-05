@@ -45,7 +45,7 @@ public class PostController {
             @RequestParam(name = "status", required = false) EntityStatus status
     ) {
         Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        return ResponseEntity.ok(postService.getAllWithPagination(pageable, search, status));
+        return ResponseEntity.ok(postService.getAll());
     }
 
     @GetMapping("{postId}")

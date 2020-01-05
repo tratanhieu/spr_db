@@ -1,5 +1,6 @@
 package dashboard.services;
 
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface PostTypeService {
 
-    ListEntityResponse<PostType> getAllWithPagination(Pageable pageable, String search, EntityStatus status);
+    List getAll();
 
     PostType getOne(Long postTypeId) throws ResourceNotFoundException;
 
