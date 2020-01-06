@@ -2,6 +2,7 @@ package dashboard.controllers.user;
 
 import dashboard.commons.ActionUtils;
 import dashboard.constants.PusherConstants;
+import dashboard.entities.user.Password;
 import dashboard.entities.user.User;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.services.PusherService;
@@ -71,5 +72,30 @@ public class UserController {
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
                 PusherConstants.PUSHER_CHANNEL_USER);
         return HttpStatus.OK;
+    }
+
+    @PostMapping(value = "{userId}/update-profile", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus updateProfile(
+            @PathVariable(name = "userId") Long userId,
+            @RequestBody User user
+    ) throws ResourceNotFoundException{
+        user.setUserId(userId);
+        userService.updateProfile(user);
+        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                PusherConstants.PUSHER_CHANNEL_USER);
+        return HttpStatus.OK;
+    }
+
+    @PostMapping(value = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus changePassword(
+            @RequestBody Password password
+            ) throws ResourceNotFoundException, NoSuchAlgorithmException {
+        int result = userService.changePassword(password.getUserId(), password.getOldPassword(), password.getNewPassword());
+        if(result == 1) {
+            pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
+                    PusherConstants.PUSHER_CHANNEL_USER);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.NON_AUTHORITATIVE_INFORMATION;
     }
 }

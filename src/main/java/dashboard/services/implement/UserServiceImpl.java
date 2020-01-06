@@ -1,5 +1,6 @@
 package dashboard.services.implement;
 
+import dashboard.commons.ActionUtils;
 import dashboard.entities.user.User;
 import dashboard.enums.UserStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @Service
@@ -76,5 +78,47 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userIdToDelete);
 
         return 1;
+    }
+
+    @Override
+    public int updateProfile(User user) throws ResourceNotFoundException {
+
+        if (ActionUtils.isEmptyString(user.getAddress())) {
+            return -1;
+        }
+
+        User userToUpdate = userRepository.findById(user.getUserId()).orElse(null);
+
+        if (userToUpdate == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        userToUpdate.setUserId(user.getUserId());
+        userToUpdate.setProvinceId(user.getProvinceId());
+        userToUpdate.setDistrictId(user.getDistrictId());
+        userToUpdate.setAddress(user.getAddress());
+
+        userRepository.save(userToUpdate);
+
+        return 1;
+    }
+
+    @Override
+    public int changePassword(Long userId, String oldPassword, String newPassword) throws ResourceNotFoundException, NoSuchAlgorithmException {
+
+        if(ActionUtils.isEmptyString(oldPassword) || ActionUtils.isEmptyString(newPassword)) {
+            return -1;
+        }
+
+        User userInfo = userRepository.findById(userId).orElse(null);
+        String hashPassword = ActionUtils.hashPassWordMD5(oldPassword);
+
+        if(hashPassword.equals(userInfo.getPassword())) {
+            userInfo.setPassword(ActionUtils.hashPassWordMD5(newPassword));
+            userRepository.save(userInfo);
+            return 1;
+        }
+
+        return -1;
     }
 }

@@ -30,4 +30,11 @@ public class ActionUtils {
 
         return sb.toString();
     }
+
+    public static boolean isEmptyString(String string) {
+        if (string == null || "".equals(string.trim())) {
+            return true;
+        }
+        return false;
+    }
 }
