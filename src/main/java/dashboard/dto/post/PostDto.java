@@ -16,7 +16,7 @@ public class PostDto extends BaseEntityDto {
 
     private String content;
 
-    private String tags;
+    private List tags;
 
     private String image;
 
@@ -44,12 +44,26 @@ public class PostDto extends BaseEntityDto {
             Date deleteDate
     ) {
         super(createDate, updateDate, deleteDate);
+
+        String[] mapTags = tags.split(",");
+        String[] tagArr;
+        List<Map> listMap = new ArrayList<>();
+        Map<String, String> map = new HashMap<>();
+        for (String tag: mapTags) {
+            tagArr = tag.split("#");
+            if (tagArr.length == 2) {
+                map.put("slugName", tagArr[0]);
+                map.put("name", tagArr[1]);
+                listMap.add(map);
+            }
+        }
+
         this.postId = postId;
         this.name = name;
         this.slugName = slugName;
         this.description = description;
         this.content = content;
-        this.tags = tags;
+        this.tags = listMap;
         this.image = image;
         this.postTypeName = postTypeName;
         this.author = author;
@@ -97,22 +111,10 @@ public class PostDto extends BaseEntityDto {
     }
 
     public List getTags() {
-        String[] mapTags = tags.split(",");
-        String[] tagArr;
-        List<Map> result = new ArrayList<>();
-        Map<String, String> map = new HashMap<>();
-        for (String tag: mapTags) {
-            tagArr = tag.split("#");
-            if (tagArr.length == 2) {
-                map.put("slugName", tagArr[0]);
-                map.put("name", tagArr[1]);
-                result.add(map);
-            }
-        }
-        return result;
+        return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(List tags) {
         this.tags = tags;
     }
 
