@@ -11,9 +11,6 @@ public interface ProvinceService {
 
     Map<String, String> listWard(String provinceId, String districtId) throws IOException;
 
-    String getProvince(String provinceId) throws IOException;
+    Map<String, String> getAddress(String provinceId, String districtId, String wardId) throws IOException;
 
-    String getDistrict(String provinceId, String districtId) throws IOException;
-
-    String getWard(String provinceId, String districtId, String wardId) throws IOException;
 }

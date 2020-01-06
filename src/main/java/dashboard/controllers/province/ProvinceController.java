@@ -33,4 +33,11 @@ public class ProvinceController {
                                        @PathVariable(name = "districtId") String districtId) throws IOException{
         return ResponseEntity.ok(provinceService.listWard(provinceId, districtId));
     }
+
+    @GetMapping("get-address/{provinceId}/{districtId}/{wardId}")
+    public ResponseEntity getAddress(@PathVariable(name = "provinceId") String provinceId,
+                                   @PathVariable(name = "districtId") String districtId,
+                                     @PathVariable(name = "wardId") String wardId) throws IOException{
+        return ResponseEntity.ok(provinceService.getAddress(provinceId, districtId, wardId));
+    }
 }

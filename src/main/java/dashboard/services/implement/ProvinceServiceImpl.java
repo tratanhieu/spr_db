@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class ProvinceServiceImpl implements ProvinceService {
 
-    final String NAME = "name";
+    final String NAME = "name_with_type";
     final String DISTRICT = "quan-huyen";
     final String WARD = "xa-phuong";
 
@@ -65,32 +65,18 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public String getProvince(String provinceId) throws IOException {
+    public Map<String ,String> getAddress(String provinceId, String districtId, String wardId) throws IOException {
 
         if(mapAll == null || mapAll.size() != 63) {
             listProvince();
         }
 
-        return (String) ((HashMap<String, Object>) mapAll.get(provinceId)).get(NAME);
-    }
+        Map<String, String> address = new HashMap<>();
 
-    @Override
-    public String getDistrict(String provinceId, String districtId) throws IOException {
+        address.put("province", listProvince().get(provinceId));
+        address.put("district", listDistrict(provinceId).get(districtId));
+        address.put("ward", listWard(provinceId, districtId).get(wardId));
 
-        if(mapAll == null || mapAll.size() != 63) {
-            listProvince();
-        }
-
-        return listDistrict(provinceId).get(districtId);
-    }
-
-    @Override
-    public String getWard(String provinceId, String districtId, String wardId) throws IOException {
-
-        if(mapAll == null || mapAll.size() != 63) {
-            listProvince();
-        }
-
-        return listWard(provinceId, districtId).get(wardId);
+        return address;
     }
 }
