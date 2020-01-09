@@ -1,16 +1,19 @@
 package dashboard.services.implement;
 
+import dashboard.commons.DataUtils;
+import dashboard.commons.ValidationUtils;
+import dashboard.dto.post.FormPostType;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.repositories.PostTypeRepository;
 import dashboard.services.PostTypeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,52 +34,46 @@ public class PostTypeServiceImpl implements PostTypeService {
                 "FROM post p " +
                     "WHERE p.post_type_id = pt.post_type_id) AS totalPost " +
                 "FROM post_type pt " +
-                "WHERE pt.status <> 'DELETE'";
+                "WHERE pt.status <> 'DELETE' " +
+                "ORDER BY pt.create_date DESC";
         return em.createNativeQuery(sqlQuery, "listPostTypeMapping").getResultList();
     }
 
     @Override
     public PostType getOne(Long postTypeId) throws ResourceNotFoundException {
-        PostType postType = postTypeRepository.findById(postTypeId).orElse(null);
+        return postTypeRepository.findById(postTypeId)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
 
-        if (postType == null) {
-            throw new ResourceNotFoundException();
+    @Override
+    public List create(FormPostType formPostType) {
+        if (formPostType.getSlugName() == null) {
+            formPostType.setSlugName(DataUtils.makeSlug(formPostType.getName()));
         }
-
-        return postType;
-    }
-
-    @Override
-    public int create(@Valid PostType postType) {
+        PostType postType = new PostType();
+        BeanUtils.copyProperties(formPostType, postType);
         postTypeRepository.save(postType);
-        return 1;
+        return this.getAll();
     }
 
     @Override
-    public int update(PostType postType) {
+    public List update(FormPostType formPostType) throws ResourceNotFoundException {
+        PostType postType = postTypeRepository.findById(formPostType.getPostTypeId())
+                .orElseThrow(ResourceNotFoundException::new);
+        BeanUtils.copyProperties(formPostType, postType);
         postTypeRepository.save(postType);
-        return 1;
+        return this.getAll();
     }
 
     @Override
-    public int delete(Long postTypeId) throws ResourceNotFoundException {
-
-        PostType postType = postTypeRepository.findById(postTypeId).orElse(null);
-
-        if (postType == null) {
-            throw  new ResourceNotFoundException();
-        }
-
-        postType.setDeleteDate(new Date());
-        postType.setStatus(EntityStatus.DELETED);
-        postTypeRepository.save(postType);
-
-        return 1;
+    public List delete(Long postTypeId) {
+        postTypeRepository.deleteById(postTypeId);
+        return this.getAll();
     }
 
     @Override
-    public int updateStatusWithMultipleId(List<Long> ListId, EntityStatus status) throws ResourceNotFoundException {
-        int res = postTypeRepository.updateStatusByListId(ListId, status);
-        return res;
+    public List updateStatusWithMultipleId(List<Long> ListId, EntityStatus status) {
+        postTypeRepository.updateStatusByListId(ListId, status);
+        return this.getAll();
     }
 }

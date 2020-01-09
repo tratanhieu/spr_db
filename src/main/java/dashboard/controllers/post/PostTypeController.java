@@ -1,7 +1,11 @@
 package dashboard.controllers.post;
 
 import dashboard.commons.ActionUtils;
+import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
+import dashboard.dto.post.FormPostType;
+import dashboard.dto.post.PostDto;
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -16,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/post/type")
@@ -45,40 +52,30 @@ public class PostTypeController {
         return ResponseEntity.ok(postTypeService.getOne(postTypeId));
     }
 
-    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody PostType postType) {
-        postTypeService.create(postType);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
-                PusherConstants.PUSHER_ACTION_CREATE);
-        return HttpStatus.OK;
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity create(@RequestBody FormPostType formPostType) {
+        ValidationUtils.validate(formPostType);
+        List response = postTypeService.create(formPostType);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "{postTypeId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(
-            @RequestBody PostType postTypeParam,
-            @PathVariable( name = "postTypeId") Long postTypeId
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity update(
+            @RequestBody FormPostType formPostType
     ) throws ResourceNotFoundException{
-        PostType postType = postTypeService.getOne(postTypeId);
-
-        if (postType.isEquals(postTypeParam)) {
-            return HttpStatus.NOT_MODIFIED;
-        }
-        postTypeService.update(postTypeParam);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
-                PusherConstants.PUSHER_ACTION_UPDATE);
-        return HttpStatus.OK;
+        ValidationUtils.validate(formPostType);
+        List response = postTypeService.update(formPostType);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "{postTypeId}/delete")
-    public HttpStatus delete(@PathVariable(name = "postTypeId") Long postTypeId) throws ResourceNotFoundException {
-        postTypeService.delete(postTypeId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
-                PusherConstants.PUSHER_ACTION_DELETE);
-        return HttpStatus.OK;
+    @DeleteMapping(value = "{postTypeId}")
+    public ResponseEntity delete(@PathVariable(name = "postTypeId") Long postTypeId) {
+        List response = postTypeService.delete(postTypeId);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
+    @PutMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) {
         postTypeService.updateStatusWithMultipleId(multipleExecute.getListId(), (EntityStatus) multipleExecute.getStatus());
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST_TYPE,
                 PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);

@@ -46,7 +46,9 @@ public class PostServiceImpl implements PostService {
                 "(SELECT GROUP_CONCAT(t.slug_name, '#', t.name) FROM post_tag pt INNER JOIN tag t ON pt.slug_name = t.slug_name WHERE pt.post_id = p.post_id) AS tags " +
                 "FROM post p " +
                 "INNER JOIN user u ON p.user_id = u.user_id " +
-                "INNER JOIN post_type pt ON p.post_type_id = pt.post_type_id";
+                "INNER JOIN post_type pt ON p.post_type_id = pt.post_type_id " +
+                "WHERE p.status <> 'DELETE' " +
+                "ORDER BY pt.create_date DESC";
         return em.createNativeQuery(sqlQueryPost, "listPostMapping").getResultList();
     }
 

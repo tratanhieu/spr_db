@@ -27,15 +27,11 @@ public class ExceptionResolver {
 	CommonService commonService;
 
 	@ExceptionHandler(Exception.class)
-	public @ResponseBody ResponseEntity handleException(
-			Exception ex,
-			HttpServletRequest request
-	) {
+	public @ResponseBody ResponseEntity handleException(Exception ex) {
 		ex.printStackTrace();
-
-		return ResponseEntity
-				.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(new ExceptionResponse(commonService.getMessageSource("system.error.undefined")));
+		Map<String, String> response = new HashMap<>();
+		response.put("errorMessage", commonService.getMessageSource("system.error.undefined"));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
     
     // SQLIntegrityConstraintViolationException
@@ -46,15 +42,19 @@ public class ExceptionResolver {
 		String[] constraintName = constraintViolation.getConstraintName().split("_");
 		if (constraintName.length == 2) {
 			errorsReturn.put(constraintName[1], commonService.getMessageSource("message.entity.exist"));
+		} else {
+			ex.printStackTrace();
 		}
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorsReturn);
+		Map<String, Map> response = new HashMap<>();
+		response.put("formErrors", errorsReturn);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public @ResponseBody ResponseEntity<ExceptionResponse> resourceNotFoundException() {
-		return ResponseEntity
-				.status(HttpStatus.FORBIDDEN)
-				.body(new ExceptionResponse(commonService.getMessageSource("message.entity.notFound")));
+	public @ResponseBody ResponseEntity resourceNotFoundException() {
+		Map<String, String> response = new HashMap<>();
+		response.put("errorMessage", commonService.getMessageSource("message.entity.notFound"));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 	}
 
     // Handle @Valid in services
@@ -64,20 +64,23 @@ public class ExceptionResolver {
 			javax.validation.ConstraintViolationException ex
 	) {
 		Set<ConstraintViolation<?>> errors = ex.getConstraintViolations();
-		Map<String, String> errorsReturn = new HashMap<>();
+		Map<String, String> mapErrors = new HashMap<>();
 		errors.forEach(error -> {
 			final String message = error.getMessage();
 //			final Locale currentLocale = request.getLocale();
 //			final Object[] params = error.getExecutableParameters();
 			if (message.startsWith("{") && message.endsWith("}")) {
-				errorsReturn.put(error.getPropertyPath().toString(),
+				mapErrors.put(error.getPropertyPath().toString(),
 						commonService.getMessageSource(message.substring(1, message.length() - 1))
 				);
 			} else {
-				errorsReturn.put(error.getPropertyPath().toString(), message);
+				mapErrors.put(error.getPropertyPath().toString(), message);
 			}
 		});
 
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorsReturn);
+		Map<String, Map> response = new HashMap<>();
+		response.put("formErrors", mapErrors);
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 }

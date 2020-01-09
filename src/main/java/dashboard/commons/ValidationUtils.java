@@ -11,8 +11,8 @@ public class ValidationUtils {
 
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public static void validateEntity(Object entity) {
-        Set<ConstraintViolation<Object>> violations = validator.validate(entity);
+    public static void validate(Object object) {
+        Set<ConstraintViolation<Object>> violations = validator.validate(object);
         if (violations.size()  > 0) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
         }
