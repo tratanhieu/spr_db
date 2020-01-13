@@ -13,15 +13,13 @@ import java.util.Optional;
 
 
 public interface TagService {
-
     ListEntityResponse<Tag> getAllWithPagination(Pageable pageable);
     Tag getOne(String slugName);
     void create(Tag tag);
-    void createPostTag( List<PostTag> postTags);
+    void createPostTags(Long postId, String[] tags);
     ArrayList<PostTag> getAllPostTag();
     void createProductTag(ProductTag productTag);
     void deletePostTag(Long postTagId);
     void deletePostTagByPostId(Long postId);
     void deleteProductTag(Long productTagId);
-
 }

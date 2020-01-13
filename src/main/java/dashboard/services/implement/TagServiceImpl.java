@@ -1,5 +1,6 @@
 package dashboard.services.implement;
 
+import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.post.PostTag;
 import dashboard.entities.product.ProductTag;
 import dashboard.entities.tag.Tag;
@@ -12,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +64,33 @@ public class TagServiceImpl  implements  TagService{
     }
 
     @Override
-    public void createPostTag(List<PostTag> postTags) {
-        postTagRepository.saveAll(postTags);
+    @Transactional
+    public void createPostTags(Long postId, String[] tags) {
+        if (postId == null || tags == null) {
+            return;
+        }
+        int batchSize = 100;
+        int tagLength = tags.length;
+        try {
+            PostTag postTag;
+            PostTagIdentity postTagIdentity;
+            for (int i = 0; i < tagLength; i++) {
+                postTag = new PostTag();
+                postTagIdentity = new PostTagIdentity(postId, tags[i]);
+                postTag.setPostTagIdentity(postTagIdentity);
+                em.persist(postTag);
+                if(i % batchSize == 0) {
+                    em.flush();
+                    em.clear();
+                }
+            }
+            em.flush();
+            em.clear();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            em.close();
+        }
     }
 
     @Override

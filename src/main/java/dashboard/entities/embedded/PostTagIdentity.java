@@ -1,6 +1,7 @@
 package dashboard.entities.embedded;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dashboard.commons.DataUtils;
 import dashboard.entities.post.Post;
 import dashboard.entities.tag.Tag;
 
@@ -26,6 +27,13 @@ public class PostTagIdentity implements Serializable {
     public PostTagIdentity(Post post, Tag tag){
         this.post = post;
         this.tag = tag;
+    }
+
+    public PostTagIdentity(Long postId, String tag){
+        if (postId != null && tag != null) {
+            this.post = new Post(postId);
+            this.tag = new Tag(tag);
+        }
     }
 
     public Post getPost() {

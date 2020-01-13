@@ -60,6 +60,14 @@ public class PostType extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
+    public PostType() {
+        super();
+    }
+
+    public PostType(Long postTypeId) {
+        this.postTypeId = postTypeId;
+    }
+
     public Long getPostTypeId() {
         return postTypeId;
     }

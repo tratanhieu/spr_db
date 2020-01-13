@@ -20,10 +20,10 @@ import java.util.List;
 public class PostTypeServiceImpl implements PostTypeService {
 
     @Autowired
-    PostTypeRepository postTypeRepository;
+    private PostTypeRepository postTypeRepository;
 
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     @Override
     public List getAll() {

@@ -3,6 +3,7 @@ package dashboard.controllers.post;
 import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
+import dashboard.dto.post.FormPost;
 import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -54,11 +55,12 @@ public class PostController {
         return ResponseEntity.ok(postService.getOne(postId));
     }
 
-    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus create(
-            @RequestBody Post post
+            @RequestBody FormPost formPost
     ) {
-        postService.create(post);
+        ValidationUtils.validate(formPost);
+        postService.create(formPost);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
                 PusherConstants.PUSHER_ACTION_CREATE);
         return HttpStatus.OK;
@@ -83,9 +85,9 @@ public class PostController {
         post.setContent(postParams.getContent());
         post.setStatus(postParams.getStatus());
         post.setUpdateDate(new Date());
-        post.setTags(postParams.getTags());
+//        post.setTags(postParams.getTags());
 
-        postService.update(post);
+//        postService.update(post);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
                 PusherConstants.PUSHER_ACTION_UPDATE);
 

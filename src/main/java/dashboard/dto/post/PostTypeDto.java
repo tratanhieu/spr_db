@@ -3,7 +3,6 @@ package dashboard.dto.post;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dashboard.dto.BaseEntityDto;
 
-import javax.validation.constraints.NotBlank;
 import java.math.BigInteger;
 import java.util.Date;
 

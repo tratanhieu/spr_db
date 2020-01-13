@@ -1,5 +1,6 @@
 package dashboard.services;
 
+import dashboard.dto.post.FormPost;
 import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -14,11 +15,11 @@ public interface PostService  {
 
     Post getOne(Long postId) throws ResourceNotFoundException;
 
-    void create(Post post);
+    List create(FormPost formPost);
 
-    void update(Post post);
+    List update(FormPost formPost);
 
-    void delete(Long postId) throws ResourceNotFoundException;
+    List delete(Long postId) throws ResourceNotFoundException;
 
-    int updateStatusWithMultipleId(List<Long> postId, EntityStatus status) throws ResourceNotFoundException;
+    List updateStatusWithMultipleId(List<Long> postId, EntityStatus status) throws ResourceNotFoundException;
 }

@@ -108,6 +108,10 @@ public class User extends BaseEntity implements Serializable {
         super();
     }
 
+    public User(Long userId) {
+        this.userId = userId;
+    }
+
     public User(String firstName, String middleName, String lastName, String phone, String email,
                 Long provinceId, Long districtId, Long wardId, String address, String password,
                 String token, UserStatus status, Long userGroupId) {

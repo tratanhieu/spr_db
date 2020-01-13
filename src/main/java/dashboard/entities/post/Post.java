@@ -3,6 +3,7 @@ package dashboard.entities.post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.post.FormPost;
 import dashboard.dto.post.PostDto;
 import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.base.BaseEntity;
@@ -62,36 +63,24 @@ public class Post extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    @JsonProperty("post_id")
     private Long postId;
 
-    @NotBlank(message = "{validation.title.notBlank}")
-    @Size(min = 2, message = "{validation.minLength}")
-    @Size(max = 50, message = "{validation.maxLength}")
     @Column(name = "name")
-    @JsonProperty("name")
     private String name;
 
-    @Size(min = 2, message = "{validation.minLength}")
-    @Size(max = 50, message = "{validation.maxLength}")
     @Column(name = "slug_name")
-    @JsonProperty("slugName")
     private String slugName;
 
     @Column(name = "content")
-    @JsonProperty("content")
     private String content;
 
     @Column(name = "image")
-    @JsonProperty("image")
     private String image;
 
     @ManyToOne
-    @JoinColumn(name = "post_type_id")
     private PostType postType;
 
     @Column(name = "description")
-    @JsonProperty("description")
     private String description;
 
 
@@ -99,16 +88,25 @@ public class Post extends BaseEntity implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull(message = "{validation.status.notBlank}")
-    @Column(name = "Status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
     @OneToMany(mappedBy = "postTagIdentity.post",cascade = CascadeType.PERSIST)
     private Set<PostTag> postTags;
 
-    @Transient
-    private String[] tags;
+    public Post() {
+        super();
+    }
+
+    public Post(Long postId) {
+        this.postId = postId;
+    }
+
+    public Post(Long postTypeId, Long userId) {
+        this.postType = new PostType(postTypeId);
+        this.user = new User(userId);
+    }
 
     public Long getPostId() {
         return postId;
@@ -150,18 +148,20 @@ public class Post extends BaseEntity implements Serializable {
         this.image = image;
     }
 
-    @JsonProperty("postType")
-    public Map<String,String> getPostType() {
-        Map<String, String> map = new HashMap<>();
-        map.put("postTypeId", String.valueOf(postType.getPostTypeId()));
-        map.put("name", postType.getName());
-        map.put("slugName", postType.getName());
-        return map;
-    }
-
-    @JsonProperty("postType")
     public void setPostType(PostType postType) {
         this.postType = postType;
+    }
+
+    public PostType getPostType() {
+        return this.postType;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getDescription() {
@@ -172,18 +172,8 @@ public class Post extends BaseEntity implements Serializable {
         this.description = description;
     }
 
-    @JsonProperty("user")
-    public Map<String, String> getUser() {
-        Map<String, String> map = new HashMap<>();
-        map.put("userId", String.valueOf(user.getUserId()));
-//        map.put("name", user.getName());
-
-        return map;
-    }
-
-    @JsonProperty("user")
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Long userId) {
+        this.user.setUserId(userId);
     }
 
     public EntityStatus getStatus() {
@@ -194,23 +184,11 @@ public class Post extends BaseEntity implements Serializable {
         this.status = status;
     }
 
-    @JsonProperty("tags")
     public Set<PostTag> getPostTags() {
         return postTags;
     }
 
-    @JsonIgnore
     public void setPostTags(Set<PostTag> postTags) {
         this.postTags = postTags;
-    }
-
-    @JsonIgnore
-    public String[] getTags() {
-        return tags;
-    }
-
-    @JsonProperty("tags")
-    public void setTags(String[] tags) {
-        this.tags = tags;
     }
 }

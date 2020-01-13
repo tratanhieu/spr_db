@@ -3,6 +3,7 @@ package dashboard.entities.tag;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.commons.DataUtils;
 import dashboard.entities.base.BaseEntity;
 import dashboard.entities.post.PostTag;
 import dashboard.entities.product.ProductTag;
@@ -39,6 +40,10 @@ public class Tag implements Serializable {
     private Set<ProductTag> productTags;
 
     public Tag(){}
+
+    public Tag(String name){
+        this.slugName = DataUtils.makeSlug(name);
+    }
 
     public Tag(String slugName, String name){
 
