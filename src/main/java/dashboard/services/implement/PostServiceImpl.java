@@ -1,6 +1,7 @@
 package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
+import dashboard.commons.FileIOUtils;
 import dashboard.dto.post.FormPost;
 import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.post.Post;
@@ -71,6 +72,10 @@ public class PostServiceImpl implements PostService {
         try {
             Post post = new Post(formPost.getPostTypeId(), formPost.getUserId());
             BeanUtils.copyProperties(formPost, post);
+            if (formPost.getSlugName() == null) {
+                post.setSlugName(DataUtils.makeSlug(post.getName()));
+            }
+            post.setImage(FileIOUtils.createImageViaBase64Encode(formPost.getImage(), formPost.getSlugName()));
             post.setUser(formPost.getUserId());
             // create post
             postRepository.save(post);

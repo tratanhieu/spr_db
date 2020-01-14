@@ -1,5 +1,6 @@
 package dashboard.dto.post;
 
+import dashboard.constants.PatternConstants;
 import dashboard.dto.TagDto;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
@@ -8,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -23,11 +25,13 @@ public class FormPost implements Serializable {
     private String slugName;
 
     @NotNull(message = "Post image is not empty")
+    @Pattern(regexp = PatternConstants.REGEX_BASE64_CHECK, message = "Image not valid")
     private String image;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "Max character is 255")
     private String description;
 
+    @Size(min = 128, message = "Min character is 128")
     private String content;
 
     private String[] tags;

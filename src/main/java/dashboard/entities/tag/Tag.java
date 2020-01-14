@@ -43,6 +43,7 @@ public class Tag implements Serializable {
 
     public Tag(String name){
         this.slugName = DataUtils.makeSlug(name);
+        this.name = name;
     }
 
     public Tag(String slugName, String name){

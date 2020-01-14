@@ -75,14 +75,16 @@ public class TagServiceImpl  implements  TagService{
             PostTag postTag;
             PostTagIdentity postTagIdentity;
             for (int i = 0; i < tagLength; i++) {
-                postTag = new PostTag();
-                postTagIdentity = new PostTagIdentity(postId, tags[i]);
-                postTag.setPostTagIdentity(postTagIdentity);
-                em.persist(postTag);
                 if(i % batchSize == 0) {
                     em.flush();
                     em.clear();
                 }
+                Tag tag = new Tag(tags[i]);
+                em.persist(tag);
+                postTag = new PostTag();
+                postTagIdentity = new PostTagIdentity(postId, tag.getSlugName());
+                postTag.setPostTagIdentity(postTagIdentity);
+                em.persist(postTag);
             }
             em.flush();
             em.clear();

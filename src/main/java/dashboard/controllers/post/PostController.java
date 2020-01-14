@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.print.attribute.standard.Media;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -56,14 +57,12 @@ public class PostController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(
+    public ResponseEntity create(
             @RequestBody FormPost formPost
     ) {
         ValidationUtils.validate(formPost);
-        postService.create(formPost);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
-                PusherConstants.PUSHER_ACTION_CREATE);
-        return HttpStatus.OK;
+        List response = postService.create(formPost);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "{postId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -77,7 +76,6 @@ public class PostController {
         if (post.equals(postParams)) {
             return HttpStatus.NOT_MODIFIED;
         }
-
 
         post.setName(postParams.getName());
         post.setSlugName(postParams.getSlugName());
