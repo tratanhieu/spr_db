@@ -7,6 +7,7 @@ import dashboard.entities.user.User;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.services.PusherService;
 import dashboard.services.UserService;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -41,8 +42,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody User user) throws NoSuchAlgorithmException {
-        String hashedPassWord = ActionUtils.hashPassWordMD5(user.getPassword());
+    public HttpStatus create(@RequestBody User user) {
+        String hashedPassWord = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassWord);
 
         userService.create(user);
@@ -55,8 +56,8 @@ public class UserController {
     public HttpStatus update(
             @PathVariable(name = "userId") Long userId,
             @RequestBody User user
-    ) throws ResourceNotFoundException, NoSuchAlgorithmException{
-        String hashedPassWord = ActionUtils.hashPassWordMD5(user.getPassword());
+    ) throws ResourceNotFoundException{
+        String hashedPassWord = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassWord);
 
         user.setUserId(userId);

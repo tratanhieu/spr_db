@@ -7,6 +7,7 @@ import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.UserRepository;
 import dashboard.services.UserService;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -111,10 +112,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User userInfo = userRepository.findById(userId).orElse(null);
-        String hashPassword = ActionUtils.hashPassWordMD5(oldPassword);
 
-        if(hashPassword.equals(userInfo.getPassword())) {
-            userInfo.setPassword(ActionUtils.hashPassWordMD5(newPassword));
+        if(BCrypt.checkpw(oldPassword, userInfo.getPassword())) {
+            userInfo.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
             userRepository.save(userInfo);
             return 1;
         }
