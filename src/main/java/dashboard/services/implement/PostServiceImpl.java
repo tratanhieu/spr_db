@@ -2,6 +2,7 @@ package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
 import dashboard.commons.FileIOUtils;
+import dashboard.commons.ValidationUtils;
 import dashboard.dto.post.FormPost;
 import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.post.Post;
@@ -72,7 +73,6 @@ public class PostServiceImpl implements PostService {
                 "WHERE p.status <> 'DELETE' " +
                 "ORDER BY p.create_date DESC";
         return em.createNativeQuery(sqlQueryPost, "listPostMapping").getResultList();
-//        return em.createNativeQuery(sqlQueryPost, Tuple.class).getResultList();
     }
 
     @Override
@@ -83,20 +83,25 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public List create(FormPost formPost) {
+        FileIOUtils fileIOUtils = new FileIOUtils();
         try {
             Post post = new Post(formPost);
             if (post.getSlugName() == null) {
                 post.setSlugName(DataUtils.makeSlug(post.getName()));
             }
-            post.setImage(FileIOUtils.createImageViaBase64Encode(post.getImage(), post.getSlugName()));
-            // create post
+            Map mapUpload = fileIOUtils.createImageViaBase64Encode(post.getImage(), post.getSlugName());
+            post.setImage((String) mapUpload.get(FileIOUtils.PATH));
+            // Create post content
             String content = formPost.getContent();
-            content = FileIOUtils.prepareContentPost(content, post.getSlugName());
+            content = fileIOUtils.prepareContentPost(content, post.getSlugName());
             post.setContent(content);
+            // Re - validate
+            ValidationUtils.validate(post);
             postRepository.save(post);
             tagService.createPostTags(post.getPostId(), formPost.getTags());
         } catch (Exception ex) {
             ex.printStackTrace();
+            fileIOUtils.rollBackUploadedImages();
         } finally {
             em.close();
         }
