@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 
 public class FormPost implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -25,7 +26,7 @@ public class FormPost implements Serializable {
     private String slugName;
 
     @NotNull(message = "Post image is not empty")
-    @Pattern(regexp = PatternConstants.REGEX_BASE64_CHECK, message = "Image not valid")
+//    @Pattern(regexp = PatternConstants.REGEX_BASE64_CHECK, message = "Image not valid")
     private String image;
 
     @Size(max = 255, message = "Max character is 255")
@@ -33,6 +34,8 @@ public class FormPost implements Serializable {
 
     @Size(min = 128, message = "Min character is 128")
     private String content;
+
+    private Date publishDate;
 
     private String[] tags;
 
@@ -85,6 +88,14 @@ public class FormPost implements Serializable {
 
     public String getContent() {
         return content;
+    }
+
+    public Date getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(Date publishDate) {
+        this.publishDate = publishDate;
     }
 
     public void setContent(String content) {

@@ -26,8 +26,6 @@ public class PostDto extends BaseEntityDto {
 
     private String status;
 
-    public PostDto() {}
-
     public PostDto(
             BigInteger postId,
             String name,
@@ -44,20 +42,20 @@ public class PostDto extends BaseEntityDto {
             Date deleteDate
     ) {
         super(createDate, updateDate, deleteDate);
-
-        String[] mapTags = tags.split(",");
-        String[] tagArr;
         List<Map> listMap = new ArrayList<>();
-        Map<String, String> map = new HashMap<>();
-        for (String tag: mapTags) {
-            tagArr = tag.split("#");
-            if (tagArr.length == 2) {
-                map.put("slugName", tagArr[0]);
-                map.put("name", tagArr[1]);
-                listMap.add(map);
+        if (tags != null) {
+            String[] mapTags = tags.split(",");
+            String[] tagArr;
+            Map<String, String> map = new HashMap<>();
+            for (String tag: mapTags) {
+                tagArr = tag.split("#");
+                if (tagArr.length == 2) {
+                    map.put("slugName", tagArr[0]);
+                    map.put("name", tagArr[1]);
+                    listMap.add(map);
+                }
             }
         }
-
         this.postId = postId;
         this.name = name;
         this.slugName = slugName;

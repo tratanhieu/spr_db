@@ -25,8 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.xml.crypto.Data;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -49,7 +52,17 @@ public class PostServiceImpl implements PostService {
     @Override
     public List getAll() {
         String sqlQueryPost = "SELECT " +
-                "p.*, " +
+                "p.post_id, " +
+                "p.name, " +
+                "p.slug_name, " +
+                "p.content, " +
+                "p.description, " +
+                "p.image, " +
+                "p.create_date, " +
+                "p.update_date, " +
+                "p.delete_date, " +
+                "p.publish_date, " +
+                "p.status, " +
                 "pt.name AS postTypeName, " +
                 "CONCAT(u.first_name, ' ', u.middle_name, ' ', u.last_name) AS author, " +
                 "(SELECT GROUP_CONCAT(t.slug_name, '#', t.name) FROM post_tag pt INNER JOIN tag t ON pt.slug_name = t.slug_name WHERE pt.post_id = p.post_id) AS tags " +
@@ -59,6 +72,7 @@ public class PostServiceImpl implements PostService {
                 "WHERE p.status <> 'DELETE' " +
                 "ORDER BY pt.create_date DESC";
         return em.createNativeQuery(sqlQueryPost, "listPostMapping").getResultList();
+//        return em.createNativeQuery(sqlQueryPost, Tuple.class).getResultList();
     }
 
     @Override
@@ -70,14 +84,15 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public List create(FormPost formPost) {
         try {
-            Post post = new Post(formPost.getPostTypeId(), formPost.getUserId());
-            BeanUtils.copyProperties(formPost, post);
-            if (formPost.getSlugName() == null) {
+            Post post = new Post(formPost);
+            if (post.getSlugName() == null) {
                 post.setSlugName(DataUtils.makeSlug(post.getName()));
             }
-            post.setImage(FileIOUtils.createImageViaBase64Encode(formPost.getImage(), formPost.getSlugName()));
-            post.setUser(formPost.getUserId());
+            post.setImage(FileIOUtils.createImageViaBase64Encode(post.getImage(), post.getSlugName()));
             // create post
+            String content = formPost.getContent();
+            content = FileIOUtils.prepareContentPost(content, post.getSlugName());
+            post.setContent(content);
             postRepository.save(post);
             tagService.createPostTags(post.getPostId(), formPost.getTags());
         } catch (Exception ex) {

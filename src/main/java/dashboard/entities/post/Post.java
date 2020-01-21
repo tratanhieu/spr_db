@@ -71,18 +71,21 @@ public class Post extends BaseEntity implements Serializable {
     @Column(name = "slug_name")
     private String slugName;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition="TEXT", length = 1024)
     private String content;
 
     @Column(name = "image")
     private String image;
 
     @ManyToOne
+    @JoinColumn(name = "post_type_id")
     private PostType postType;
 
     @Column(name = "description")
     private String description;
 
+    @Column(name = "publish_date")
+    private Date publishDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -106,6 +109,18 @@ public class Post extends BaseEntity implements Serializable {
     public Post(Long postTypeId, Long userId) {
         this.postType = new PostType(postTypeId);
         this.user = new User(userId);
+    }
+
+    public Post(FormPost formPost) {
+        this.name = formPost.getName();
+        this.slugName = formPost.getSlugName();
+        this.image = formPost.getImage();
+        this.description = formPost.getDescription();
+        this.content = formPost.getContent();
+        this.publishDate = formPost.getPublishDate();
+        this.postType = new PostType(formPost.getPostTypeId());
+        this.user = new User(formPost.getUserId());
+        this.status = formPost.getStatus();
     }
 
     public Long getPostId() {
@@ -170,6 +185,14 @@ public class Post extends BaseEntity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Date getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(Date publishDate) {
+        this.publishDate = publishDate;
     }
 
     public void setUser(Long userId) {

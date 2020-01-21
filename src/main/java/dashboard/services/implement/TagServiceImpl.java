@@ -80,7 +80,7 @@ public class TagServiceImpl  implements  TagService{
                     em.clear();
                 }
                 Tag tag = new Tag(tags[i]);
-                em.persist(tag);
+                em.merge(tag);
                 postTag = new PostTag();
                 postTagIdentity = new PostTagIdentity(postId, tag.getSlugName());
                 postTag.setPostTagIdentity(postTagIdentity);
