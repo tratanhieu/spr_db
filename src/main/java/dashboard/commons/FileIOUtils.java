@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class FileIOUtils {
     private static final Pattern IMG_PATTERN = Pattern.compile(
-            "<img(\\s+.*?)(?:src\\s*=\\s*(?:'|\")(.*?)(?:'|\"))(.*?)/>",
+            "<img[^>]+src=\"data:image\\/([^\">]+)\"",
             Pattern.DOTALL|Pattern.CASE_INSENSITIVE);
     private static final String IP = "http://localhost:5000";
 
@@ -48,12 +48,12 @@ public class FileIOUtils {
     }
 
     public static String prepareContentPost(String content, String slugName) throws IOException {
-        StringBuilder sb = new StringBuilder(content);
-        Matcher matcherImgTags = IMG_PATTERN.matcher(sb.toString());
+        StringBuilder contentBuilder = new StringBuilder(content);
+        StringBuilder builder = new StringBuilder();
+        Matcher matcherImgTags = IMG_PATTERN.matcher(contentBuilder.toString());
         int start = 0, end = 0;
         int startUrl = 0, endUrl = 0;
         int index = 0;
-        StringBuilder builder = new StringBuilder();
         while (matcherImgTags.find()) { // find next match
             start = matcherImgTags.start();
             end = matcherImgTags.end();
@@ -70,8 +70,9 @@ public class FileIOUtils {
                 builder.replace(startUrl, endUrl, "src=\"" + url + "\"");
                 index++;
             }
-            sb.replace(start, end, builder.toString());
+            contentBuilder.replace(start, end, builder.toString());
+            matcherImgTags = IMG_PATTERN.matcher(contentBuilder.toString());
         }
-        return sb.toString();
+        return contentBuilder.toString();
     }
 }

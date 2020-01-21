@@ -70,7 +70,7 @@ public class PostServiceImpl implements PostService {
                 "INNER JOIN user u ON p.user_id = u.user_id " +
                 "INNER JOIN post_type pt ON p.post_type_id = pt.post_type_id " +
                 "WHERE p.status <> 'DELETE' " +
-                "ORDER BY pt.create_date DESC";
+                "ORDER BY p.create_date DESC";
         return em.createNativeQuery(sqlQueryPost, "listPostMapping").getResultList();
 //        return em.createNativeQuery(sqlQueryPost, Tuple.class).getResultList();
     }
