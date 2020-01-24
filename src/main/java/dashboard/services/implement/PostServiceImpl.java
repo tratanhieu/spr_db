@@ -4,6 +4,7 @@ import dashboard.commons.DataUtils;
 import dashboard.commons.FileIOUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.dto.post.FormPost;
+import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.post.Post;
 import dashboard.entities.post.PostTag;
@@ -12,10 +13,9 @@ import dashboard.entities.tag.Tag;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
-import dashboard.repositories.PostRepository;
-import dashboard.repositories.PostTagRepository;
-import dashboard.repositories.TagRepository;
+import dashboard.repositories.*;
 import dashboard.services.PostService;
+import dashboard.services.PostTypeService;
 import dashboard.services.TagService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +42,22 @@ public class PostServiceImpl implements PostService {
     PostRepository postRepository;
 
     @Autowired
+    PostTypeRepository postTypeRepository;
+
+    @Autowired
     TagService tagService;
 
     @Autowired
+    PostTypeService postTypeService;
+
+    @Autowired
     TagRepository tagRepository;
+
+    @Autowired
+    PostTypeMapper postTypeMapper;
+
+    @Autowired
+    TagMapper tagMapper;
 
     @Autowired
     PostTagRepository postTagRepository;
@@ -78,6 +90,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post getOne(Long postId) throws ResourceNotFoundException {
         return postRepository.findById(postId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public Map getCreate() {
+        List<PostTypeDto> postTypes = postTypeMapper.findAllActivePostType();
+        List<Tag> tags = tagMapper.findAllTag();
+        Map<String, Object> map = new HashMap<>();
+        map.put("postTypeList", postTypes);
+        map.put("tagList", tags);
+        return map;
     }
 
     @Override

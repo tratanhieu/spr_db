@@ -56,6 +56,11 @@ public class PostController {
         return ResponseEntity.ok(postService.getOne(postId));
     }
 
+    @GetMapping("create")
+    public ResponseEntity getCreate() {
+        return ResponseEntity.ok(postService.getCreate());
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(
             @RequestBody FormPost formPost

@@ -21,4 +21,7 @@ public interface PostTypeRepository extends CrudRepository<PostType, Long> {
     @Transactional
     @Query(value = "UPDATE PostType pt SET pt.status = :status WHERE pt.postTypeId IN (:listId)")
     int updateStatusByListId(@Param("listId") List<Long> listId, @Param("status") EntityStatus status);
+
+    @Query(value = "SELECT pt.postTypeId, pt.name FROM PostType AS pt")
+    List<PostType> findAllActivePostType();
 }

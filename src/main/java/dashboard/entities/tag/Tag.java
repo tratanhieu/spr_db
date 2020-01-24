@@ -24,7 +24,7 @@ public class Tag implements Serializable {
 
     @Id
     @Column(name = "slug_name")
-    @JsonProperty("slug_name")
+    @JsonProperty("slugName")
     private String slugName;
 
     @Column(name = "name")

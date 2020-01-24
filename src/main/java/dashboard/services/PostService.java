@@ -8,12 +8,15 @@ import dashboard.generics.ListEntityResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PostService  {
 
     List getAll();
 
     Post getOne(Long postId) throws ResourceNotFoundException;
+
+    Map getCreate();
 
     List create(FormPost formPost);
 
