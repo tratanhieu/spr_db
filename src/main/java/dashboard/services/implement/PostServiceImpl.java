@@ -94,7 +94,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Map getCreate() {
-        List<PostTypeDto> postTypes = postTypeMapper.findAllActivePostType();
+        List<PostType> postTypes = postTypeMapper.findAllActivePostTypeForSelect();
         List<Tag> tags = tagMapper.findAllTag();
         Map<String, Object> map = new HashMap<>();
         map.put("postTypeList", postTypes);
