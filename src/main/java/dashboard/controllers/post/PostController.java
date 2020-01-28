@@ -3,7 +3,7 @@ package dashboard.controllers.post;
 import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
-import dashboard.dto.post.FormPost;
+import dashboard.dto.post.PostForm;
 import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -11,18 +11,13 @@ import dashboard.generics.MultipleExecute;
 import dashboard.services.PostService;
 import dashboard.services.PusherService;
 import dashboard.services.TagService;
-import org.apache.coyote.http2.HPackHuffman;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.EnableMBeanExport;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.util.Date;
 import java.util.List;
 
@@ -63,10 +58,10 @@ public class PostController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(
-            @RequestBody FormPost formPost
+            @RequestBody PostForm postForm
     ) {
-        ValidationUtils.validate(formPost);
-        List response = postService.create(formPost);
+        ValidationUtils.validate(postForm);
+        List response = postService.create(postForm);
         return ResponseEntity.ok(response);
     }
 

@@ -41,13 +41,8 @@ public class UserGroupController {
     private static final String CHANNEL = "USER_GROUP_FEATURES";
 
     @GetMapping("")
-    public ResponseEntity index (
-            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
-            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
-    ) {
-        Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        return ResponseEntity.ok(userGroupService.getAllWithPagination(pageable));
+    public ResponseEntity index () {
+        return ResponseEntity.ok(userGroupService.getAll());
     }
 
     @GetMapping("/{id}")

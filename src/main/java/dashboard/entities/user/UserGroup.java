@@ -36,7 +36,6 @@ public class UserGroup extends BaseEntity implements Serializable {
     private String name;
 
     @Column(name = "status")
-    @NotNull(message = "{validation.status.notBlank}")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 

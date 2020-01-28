@@ -3,25 +3,19 @@ package dashboard.controllers.post;
 import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
-import dashboard.dto.post.FormPostType;
-import dashboard.dto.post.PostDto;
-import dashboard.dto.post.PostTypeDto;
-import dashboard.entities.post.PostType;
+import dashboard.dto.post.PostTypeForm;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.MultipleExecute;
 import dashboard.services.PostTypeService;
 import dashboard.services.PusherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -53,18 +47,18 @@ public class PostTypeController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity create(@RequestBody FormPostType formPostType) {
-        ValidationUtils.validate(formPostType);
-        List response = postTypeService.create(formPostType);
+    public ResponseEntity create(@RequestBody PostTypeForm postTypeForm) {
+        ValidationUtils.validate(postTypeForm);
+        List response = postTypeService.create(postTypeForm);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(
-            @RequestBody FormPostType formPostType
+            @RequestBody PostTypeForm postTypeForm
     ) throws ResourceNotFoundException{
-        ValidationUtils.validate(formPostType);
-        List response = postTypeService.update(formPostType);
+        ValidationUtils.validate(postTypeForm);
+        List response = postTypeService.update(postTypeForm);
         return ResponseEntity.ok(response);
     }
 

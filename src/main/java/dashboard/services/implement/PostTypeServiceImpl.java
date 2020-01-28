@@ -1,21 +1,17 @@
 package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
-import dashboard.commons.ValidationUtils;
-import dashboard.dto.post.FormPostType;
-import dashboard.entities.post.Post;
+import dashboard.dto.post.PostTypeForm;
 import dashboard.entities.post.PostType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.repositories.PostTypeMapper;
 import dashboard.repositories.PostTypeRepository;
 import dashboard.services.PostTypeService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.List;
@@ -44,22 +40,22 @@ public class PostTypeServiceImpl implements PostTypeService {
     }
 
     @Override
-    public List create(FormPostType formPostType) {
-        if (formPostType.getPostTypeId() != null) {
+    public List create(PostTypeForm postTypeForm) {
+        if (postTypeForm.getPostTypeId() != null) {
             throw new ValidationException("Post type id not null");
         }
-        if (formPostType.getSlugName() == null) {
-            formPostType.setSlugName(DataUtils.makeSlug(formPostType.getName()));
+        if (postTypeForm.getSlugName() == null) {
+            postTypeForm.setSlugName(DataUtils.makeSlug(postTypeForm.getName()));
         }
-        PostType postType = new PostType(formPostType);
+        PostType postType = new PostType(postTypeForm);
         postType.setCreateDate(new Date());
         postTypeMapper.save(postType);
         return this.getAll();
     }
 
     @Override
-    public List update(FormPostType formPostType) throws ResourceNotFoundException {
-        PostType postType = new PostType(formPostType);
+    public List update(PostTypeForm postTypeForm) throws ResourceNotFoundException {
+        PostType postType = new PostType(postTypeForm);
         postTypeMapper.update(postType);
         return this.getAll();
     }

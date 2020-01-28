@@ -5,9 +5,7 @@ import dashboard.entities.post.PostTag;
 import dashboard.entities.product.ProductTag;
 import dashboard.entities.tag.Tag;
 import dashboard.generics.ListEntityResponse;
-import dashboard.repositories.PostTagRepository;
-import dashboard.repositories.ProductTagRepository;
-import dashboard.repositories.TagRepository;
+import dashboard.repositories.*;
 import dashboard.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +28,12 @@ public class TagServiceImpl  implements  TagService{
 
     @Autowired
     TagRepository tagRepository;
+
+    @Autowired
+    TagMapper tagMapper;
+
+    @Autowired
+    PostTagMapper postTagMapper;
 
     @Autowired
     PostTagRepository postTagRepository;
@@ -72,22 +76,30 @@ public class TagServiceImpl  implements  TagService{
         int batchSize = 100;
         int tagLength = tags.length;
         try {
-            PostTag postTag;
-            PostTagIdentity postTagIdentity;
-            for (int i = 0; i < tagLength; i++) {
-                if(i % batchSize == 0) {
-                    em.flush();
-                    em.clear();
-                }
-                Tag tag = new Tag(tags[i]);
-                em.merge(tag);
-                postTag = new PostTag();
-                postTagIdentity = new PostTagIdentity(postId, tag.getSlugName());
-                postTag.setPostTagIdentity(postTagIdentity);
-                em.persist(postTag);
+//            PostTag postTag;
+//            PostTagIdentity postTagIdentity;
+//            for (int i = 0; i < tagLength; i++) {
+//                if(i % batchSize == 0) {
+//                    em.flush();
+//                    em.clear();
+//                }
+//                Tag tag = new Tag(tags[i]);
+//                em.merge(tag);
+//                postTag = new PostTag();
+//                postTagIdentity = new PostTagIdentity(postId, tag.getSlugName());
+//                postTag.setPostTagIdentity(postTagIdentity);
+//                em.persist(postTag);
+//            }
+//            em.flush();
+//            em.clear();
+            List<Tag> tagList = new ArrayList<>();
+
+            for (String tag: tags) {
+                tagList.add(new Tag(tag));
             }
-            em.flush();
-            em.clear();
+
+            tagMapper.saveAll(tagList);
+            postTagMapper.saveAll(postId, tagList);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {

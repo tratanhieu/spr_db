@@ -8,6 +8,7 @@ import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.UserGroupFeaturesRepository;
+import dashboard.repositories.UserGroupMapper;
 import dashboard.repositories.UserGroupRepository;
 import dashboard.services.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,30 +30,19 @@ public class UserGroupServiceImpl implements UserGroupService {
     UserGroupRepository userGroupRepository;
 
     @Autowired
+    UserGroupMapper userGroupMapper;
+
+    @Autowired
     UserGroupFeaturesRepository userGroupFeaturesRepository;
 
     @Override
-    public ListEntityResponse<UserGroup> getAllWithPagination(Pageable pageable) {
-        Page<UserGroup> result = userGroupRepository.findWithPageable(pageable);
-
-        ListEntityResponse<UserGroup> userGroupResponse = new ListEntityResponse<>();
-
-        userGroupResponse.setPage(result.getNumber() + 1);
-        userGroupResponse.setPageSize(result.getSize());
-        userGroupResponse.setTotalPage(result.getTotalPages());
-        userGroupResponse.setListData(result.getContent());
-
-        return userGroupResponse;
+    public List getAll() {
+        return userGroupMapper.findAll();
     }
 
     @Override
     public UserGroup getOne(Long userGroupId) throws ResourceNotFoundException {
-        UserGroup userGroup = userGroupRepository.findById(userGroupId).orElse(null);
-
-        if (userGroup == null) {
-            throw new ResourceNotFoundException();
-        }
-        return userGroup;
+        return userGroupMapper.findById(userGroupId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override

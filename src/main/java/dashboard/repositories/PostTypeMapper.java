@@ -31,12 +31,13 @@ public interface PostTypeMapper {
 
     @Select(
         "SELECT " +
+            "post_type_id AS postTypeId, " +
             "name, " +
             "slug_name AS slugName " +
         "FROM post_type " +
         "WHERE status = 'ACTIVE'"
     )
-    List<PostType> findAllActivePostTypeForSelect();
+    List<PostTypeDto> findAllActivePostTypeForSelect();
 
     @Select(
         "SELECT " +

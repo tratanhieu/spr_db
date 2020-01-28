@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-public class FormPostType implements Serializable {
+public class PostTypeForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long postTypeId;

@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
-public class FormPost implements Serializable {
+public class PostForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long postId;
@@ -39,6 +39,7 @@ public class FormPost implements Serializable {
 
     private String[] tags;
 
+    @NotNull(message = "Post type is not empty")
     private Long postTypeId;
 
     private Long userId;

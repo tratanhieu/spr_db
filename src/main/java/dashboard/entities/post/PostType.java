@@ -1,8 +1,7 @@
 package dashboard.entities.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import dashboard.dto.post.FormPostType;
+import dashboard.dto.post.PostTypeForm;
 import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
@@ -69,11 +68,11 @@ public class PostType extends BaseEntity implements Serializable {
         this.postTypeId = postTypeId;
     }
 
-    public PostType(FormPostType formPostType) {
-        this.postTypeId = formPostType.getPostTypeId();
-        this.name = formPostType.getName();
-        this.slugName = formPostType.getSlugName();
-        this.status = formPostType.getStatus();
+    public PostType(PostTypeForm postTypeForm) {
+        this.postTypeId = postTypeForm.getPostTypeId();
+        this.name = postTypeForm.getName();
+        this.slugName = postTypeForm.getSlugName();
+        this.status = postTypeForm.getStatus();
         this.setUpdateDate(new Date());
     }
 

@@ -3,34 +3,23 @@ package dashboard.services.implement;
 import dashboard.commons.DataUtils;
 import dashboard.commons.FileIOUtils;
 import dashboard.commons.ValidationUtils;
-import dashboard.dto.post.FormPost;
+import dashboard.dto.post.PostForm;
 import dashboard.dto.post.PostTypeDto;
-import dashboard.entities.embedded.PostTagIdentity;
 import dashboard.entities.post.Post;
-import dashboard.entities.post.PostTag;
-import dashboard.entities.post.PostType;
 import dashboard.entities.tag.Tag;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.*;
 import dashboard.services.PostService;
 import dashboard.services.PostTypeService;
 import dashboard.services.TagService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Tuple;
-import javax.xml.crypto.Data;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -54,37 +43,17 @@ public class PostServiceImpl implements PostService {
     TagRepository tagRepository;
 
     @Autowired
+    PostMapper postMapper;
+
+    @Autowired
     PostTypeMapper postTypeMapper;
 
     @Autowired
     TagMapper tagMapper;
 
-    @Autowired
-    PostTagRepository postTagRepository;
-
     @Override
     public List getAll() {
-        String sqlQueryPost = "SELECT " +
-                "p.post_id, " +
-                "p.name, " +
-                "p.slug_name, " +
-                "p.content, " +
-                "p.description, " +
-                "p.image, " +
-                "p.create_date, " +
-                "p.update_date, " +
-                "p.delete_date, " +
-                "p.publish_date, " +
-                "p.status, " +
-                "pt.name AS postTypeName, " +
-                "CONCAT(u.first_name, ' ', u.middle_name, ' ', u.last_name) AS author, " +
-                "(SELECT GROUP_CONCAT(t.slug_name, '#', t.name) FROM post_tag pt INNER JOIN tag t ON pt.slug_name = t.slug_name WHERE pt.post_id = p.post_id) AS tags " +
-                "FROM post p " +
-                "INNER JOIN user u ON p.user_id = u.user_id " +
-                "INNER JOIN post_type pt ON p.post_type_id = pt.post_type_id " +
-                "WHERE p.status <> 'DELETE' " +
-                "ORDER BY p.create_date DESC";
-        return em.createNativeQuery(sqlQueryPost, "listPostMapping").getResultList();
+        return postMapper.findAll();
     }
 
     @Override
@@ -94,7 +63,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Map getCreate() {
-        List<PostType> postTypes = postTypeMapper.findAllActivePostTypeForSelect();
+        List<PostTypeDto> postTypes = postTypeMapper.findAllActivePostTypeForSelect();
         List<Tag> tags = tagMapper.findAllTag();
         Map<String, Object> map = new HashMap<>();
         map.put("postTypeList", postTypes);
@@ -104,23 +73,25 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List create(FormPost formPost) {
+    public List create(PostForm postForm) {
         FileIOUtils fileIOUtils = new FileIOUtils();
         try {
-            Post post = new Post(formPost);
-            if (post.getSlugName() == null) {
-                post.setSlugName(DataUtils.makeSlug(post.getName()));
+//            Post post = new Post(formPost);
+            if (postForm.getSlugName() == null) {
+                postForm.setSlugName(DataUtils.makeSlug(postForm.getName()));
             }
-            Map mapUpload = fileIOUtils.createImageViaBase64Encode(post.getImage(), post.getSlugName());
-            post.setImage((String) mapUpload.get(FileIOUtils.PATH));
+            Map mapUpload = fileIOUtils.createImageViaBase64Encode(postForm.getImage(), postForm.getSlugName());
+            postForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
             // Create post content
-            String content = formPost.getContent();
-            content = fileIOUtils.prepareContentPost(content, post.getSlugName());
-            post.setContent(content);
+            String content = postForm.getContent();
+            content = fileIOUtils.prepareContentPost(content, postForm.getSlugName());
+            postForm.setContent(content);
+            postForm.setUserId(1L);
             // Re - validate
-            ValidationUtils.validate(post);
-            postRepository.save(post);
-            tagService.createPostTags(post.getPostId(), formPost.getTags());
+            ValidationUtils.validate(postForm);
+            // Save
+            Long insertedId = postMapper.save(postForm);
+            tagService.createPostTags(insertedId, postForm.getTags());
         } catch (Exception ex) {
             ex.printStackTrace();
             fileIOUtils.rollBackUploadedImages();
@@ -131,7 +102,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List update(FormPost formPost) {
+    public List update(PostForm postForm) {
 //
 //        // update post
 //        postRepository.save(post);

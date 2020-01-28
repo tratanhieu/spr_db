@@ -1,26 +1,17 @@
 package dashboard.entities.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import dashboard.dto.post.FormPost;
+import dashboard.dto.post.PostForm;
 import dashboard.dto.post.PostDto;
-import dashboard.dto.post.PostTypeDto;
 import dashboard.entities.base.BaseEntity;
-import dashboard.entities.post.PostType;
 import dashboard.entities.user.User;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -111,16 +102,16 @@ public class Post extends BaseEntity implements Serializable {
         this.user = new User(userId);
     }
 
-    public Post(FormPost formPost) {
-        this.name = formPost.getName();
-        this.slugName = formPost.getSlugName();
-        this.image = formPost.getImage();
-        this.description = formPost.getDescription();
-        this.content = formPost.getContent();
-        this.publishDate = formPost.getPublishDate();
-        this.postType = new PostType(formPost.getPostTypeId());
-        this.user = new User(formPost.getUserId());
-        this.status = formPost.getStatus();
+    public Post(PostForm postForm) {
+        this.name = postForm.getName();
+        this.slugName = postForm.getSlugName();
+        this.image = postForm.getImage();
+        this.description = postForm.getDescription();
+        this.content = postForm.getContent();
+        this.publishDate = postForm.getPublishDate();
+        this.postType = new PostType(postForm.getPostTypeId());
+        this.user = new User(postForm.getUserId());
+        this.status = postForm.getStatus();
     }
 
     public Long getPostId() {
