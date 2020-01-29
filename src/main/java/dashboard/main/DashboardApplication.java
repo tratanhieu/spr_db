@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages= {
 	"dashboard.controllers",
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 })
 @EntityScan("dashboard.entities")
 @EnableJpaRepositories("dashboard.repositories")
+@EnableTransactionManagement
 @MapperScan(basePackages = {"dashboard.repositories"}, annotationClass = Mapper.class)
 public class DashboardApplication {
 	public static void main(String[] args) {

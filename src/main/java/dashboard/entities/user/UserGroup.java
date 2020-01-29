@@ -1,13 +1,13 @@
 package dashboard.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.user.UserGroupForm;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
@@ -42,7 +42,7 @@ public class UserGroup extends BaseEntity implements Serializable {
     @OneToMany(mappedBy = "userGroupFeaturesIdentity.userGroup",
             cascade = CascadeType.ALL
             /*orphanRemoval = true*/)
-    private Set<UserGroupFeatures> userGroupFeatures;
+    private Set<UserGroupFeature> userGroupFeatures;
 
     public UserGroup() {
         super();
@@ -50,6 +50,12 @@ public class UserGroup extends BaseEntity implements Serializable {
 
     public UserGroup(Long userGroupId) {
         this.userGroupId = userGroupId;
+    }
+
+    public UserGroup(UserGroupForm userGroupForm) {
+        this.userGroupId = userGroupForm.getUserGroupId();
+        this.name = userGroupForm.getName();
+        this.status = userGroupForm.getStatus();
     }
 
     public UserGroup(Long userGroupId, String name, EntityStatus status) {
@@ -82,11 +88,11 @@ public class UserGroup extends BaseEntity implements Serializable {
         this.status = status;
     }
 
-    public Set<UserGroupFeatures> getUserGroupFeatures() {
+    public Set<UserGroupFeature> getUserGroupFeatures() {
         return userGroupFeatures;
     }
 
-    public void setUserGroupFeatures(Set<UserGroupFeatures> userGroupFeatures) {
+    public void setUserGroupFeatures(Set<UserGroupFeature> userGroupFeatures) {
         this.userGroupFeatures = userGroupFeatures;
     }
 

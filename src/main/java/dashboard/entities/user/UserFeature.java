@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user_features")
 @EntityListeners(AuditingEntityListener.class)
-public class UserFeatures extends BaseEntity implements Serializable {
+public class UserFeature extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,18 +36,18 @@ public class UserFeatures extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    @OneToMany(mappedBy = "userGroupFeaturesIdentity.userFeatures")
-    private Set<UserGroupFeatures> userGroupFeatures;
+    @OneToMany(mappedBy = "userGroupFeaturesIdentity.userFeature")
+    private Set<UserGroupFeature> userGroupFeatures;
 
-    public UserFeatures() {
+    public UserFeature() {
         super();
     }
 
-    public UserFeatures(String featuresId) {
+    public UserFeature(String featuresId) {
         this.featuresId = featuresId;
     }
 
-    public UserFeatures(String featuresId, String name, EntityStatus status) {
+    public UserFeature(String featuresId, String name, EntityStatus status) {
         this.featuresId = featuresId;
         this.name = name;
         this.status = status;
@@ -69,11 +69,11 @@ public class UserFeatures extends BaseEntity implements Serializable {
         this.name = name;
     }
 
-    public Set<UserGroupFeatures> getUserGroupFeatures() {
+    public Set<UserGroupFeature> getUserGroupFeatures() {
         return userGroupFeatures;
     }
 
-    public void setUserGroupFeatures(Set<UserGroupFeatures> userGroupFeatures) {
+    public void setUserGroupFeatures(Set<UserGroupFeature> userGroupFeatures) {
         this.userGroupFeatures = userGroupFeatures;
     }
 

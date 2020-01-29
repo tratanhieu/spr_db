@@ -1,8 +1,7 @@
 package dashboard.repositories;
 
-import dashboard.entities.embedded.UserGroupFeaturesIdentity;
-import dashboard.entities.user.UserGroupFeatures;
+import dashboard.entities.user.UserGroupFeature;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserGroupFeaturesRepository extends CrudRepository<UserGroupFeatures, Integer> {
+public interface UserGroupFeaturesRepository extends CrudRepository<UserGroupFeature, Integer> {
 }

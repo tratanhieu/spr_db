@@ -1,6 +1,6 @@
 package dashboard.entities.embedded;
 
-import dashboard.entities.user.UserFeatures;
+import dashboard.entities.user.UserFeature;
 import dashboard.entities.user.UserGroup;
 
 import javax.persistence.Embeddable;
@@ -18,27 +18,27 @@ public class UserGroupFeaturesIdentity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_features_id")
-    private UserFeatures userFeatures;
+    private UserFeature userFeature;
 
     public UserGroupFeaturesIdentity() {
     }
 
     public UserGroupFeaturesIdentity(Long userGroupId, String userFeatureId) {
         userGroup.setUserGroupId(userGroupId);
-        userFeatures.setFeaturesId(userFeatureId);
+        userFeature.setFeaturesId(userFeatureId);
     }
 
-    public UserGroupFeaturesIdentity(UserGroup userGroup, UserFeatures userFeatures) {
+    public UserGroupFeaturesIdentity(UserGroup userGroup, UserFeature userFeature) {
         this.userGroup = userGroup;
-        this.userFeatures = userFeatures;
+        this.userFeature = userFeature;
     }
 
     public UserGroup getUserGroup() {
         return userGroup;
     }
 
-    public UserFeatures getUserFeatures() {
-        return userFeatures;
+    public UserFeature getUserFeature() {
+        return userFeature;
     }
 
     @Override
@@ -47,11 +47,11 @@ public class UserGroupFeaturesIdentity implements Serializable {
         if (!(o instanceof UserGroupFeaturesIdentity)) return false;
         UserGroupFeaturesIdentity that = (UserGroupFeaturesIdentity) o;
         return Objects.equals(getUserGroup(), that.getUserGroup()) &&
-                Objects.equals(getUserFeatures(), that.getUserFeatures());
+                Objects.equals(getUserFeature(), that.getUserFeature());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserGroup(), getUserFeatures());
+        return Objects.hash(getUserGroup(), getUserFeature());
     }
 }

@@ -2,7 +2,6 @@ package dashboard.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dashboard.entities.base.BaseEntity;
 import dashboard.entities.embedded.UserGroupFeaturesIdentity;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -12,7 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "user_group_features")
 @EntityListeners(AuditingEntityListener.class)
-public class UserGroupFeatures implements Serializable {
+public class UserGroupFeature implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,16 +36,16 @@ public class UserGroupFeatures implements Serializable {
 
     @Transient
     @JsonProperty(value = "featureId")
-    private String featureId;
+    private String userFeatureId;
 
-    public UserGroupFeatures() {
+    public UserGroupFeature() {
         this.read = false;
         this.create = false;
         this.update = false;
         this.delete = false;
     }
 
-    public UserGroupFeatures(Boolean read, Boolean create, Boolean update, Boolean delete) {
+    public UserGroupFeature(Boolean read, Boolean create, Boolean update, Boolean delete) {
         this.read = read;
         this.create = create;
         this.update = update;
@@ -63,23 +62,22 @@ public class UserGroupFeatures implements Serializable {
         this.userGroupFeaturesIdentity = userGroupFeaturesIdentity;
     }
 
-    @JsonIgnore
-    public String getFeatureId() {
-        return featureId;
+    public String getUserFeatureId() {
+        return userFeatureId;
     }
 
-    public void setFeatureId(String featureId) {
-        this.featureId = featureId;
+    public void setUserFeatureId(String featureId) {
+        this.userFeatureId = featureId;
     }
 
     @JsonProperty("featureId")
-    public String getUserFeatureId() {
-        return userGroupFeaturesIdentity.getUserFeatures().getFeaturesId();
+    public String getUserDFeatureId() {
+        return userGroupFeaturesIdentity.getUserFeature().getFeaturesId();
     }
 
     @JsonProperty(value = "featureName")
     public String getUserFeatureName() {
-        return userGroupFeaturesIdentity.getUserFeatures().getName();
+        return userGroupFeaturesIdentity.getUserFeature().getName();
     }
 
     public Boolean getRead() {

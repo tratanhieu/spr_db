@@ -1,17 +1,17 @@
 package dashboard.services;
 
-import dashboard.entities.user.UserFeatures;
+import dashboard.entities.user.UserFeature;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface UserFeaturesService {
 
-    ListEntityResponse<UserFeatures> getAllWithPagination(Pageable pageable);
+    ListEntityResponse<UserFeature> getAllWithPagination(Pageable pageable);
 
-    int create(UserFeatures userGroup);
+    int create(UserFeature userGroup);
 
-    int update(UserFeatures userGroup) throws ResourceNotFoundException;
+    int update(UserFeature userGroup) throws ResourceNotFoundException;
 
     int delete(String userFeatureId) throws ResourceNotFoundException;
 }

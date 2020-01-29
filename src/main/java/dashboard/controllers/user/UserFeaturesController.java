@@ -2,7 +2,7 @@ package dashboard.controllers.user;
 
 import dashboard.commons.ActionUtils;
 import dashboard.constants.PusherConstants;
-import dashboard.entities.user.UserFeatures;
+import dashboard.entities.user.UserFeature;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.services.PusherService;
 import dashboard.services.UserFeaturesService;
@@ -19,6 +19,7 @@ public class UserFeaturesController {
 
     @Autowired
     UserFeaturesService userFeaturesService;
+
     @Autowired
     PusherService pusherService;
 
@@ -35,8 +36,8 @@ public class UserFeaturesController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody UserFeatures userFeatures) {
-        userFeaturesService.create(userFeatures);
+    public HttpStatus create(@RequestBody UserFeature userFeature) {
+        userFeaturesService.create(userFeature);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
                 PusherConstants.PUSHER_CHANNEL_USER_FEATURES);
         return HttpStatus.OK;
@@ -45,10 +46,10 @@ public class UserFeaturesController {
     @PostMapping(value = "{userFeaturesId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus update(
             @PathVariable(name = "userFeaturesId") String userFeaturesId,
-            @RequestBody UserFeatures userFeatures
+            @RequestBody UserFeature userFeature
     ) throws ResourceNotFoundException {
-        userFeatures.setFeaturesId(userFeaturesId);
-        userFeaturesService.update(userFeatures);
+        userFeature.setFeaturesId(userFeaturesId);
+        userFeaturesService.update(userFeature);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
                 PusherConstants.PUSHER_CHANNEL_USER_FEATURES);
         return HttpStatus.OK;

@@ -2,10 +2,7 @@ package dashboard.repositories;
 
 import dashboard.dto.post.PostForm;
 import dashboard.dto.post.PostDto;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -61,11 +58,6 @@ public interface PostMapper {
             "#{status}" +
         ")"
     )
-    @SelectKey(
-            statement = "SELECT LAST_INSERT_ID() AS postId",
-            keyProperty = "postId",
-            before = true,
-            resultType = Long.class
-    )
-    Long save(PostForm postForm);
+    @Options(useGeneratedKeys = true, keyProperty = "postId")
+    void save(PostForm postForm);
 }

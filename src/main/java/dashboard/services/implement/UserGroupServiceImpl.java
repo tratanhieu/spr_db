@@ -1,20 +1,21 @@
 package dashboard.services.implement;
 
+import dashboard.dto.user.UserGroupDto;
+import dashboard.dto.user.UserGroupForm;
 import dashboard.entities.embedded.UserGroupFeaturesIdentity;
-import dashboard.entities.user.UserFeatures;
+import dashboard.entities.user.UserFeature;
 import dashboard.entities.user.UserGroup;
-import dashboard.entities.user.UserGroupFeatures;
+import dashboard.entities.user.UserGroupFeature;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
+import dashboard.repositories.UserGroupFeatureMapper;
 import dashboard.repositories.UserGroupFeaturesRepository;
 import dashboard.repositories.UserGroupMapper;
 import dashboard.repositories.UserGroupRepository;
 import dashboard.services.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -27,13 +28,10 @@ import java.util.Set;
 public class UserGroupServiceImpl implements UserGroupService {
 
     @Autowired
-    UserGroupRepository userGroupRepository;
-
-    @Autowired
     UserGroupMapper userGroupMapper;
 
     @Autowired
-    UserGroupFeaturesRepository userGroupFeaturesRepository;
+    UserGroupFeatureMapper userGroupFeatureMapper;
 
     @Override
     public List getAll() {
@@ -41,72 +39,42 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public UserGroup getOne(Long userGroupId) throws ResourceNotFoundException {
+    public UserGroupDto getOne(Long userGroupId) throws ResourceNotFoundException {
         return userGroupMapper.findById(userGroupId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
-    public void create(UserGroup userGroupParams) {
-        UserGroup userGroup = new UserGroup();
-        userGroup.setName(userGroupParams.getName());
-        userGroup.setStatus(userGroupParams.getStatus());
-        userGroupRepository.save(userGroup);
-        List<UserGroupFeatures> userGroupFeatureList = new ArrayList<>();
-
-        Set<UserGroupFeatures> userGroupFeatures = userGroupParams.getUserGroupFeatures();
-        UserGroupFeaturesIdentity userGroupFeaturesIdentity;
-        for (UserGroupFeatures userGroupFeature : userGroupFeatures) {
-            userGroupFeaturesIdentity = new UserGroupFeaturesIdentity(
-                    userGroup, new UserFeatures(userGroupFeature.getFeatureId())
-            );
-            userGroupFeature.setUserGroupFeaturesIdentity(userGroupFeaturesIdentity);
-            userGroupFeatureList.add(userGroupFeature);
-        }
-        userGroupFeaturesRepository.saveAll(userGroupFeatureList);
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor={Exception.class}
+    )
+    public void create(UserGroupForm userGroupForm) {
+        UserGroup userGroup = new UserGroup(userGroupForm);
+        List<UserGroupFeature> userGroupFeatureList = userGroupForm.getUserGroupFeatures();
+        userGroupMapper.save(userGroup);
+        userGroupFeatureMapper.saveAll(userGroup.getUserGroupId(), userGroupFeatureList);
     }
 
     @Override
-    public void update(UserGroup userGroupParams) throws ResourceNotFoundException {
-        UserGroup userGroupId = userGroupRepository.findById(userGroupParams.getUserGroupId()).orElse(null);
-
-        if (userGroupId == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        UserGroup userGroup = new UserGroup();
-        userGroup.setUserGroupId(userGroupParams.getUserGroupId());
-        userGroup.setName(userGroupParams.getName());
-        userGroup.setStatus(userGroupParams.getStatus());
-        userGroupRepository.save(userGroup);
-        List<UserGroupFeatures> userGroupFeatureList = new ArrayList<>();
-
-        Set<UserGroupFeatures> userGroupFeatures = userGroupParams.getUserGroupFeatures();
-        UserGroupFeaturesIdentity userGroupFeaturesIdentity;
-        for (UserGroupFeatures userGroupFeature : userGroupFeatures) {
-            userGroupFeaturesIdentity = new UserGroupFeaturesIdentity(
-                    userGroup, new UserFeatures(userGroupFeature.getFeatureId())
-            );
-            userGroupFeature.setUserGroupFeaturesIdentity(userGroupFeaturesIdentity);
-            userGroupFeatureList.add(userGroupFeature);
-        }
-        userGroupFeaturesRepository.saveAll(userGroupFeatureList);
-
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor={Exception.class}
+    )
+    public void update(UserGroupForm userGroupForm) throws ResourceNotFoundException {
+        userGroupMapper.findById(userGroupForm.getUserGroupId()).orElseThrow(ResourceNotFoundException::new);
+        UserGroup userGroup = new UserGroup(userGroupForm);
+        List<UserGroupFeature> userGroupFeatureList = userGroupForm.getUserGroupFeatures();
+        userGroupMapper.updateById(userGroup);
+        userGroupFeatureMapper.saveAll(userGroup.getUserGroupId(), userGroupFeatureList);
     }
 
     @Override
-    public int delete(Long userGroupId) throws ResourceNotFoundException {
-        UserGroup userGroupIdToDelete = userGroupRepository.findById(userGroupId).orElse(null);
-
-        if (userGroupIdToDelete == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        userGroupIdToDelete.setStatus(EntityStatus.DELETED);
-        userGroupIdToDelete.setDeleteDate(new Date());
-        userGroupRepository.save(userGroupIdToDelete);
-        userGroupRepository.deleteUserGroupFeatures(userGroupId);
-        userGroupRepository.removeUserGroupFromUser(userGroupId);
-
-        return 1;
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor={Exception.class}
+    )
+    public void delete(Long userGroupId) {
+        userGroupMapper.deleteById(userGroupId);
+        userGroupFeatureMapper.deleteByUserGroupId(userGroupId);
     }
 }

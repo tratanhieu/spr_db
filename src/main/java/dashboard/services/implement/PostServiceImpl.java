@@ -15,6 +15,7 @@ import dashboard.services.PostTypeService;
 import dashboard.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -72,7 +73,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional
+    @Transactional(
+        propagation = Propagation.REQUIRED,
+        rollbackFor = {Exception.class}
+    )
     public List create(PostForm postForm) {
         FileIOUtils fileIOUtils = new FileIOUtils();
         try {
@@ -90,13 +94,11 @@ public class PostServiceImpl implements PostService {
             // Re - validate
             ValidationUtils.validate(postForm);
             // Save
-            Long insertedId = postMapper.save(postForm);
-            tagService.createPostTags(insertedId, postForm.getTags());
+            postMapper.save(postForm);
+            tagService.createPostTags(postForm.getPostId(), postForm.getTags());
         } catch (Exception ex) {
             ex.printStackTrace();
             fileIOUtils.rollBackUploadedImages();
-        } finally {
-            em.close();
         }
         return getAll();
     }
