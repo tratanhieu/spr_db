@@ -1,6 +1,7 @@
 package dashboard.controllers.user;
 
 import dashboard.commons.ValidationUtils;
+import dashboard.constants.FeatureConstants;
 import dashboard.constants.PusherConstants;
 import dashboard.dto.user.UserGroupForm;
 import dashboard.entities.user.UserGroup;
@@ -38,9 +39,14 @@ public class UserGroupController {
         return ResponseEntity.ok(userGroupService.getAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity getOne(@PathVariable(name = "id") Long userGroupId) throws ResourceNotFoundException {
         return ResponseEntity.ok(userGroupService.getOne(userGroupId));
+    }
+
+    @GetMapping("create")
+    public ResponseEntity getCreate() {
+        return ResponseEntity.ok(FeatureConstants.MAP_FEATURE);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -57,7 +63,7 @@ public class UserGroupController {
         return getAll();
     }
 
-    @GetMapping(value = "{userGroupId}/delete")
+    @DeleteMapping(value = "{userGroupId}")
     public HttpStatus delete(@PathVariable(name = "userGroupId") Long userGroupId) throws ResourceNotFoundException {
         userGroupService.delete(userGroupId);
         pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
