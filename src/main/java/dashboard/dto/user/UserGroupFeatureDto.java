@@ -2,6 +2,8 @@ package dashboard.dto.user;
 
 public class UserGroupFeatureDto {
 
+    private String featureId;
+
     private String featureName;
 
     private boolean read;
@@ -11,6 +13,14 @@ public class UserGroupFeatureDto {
     private boolean update;
 
     private boolean delete;
+
+    public String getFeatureId() {
+        return featureId;
+    }
+
+    public void setFeatureId(String featureId) {
+        this.featureId = featureId;
+    }
 
     public String getFeatureName() {
         return featureName;

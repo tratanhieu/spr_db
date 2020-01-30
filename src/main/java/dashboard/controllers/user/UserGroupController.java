@@ -64,11 +64,9 @@ public class UserGroupController {
     }
 
     @DeleteMapping(value = "{userGroupId}")
-    public HttpStatus delete(@PathVariable(name = "userGroupId") Long userGroupId) throws ResourceNotFoundException {
+    public ResponseEntity delete(@PathVariable(name = "userGroupId") Long userGroupId) throws ResourceNotFoundException {
         userGroupService.delete(userGroupId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_CHANNEL_USER_GROUP_FEATURES);
-        return HttpStatus.OK;
+        return getAll();
     }
 
 }

@@ -9,6 +9,8 @@ public class UserGroupDto {
 
     private String name;
 
+    private int totalUser;
+
     private List<UserGroupFeatureDto> userGroupFeatures;
 
     private EntityStatus status;
@@ -27,6 +29,14 @@ public class UserGroupDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getTotalUser() {
+        return totalUser;
+    }
+
+    public void setTotalUser(int totalUser) {
+        this.totalUser = totalUser;
     }
 
     public List<UserGroupFeatureDto> getUserGroupFeatures() {

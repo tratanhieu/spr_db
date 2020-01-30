@@ -16,13 +16,14 @@ public interface UserGroupMapper {
         "SELECT " +
             "user_group_id AS userGroupId, " +
             "name, " +
+            "(SELECT COUNT(*) FROM user WHERE user_group_id = user_group.user_group_id) AS totalUser, " +
             "create_date AS createDate, " +
             "update_date AS updateDate, " +
             "status " +
         "FROM user_group " +
         "ORDER BY create_date DESC"
     )
-    List<UserGroup> findAll();
+    List<UserGroupDto> findAll();
 
     @Select(
         "SELECT " +
@@ -48,18 +49,16 @@ public interface UserGroupMapper {
 
     @Select(
         "SELECT " +
-            "user_feature.name AS featureName, " +
-            "user_group_feature.read_permission, " +
-            "user_group_feature.create_permission, " +
-            "user_group_feature.update_permission, " +
-            "user_group_feature.delete_permission " +
+            "user_feature_id, " +
+            "read_permission, " +
+            "create_permission, " +
+            "update_permission, " +
+            "delete_permission " +
         "FROM user_group_feature " +
-        "INNER JOIN user_feature " +
-            "ON user_group_feature.user_feature_id = user_feature.feature_id " +
-        "WHERE user_group_feature.user_group_id = #{userGroupId}"
+        "WHERE user_group_id = #{userGroupId}"
     )
     @Results(id = "findUserGroupFeatures", value = {
-        @Result(property = "featureName", column = "featureName"),
+        @Result(property = "featureId", column = "user_feature_id"),
         @Result(property = "read", column = "read_permission"),
         @Result(property = "create", column = "create_permission"),
         @Result(property = "update", column = "update_permission"),

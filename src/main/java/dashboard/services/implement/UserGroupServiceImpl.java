@@ -1,6 +1,8 @@
 package dashboard.services.implement;
 
+import dashboard.constants.FeatureConstants;
 import dashboard.dto.user.UserGroupDto;
+import dashboard.dto.user.UserGroupFeatureDto;
 import dashboard.dto.user.UserGroupForm;
 import dashboard.entities.embedded.UserGroupFeaturesIdentity;
 import dashboard.entities.user.UserFeature;
@@ -18,10 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,7 +40,11 @@ public class UserGroupServiceImpl implements UserGroupService {
 
     @Override
     public UserGroupDto getOne(Long userGroupId) throws ResourceNotFoundException {
-        return userGroupMapper.findById(userGroupId).orElseThrow(ResourceNotFoundException::new);
+        UserGroupDto userGroupDto = userGroupMapper.findById(userGroupId).orElseThrow(ResourceNotFoundException::new);
+        List<UserGroupFeatureDto> userGroupFeatureDtoList = userGroupDto.getUserGroupFeatures().stream().peek(item ->
+            item.setFeatureName(FeatureConstants.MAP_FEATURE.get(item.getFeatureId()))).collect(Collectors.toList());
+        userGroupDto.setUserGroupFeatures(userGroupFeatureDtoList);
+        return userGroupDto;
     }
 
     @Override
@@ -51,6 +55,19 @@ public class UserGroupServiceImpl implements UserGroupService {
     public void create(UserGroupForm userGroupForm) {
         UserGroup userGroup = new UserGroup(userGroupForm);
         List<UserGroupFeature> userGroupFeatureList = userGroupForm.getUserGroupFeatures();
+        Map<String, String> featureKeys = new HashMap<>(FeatureConstants.MAP_FEATURE);
+        long count = userGroupFeatureList.stream().filter(item -> {
+            if (featureKeys.get(item.getUserFeatureId()) != null) {
+                featureKeys.remove(item.getUserFeatureId());
+                return true;
+            }
+            return false;
+        }).count();
+
+        if (count != FeatureConstants.MAP_FEATURE.size()) {
+            throw new IllegalArgumentException("Format is not match Feature");
+        }
+
         userGroupMapper.save(userGroup);
         userGroupFeatureMapper.saveAll(userGroup.getUserGroupId(), userGroupFeatureList);
     }
