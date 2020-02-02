@@ -1,80 +1,67 @@
 package dashboard.services.implement;
 
+import dashboard.dto.user.UserDto;
+import dashboard.dto.user.UserForm;
 import dashboard.entities.user.User;
 import dashboard.enums.UserStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
+import dashboard.repositories.UserGroupMapper;
+import dashboard.repositories.UserMapper;
 import dashboard.repositories.UserRepository;
 import dashboard.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository userRepository;
+    UserMapper userMapper;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
-    public ListEntityResponse<User> getAllWithPagination(Pageable pageable) {
-        Page<User> result = userRepository.findWithPageable(pageable);
-
-        ListEntityResponse<User> userResponse = new ListEntityResponse<>();
-
-        userResponse.setPage(result.getNumber() + 1);
-        userResponse.setPageSize(result.getSize());
-        userResponse.setTotalPage(result.getTotalPages());
-        userResponse.setListData(result.getContent());
-
-        return userResponse;
-
+    public List getAll() {
+        return userMapper.findAll();
     }
 
     @Override
-    public User getOne(Long userId) throws ResourceNotFoundException {
-        User user = userRepository.findById(userId).orElse(null);
-
-        if (user == null) {
-            throw new ResourceNotFoundException();
-        }
-        return user;
+    public Map<String, Object> getCreate() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userGroupList", userMapper.findAllActiveUserGroup());
+        return map;
     }
 
     @Override
-    public int create(User user) {
-        userRepository.save(user);
-        return 1;
+    public UserDto getOne(Long userId) throws ResourceNotFoundException {
+        return userMapper.findById(userId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
-    public int update(User user) throws ResourceNotFoundException {
-        User userId = userRepository.findById(user.getUserId()).orElse(null);
-
-        if (userId == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        userRepository.save(user);
-
-        return 1;
+    public void create(UserForm userForm) {
+        String encodedPassword = passwordEncoder.encode("123");
+        userForm.setPassword(encodedPassword);
+        userMapper.save(userForm);
     }
 
     @Override
-    public int delete(Long userId) throws ResourceNotFoundException {
-        User userIdToDelete = userRepository.findById(userId).orElse(null);
+    public void update(UserForm userForm) {
+        userMapper.updateById(userForm);
+    }
 
-        if (userIdToDelete == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        userIdToDelete.setStatus(UserStatus.DELETED);
-        userIdToDelete.setDeleteDate(new Date());
-        userRepository.save(userIdToDelete);
-
-        return 1;
+    @Override
+    public void delete(Long userId) {
+        userMapper.deleteById(userId);
     }
 }

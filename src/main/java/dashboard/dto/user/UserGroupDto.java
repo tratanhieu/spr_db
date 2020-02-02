@@ -1,5 +1,6 @@
 package dashboard.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import dashboard.enums.EntityStatus;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class UserGroupDto {
 
     private int totalUser;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<UserGroupFeatureDto> userGroupFeatures;
 
     private EntityStatus status;

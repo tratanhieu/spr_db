@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 	"dashboard.controllers",
 	"dashboard.services",
 	"dashboard.exceptions",
+	"dashboard.provider",
+	"dashboard.filter",
 	"dashboard.main"
 })
 @EntityScan("dashboard.entities")

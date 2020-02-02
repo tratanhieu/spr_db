@@ -54,7 +54,7 @@ public class MainController {
         return ResponseEntity.ok().body(file);
     }
 
-    public Resource loadAsResource(String year, String month, String day, String filename) {
+    private Resource loadAsResource(String year, String month, String day, String filename) {
         Path pathDir = Paths.get(FileSystems.getDefault().getPath("").toAbsolutePath() +
                 "/src/main/resources/static/images/" +
                 year + "/" + month + "/" + day);

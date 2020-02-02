@@ -1,19 +1,26 @@
 package dashboard.services;
 
+import dashboard.dto.user.UserDto;
+import dashboard.dto.user.UserForm;
 import dashboard.entities.user.User;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+import java.util.Map;
+
 public interface UserService {
 
-    ListEntityResponse<User> getAllWithPagination(Pageable pageable);
+    List getAll();
 
-    User getOne(Long userId) throws ResourceNotFoundException;
+    Map<String, Object> getCreate();
 
-    int create(User user);
+    UserDto getOne(Long userId) throws ResourceNotFoundException;
 
-    int update(User user) throws ResourceNotFoundException;
+    void create(UserForm userForm);
 
-    int delete(Long userId) throws ResourceNotFoundException;
+    void update(UserForm userForm);
+
+    void delete(Long userId);
 }
