@@ -38,7 +38,7 @@ public class ProductBrandController {
             ) {
 
         Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        return ResponseEntity.ok(productBrandService.getAllWithPagination(pageable,search, status ));
+        return ResponseEntity.ok(productBrandService.getAllWithPagination());
     }
 
     @GetMapping("/{id}")
@@ -59,15 +59,7 @@ public class ProductBrandController {
             @PathVariable Long productBrandId,
             @RequestBody ProductBrand productBrandParam
     ) throws ResourceNotFoundException {
-        ProductBrand productBrand = productBrandService.getOne(productBrandId);
 
-        if (productBrand.isEquals(productBrandParam)) {
-            return HttpStatus.NOT_MODIFIED;
-        }
-
-        productBrandService.update(productBrandParam);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
-                PusherConstants.PUSHER_ACTION_UPDATE);
         return HttpStatus.OK;
     }
 

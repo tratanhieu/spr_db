@@ -1,5 +1,6 @@
 package dashboard.services;
 
+import dashboard.dto.product.ProductBrandDto;
 import dashboard.entities.product.ProductBrand;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -10,9 +11,9 @@ import java.util.List;
 
 public interface ProductBrandService {
 
-    ListEntityResponse<ProductBrand> getAllWithPagination(Pageable pageable, String search, EntityStatus status);
+    List<ProductBrandDto> getAllWithPagination();
 
-    ProductBrand getOne(Long productBrandId) throws ResourceNotFoundException;
+    ProductBrandDto getOne(Long productBrandId) throws ResourceNotFoundException;
 
     int create(ProductBrand productBrand);
 

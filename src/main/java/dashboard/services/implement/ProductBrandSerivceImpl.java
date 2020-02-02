@@ -1,9 +1,11 @@
 package dashboard.services.implement;
 
+import dashboard.dto.product.ProductBrandDto;
 import dashboard.entities.product.ProductBrand;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
+import dashboard.repositories.ProductBrandMapper;
 import dashboard.repositories.ProductBrandRepository;
 import dashboard.services.ProductBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,30 +21,17 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
     @Autowired
     ProductBrandRepository productBrandRepository;
 
+    @Autowired
+    ProductBrandMapper productBrandMapper;
     @Override
-    public ListEntityResponse<ProductBrand> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
-        Page<ProductBrand> result = productBrandRepository.findWithPageableAndSearch(pageable, search, status);
-
-        ListEntityResponse<ProductBrand> productBrandResponse = new ListEntityResponse<>();
-
-        productBrandResponse.setPage(result.getNumber() + 1);
-        productBrandResponse.setPageSize(result.getSize());
-        productBrandResponse.setTotalPage(result.getTotalPages());
-        productBrandResponse.setListData(result.getContent());
-
-        return productBrandResponse;
+    public List<ProductBrandDto> getAllWithPagination() {
+        return productBrandMapper.findAllActiveProductBrand();
     }
 
     @Override
-    public ProductBrand getOne(Long productBrandId) throws ResourceNotFoundException {
+    public ProductBrandDto getOne(Long productBrandId) throws ResourceNotFoundException {
 
-        ProductBrand productBrand = productBrandRepository.findById(productBrandId).orElse(null);
-
-        if (productBrand == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        return productBrand;
+        return productBrandMapper.findById(productBrandId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
