@@ -5,10 +5,11 @@ import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
 import dashboard.dto.user.UserDto;
 import dashboard.dto.user.UserForm;
+import dashboard.dto.user.UserPasswordForm;
 import dashboard.entities.user.CustomUserDetails;
+import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.provider.JwtTokenProvider;
-import dashboard.services.PusherService;
 import dashboard.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +30,6 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    PusherService pusherService;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -61,8 +56,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll());
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long userId) throws ResourceNotFoundException {
+    @GetMapping("{userId}")
+    public ResponseEntity getOne(@PathVariable(name = "userId") Long userId) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.getOne(userId));
     }
 
@@ -95,6 +90,28 @@ public class UserController {
             userService.update(userForm);
         }
         return index();
+    }
+
+    @PatchMapping(value = "profile", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updateProfile(@RequestBody UserForm userForm) throws ResourceNotFoundException {
+        userService.getOne(userForm.getUserId());
+        userService.updateProfile(userForm);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity changePassword(@RequestBody UserPasswordForm userPasswordForm) {
+        userService.updatePassword(1L, userPasswordForm.getNewPassword());
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "active")
+    public ResponseEntity active(@PathVariable("token") String token) {
+        if (token != null) {
+            userService.active(1L, EntityStatus.ACTIVE);
+            return ResponseEntity.ok(HttpStatus.OK);
+        }
+        return (ResponseEntity) ResponseEntity.badRequest();
     }
 
     @DeleteMapping(value = "{userId}")

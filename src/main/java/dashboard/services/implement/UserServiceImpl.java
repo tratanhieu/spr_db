@@ -3,6 +3,7 @@ package dashboard.services.implement;
 import dashboard.dto.user.UserDto;
 import dashboard.dto.user.UserForm;
 import dashboard.entities.user.User;
+import dashboard.enums.EntityStatus;
 import dashboard.enums.UserStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
@@ -58,6 +59,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(UserForm userForm) {
         userMapper.updateById(userForm);
+    }
+
+    @Override
+    public void updateProfile(UserForm userForm) {
+        userMapper.updateById(userForm);
+    }
+
+    @Override
+    public void updatePassword(Long userId, String password) {
+
+    }
+
+    @Override
+    public void active(Long userId, EntityStatus status) {
+        userMapper.activeUser(userId, status);
     }
 
     @Override

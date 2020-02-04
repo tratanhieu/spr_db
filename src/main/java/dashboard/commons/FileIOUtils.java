@@ -42,8 +42,11 @@ public class FileIOUtils {
         // Update file name
         String dirPath = String.format(STATIC_FOLDER, dir, "images/" + datePath + "/");
         File outputPath = new File(dirPath);
-        if (!outputPath.exists() && !outputPath.mkdir()) {
-            throw new DirectoryNotEmptyException("Can create Folder");
+        if (!outputPath.exists()) {
+            outputPath.mkdir();
+//            if (!res) {
+//                throw new DirectoryNotEmptyException("Can't create Folder");
+//            }
         }
         // Get current path
         Path currentPath = FileSystems.getDefault().getPath(dirPath + "/" + fileName);

@@ -1,13 +1,11 @@
 package dashboard.repositories;
 
-import dashboard.dto.user.UserDto;
-import dashboard.dto.user.UserForm;
-import dashboard.dto.user.UserGroupDto;
-import dashboard.dto.user.UserGroupFeatureDto;
+import dashboard.dto.user.*;
 import dashboard.entities.tag.Tag;
 import dashboard.entities.user.User;
 import dashboard.entities.user.UserGroup;
 import dashboard.entities.user.UserGroupFeature;
+import dashboard.enums.EntityStatus;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -99,6 +97,41 @@ public interface UserMapper {
         "WHERE user_id = #{userId}"
     )
     void updateById(UserForm userForm);
+
+    @Update(
+        "UPDATE user " +
+        "SET " +
+            "first_name = #{firstName}, " +
+            "middle_name = #{middleName}, " +
+            "last_name = #{lastName}, " +
+            "email = #{email}, " +
+            "province_id = #{provinceId}, " +
+            "district_id = #{districtId}, " +
+            "ward_id = #{wardId}, " +
+            "address = #{address}, " +
+            "update_date = NOW() " +
+        "WHERE user_id = #{userId}"
+    )
+    void updateProfileByUserId(UserForm userForm);
+
+    @Update(
+        "UPDATE user " +
+        "SET " +
+            "password = #{password}, " +
+            "update_date = NOW() " +
+        "WHERE user_id = #{userId}"
+    )
+    void updatePasswordByUserId(@Param("userId") Long userId, @Param("password") String password);
+
+    @Update(
+        "UPDATE user " +
+        "SET " +
+            "token = NULL, " +
+            "status = #{status}, " +
+            "update_date = NOW() " +
+        "WHERE user_id = #{userId}"
+    )
+    void activeUser(@Param("userId") Long userId, @Param("status") EntityStatus status);
 
     @Delete(
         "DELETE FROM user WHERE user_id = #{userId}"
