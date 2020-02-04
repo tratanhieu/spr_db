@@ -33,7 +33,7 @@ public interface CartMapper {
             "#{saleOff}, " +
             "#{price}, " +
             "#{totalPrice}" +
-        ")"
+        ") ON DUPLICATE KEY UPDATE quantity = quantity + #{quantity}"
     )
     void addToCart(CartForm cartForm);
 
@@ -51,7 +51,12 @@ public interface CartMapper {
     void updateCart(CartForm cartForm);
 
     @Delete(
-        "DELETE FROM cart WHERE user_id = #{userId} and product_id = #{productId}"
+        "DELETE FROM " +
+            "cart " +
+        "WHERE " +
+            "user_id = #{userId} " +
+            "AND " +
+            "product_id = #{productId}"
     )
     void deleteFromCart(Long userId, Long productId);
 
