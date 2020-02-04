@@ -1,11 +1,10 @@
 package dashboard.services;
 
 import dashboard.dto.product.ProductBrandDto;
-import dashboard.entities.product.ProductBrand;
+import dashboard.dto.product.ProductBrandForm;
+
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -15,9 +14,9 @@ public interface ProductBrandService {
 
     ProductBrandDto getOne(Long productBrandId) throws ResourceNotFoundException;
 
-    int create(ProductBrand productBrand);
+    List create(ProductBrandForm productBrandForm);
 
-    int update(ProductBrand productBrand);
+    List update(ProductBrandForm productBrandForm);
 
     int delete(Long productBrandId) throws ResourceNotFoundException;
 

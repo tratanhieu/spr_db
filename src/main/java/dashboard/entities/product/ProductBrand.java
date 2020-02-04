@@ -1,6 +1,7 @@
 package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.product.ProductBrandForm;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,6 +40,16 @@ public class ProductBrand extends BaseEntity implements Serializable {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    public ProductBrand() {}
+
+    public ProductBrand(ProductBrandForm productBrandForm) {
+        this.productBrandId = productBrandForm.getProductBrandId();
+        this.name = productBrandForm.getName();
+        this.slugName = productBrandForm.getSlugName();
+        this.image = productBrandForm.getImage();
+        this.status = productBrandForm.getStatus();
+    }
 
     public Long getProductBrandId() {
         return productBrandId;

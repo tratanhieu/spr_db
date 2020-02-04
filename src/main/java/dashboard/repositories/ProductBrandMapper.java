@@ -1,9 +1,10 @@
 package dashboard.repositories;
 
 import dashboard.dto.post.PostTypeDto;
-import dashboard.dto.product.ProductBrand;
+
 import dashboard.dto.product.ProductBrandDto;
 import dashboard.entities.post.PostType;
+import dashboard.entities.product.ProductBrand;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -29,16 +30,6 @@ public interface ProductBrandMapper {
 
     @Select(
             "SELECT " +
-                    "post_type_id AS postTypeId, " +
-                    "name, " +
-                    "slug_name AS slugName " +
-                    "FROM post_type " +
-                    "WHERE status = 'ACTIVE'"
-    )
-    List<PostTypeDto> findAllActivePostTypeForSelect();
-
-    @Select(
-            "SELECT " +
                     "product_brand_Id AS productBrandId, " +
                     "name, " +
                     "slug_name AS slugName, " +
@@ -52,44 +43,34 @@ public interface ProductBrandMapper {
     Optional<ProductBrandDto> findById(@Param("productBrandId") Long productBrandId);
 
     @Insert(
-            "INSERT INTO post_type (name, slug_name, create_date, update_date, status) " +
+            "INSERT INTO product_brand (name, slug_name, image, create_date,status) " +
                     "VALUE(" +
                     "#{name}, " +
                     "#{slugName}, " +
-                    "#{createDate}, " +
-                    "#{updateDate}, " +
+                    "#{image}," +
+                    "NOW()," +
                     "#{status}" +
                     ")"
     )
     @SelectKey(
-            statement = "SELECT LAST_INSERT_ID() AS postTypeId",
-            keyProperty = "postTypeId",
+            statement = "SELECT LAST_INSERT_ID() AS productBrandId",
+            keyProperty = "productBrandId",
             before = true,
             resultType = Long.class
     )
-    Long save(PostType postType);
+    Long save(ProductBrand productBrand);
 
     @Update(
-            "UPDATE post_type " +
+            "UPDATE product_brand " +
                     "SET " +
                     "name = #{name}, " +
                     "slug_name = #{slugName}, " +
+                    "image = #{image}, " +
                     "update_date = NOW(), " +
                     "status = #{status} " +
-                    "WHERE post_type_id = #{postTypeId}"
+                    "WHERE product_brand_id = #{productBrandId}"
     )
-    void update(PostType postType);
-
-    @Insert(
-            "<script>" +
-                    "INSERT ALL " +
-                    "<foreach item='postType' index='index' collection='postTypeList'>" +
-                    "INTO post_type(name, slug_name, create_date, update_date, status) " +
-                    "VALUES (#{postType.name}, #{postType.slugName}, #{postType.createDate}, #{postType.updateDate}, #{postType.status})" +
-                    "</foreach>" +
-                    "</script>"
-    )
-    void saveAll(@Param("postTypeList") List<PostType> postTypeList);
+    void update(ProductBrand productBrand);
 
     @Select(
             "DELETE FROM post_type WHERE post_type_id = #{postTypeId}"
