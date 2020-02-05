@@ -73,7 +73,7 @@ public interface ProductBrandMapper {
     void update(ProductBrand productBrand);
 
     @Select(
-            "DELETE FROM post_type WHERE post_type_id = #{postTypeId}"
+            "DELETE FROM product_brand WHERE product_brand_id= #{productBrandId}"
     )
-    void deleteById(@Param("postTypeId") Long postTypeId);
+    void deleteById(@Param("productBrandId") Long productBrandId);
 }

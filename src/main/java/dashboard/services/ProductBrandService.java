@@ -18,7 +18,7 @@ public interface ProductBrandService {
 
     List update(ProductBrandForm productBrandForm);
 
-    int delete(Long productBrandId) throws ResourceNotFoundException;
+    List delete(Long productBrandId);
 
     int updateStatusWithMultipleId(List<Long> ListId, EntityStatus status) throws ResourceNotFoundException;
 }

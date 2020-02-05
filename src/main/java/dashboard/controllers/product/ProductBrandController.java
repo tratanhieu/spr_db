@@ -60,7 +60,7 @@ public class ProductBrandController {
         return ResponseEntity.ok(reponse);
     }
 
-    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(
             @RequestBody ProductBrandForm productBrandForm
     ){
@@ -69,12 +69,11 @@ public class ProductBrandController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "{productBrandId}/delete")
-    public HttpStatus delete(@PathVariable(name = "productBrandId") Long productBrandId) throws ResourceNotFoundException {
-        productBrandService.delete(productBrandId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_BRAND,
-                PusherConstants.PUSHER_ACTION_DELETE);
-        return HttpStatus.OK;
+    @DeleteMapping(value = "{productBrandId}")
+    public ResponseEntity delete(@PathVariable(name = "productBrandId") Long productBrandId){
+        List respone =  productBrandService.delete(productBrandId);
+
+        return ResponseEntity.ok(respone);
     }
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)

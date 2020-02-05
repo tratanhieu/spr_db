@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EmbeddedId;
 import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 @Service
 public class ProductBrandSerivceImpl implements ProductBrandService {
 
+    public static final String EMPTY_VALUE = "";
     @Autowired
     ProductBrandRepository productBrandRepository;
 
@@ -57,7 +59,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             }
 
             // Make slug name
-            if (productBrandForm.getSlugName() == null) {
+            if (EMPTY_VALUE.equals(productBrandForm.getSlugName())) {
                 productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
             }
 
@@ -85,7 +87,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             throw new ValidationException("Product brand id cannot empty");
         }
 
-        if (productBrandForm.getSlugName() == null) {
+        if (EMPTY_VALUE.equals(productBrandForm.getSlugName())) {
             productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
         }
 
@@ -96,16 +98,11 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
     }
 
     @Override
-    public int delete(Long productBrandId) throws ResourceNotFoundException {
-        ProductBrand productBrand = productBrandRepository.findById(productBrandId).orElse(null);
-        if (productBrand == null) {
-            throw new ResourceNotFoundException();
-        }
-        productBrand.setStatus(EntityStatus.DELETED);
-        productBrand.setDeleteDate(new Date());
-        productBrandRepository.save(productBrand);
+    public List delete(Long productBrandId){
 
-        return 1;
+        productBrandMapper.deleteById(productBrandId);
+
+        return getAllWithPagination();
     }
 
     @Override
