@@ -1,9 +1,13 @@
 package dashboard.repositories;
 
 import dashboard.dto.user.customer.CustomerDto;
+import dashboard.dto.user.customer.CustomerForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.Optional;
 
 @Mapper
 public interface CustomerMapper {
@@ -26,5 +30,22 @@ public interface CustomerMapper {
         "WHERE " +
             "user_id = #{userId}"
     )
-    CustomerDto getCustomerInfo(@Param("userId") Long userId);
+    Optional<CustomerDto> getCustomerInfo(@Param("userId") Long userId);
+
+    @Update(
+        "UPDATE customer SET " +
+            "first_name = #{firstName}, " +
+            "last_name = #{lastName}, " +
+            "middle_name = #{middleName}, " +
+            "dob = #{dob}, " +
+            "email = #{email}, " +
+            "phone = #{phone}, " +
+            "province = #{provinceId}, " +
+            "district = #{districtId}, " +
+            "ward = #{wardId}, " +
+            "address = #{address} " +
+        "WHERE " +
+            "user_id = #{userId}"
+    )
+    void updateCustomerInfo(CustomerForm customerForm);
 }
