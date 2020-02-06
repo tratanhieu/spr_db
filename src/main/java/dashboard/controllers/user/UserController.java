@@ -3,6 +3,7 @@ package dashboard.controllers.user;
 import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
+import dashboard.dto.user.LoginForm;
 import dashboard.dto.user.UserDto;
 import dashboard.dto.user.UserForm;
 import dashboard.dto.user.UserPasswordForm;
@@ -38,10 +39,10 @@ public class UserController {
     private JwtTokenProvider tokenProvider;
 
     @PostMapping("/login")
-    public ResponseEntity authenticateUser(@RequestBody UserForm userForm) {
+    public ResponseEntity authenticateUser(@RequestBody LoginForm loginForm) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-            userForm.getPhone(),
-            userForm.getPassword()
+            loginForm.getUserName(),
+            loginForm.getPassword()
         );
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 

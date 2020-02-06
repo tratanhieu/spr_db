@@ -43,10 +43,7 @@ public class FileIOUtils {
         String dirPath = String.format(STATIC_FOLDER, dir, "images/" + datePath + "/");
         File outputPath = new File(dirPath);
         if (!outputPath.exists()) {
-            outputPath.mkdir();
-//            if (!res) {
-//                throw new DirectoryNotEmptyException("Can't create Folder");
-//            }
+            Files.createDirectory(FileSystems.getDefault().getPath(dirPath));
         }
         // Get current path
         Path currentPath = FileSystems.getDefault().getPath(dirPath + "/" + fileName);
