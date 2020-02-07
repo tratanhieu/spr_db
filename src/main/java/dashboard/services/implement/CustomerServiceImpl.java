@@ -2,11 +2,14 @@ package dashboard.services.implement;
 
 import dashboard.dto.user.customer.CustomerDto;
 import dashboard.dto.user.customer.CustomerForm;
+import dashboard.dto.user.customer.PasswordForm;
+import dashboard.dto.user.customer.RegisterForm;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.repositories.CustomerMapper;
 import dashboard.services.CustomerService;
 import dashboard.services.ProvinceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,5 +50,35 @@ public class CustomerServiceImpl implements CustomerService {
     public void updateCustomerInfo(CustomerForm customerForm) throws ResourceNotFoundException {
         customerMapper.getCustomerInfo(customerForm.getUserId()).orElseThrow(ResourceNotFoundException::new);
         customerMapper.updateCustomerInfo(customerForm);
+    }
+
+    @Override
+    public int changePassword(PasswordForm passwordForm, Long userId) {
+        String oldPassword = customerMapper.getCustomerPassword(userId);
+
+        if(!passwordForm.getNewPassword().equals(passwordForm.getConfirmNewPassword())) {
+            // pass moi khong khop
+            return 2;
+        }
+
+        if(BCrypt.checkpw(passwordForm.getOldPassword(), oldPassword)) {
+            String newHashedPassword = BCrypt.hashpw(passwordForm.getNewPassword(), BCrypt.gensalt());
+            customerMapper.changePassword(newHashedPassword, userId);
+            // ok
+            return 1;
+        }
+        // pass cu sai
+        return -1;
+    }
+
+    @Override
+    public int registNewCustomer(RegisterForm registerForm) {
+        if(!registerForm.getPassword().equals(registerForm.getConfirmPassword())) {
+            // pass ko trung
+            return -1;
+        }
+
+        customerMapper.registNewCustomer(registerForm);
+        return 1;
     }
 }

@@ -2,10 +2,8 @@ package dashboard.repositories;
 
 import dashboard.dto.user.customer.CustomerDto;
 import dashboard.dto.user.customer.CustomerForm;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import dashboard.dto.user.customer.RegisterForm;
+import org.apache.ibatis.annotations.*;
 
 import java.util.Optional;
 
@@ -33,7 +31,9 @@ public interface CustomerMapper {
     Optional<CustomerDto> getCustomerInfo(@Param("userId") Long userId);
 
     @Update(
-        "UPDATE customer SET " +
+        "UPDATE " +
+            "customer " +
+        "SET " +
             "first_name = #{firstName}, " +
             "last_name = #{lastName}, " +
             "middle_name = #{middleName}, " +
@@ -48,4 +48,26 @@ public interface CustomerMapper {
             "user_id = #{userId}"
     )
     void updateCustomerInfo(CustomerForm customerForm);
+
+    @Select(
+        "SELECT " +
+            "password " +
+        "FROM " +
+            "customer " +
+        "WHERE " +
+            "userId = #{userId}"
+    )
+    String getCustomerPassword(@Param("userId")Long userId);
+
+    @Update(
+        "UPDATE " +
+            "customer " +
+        "SET " +
+            "password = #{newPassword} " +
+        "WHERE " +
+            "userId = #{userId}")
+    void changePassword(@Param("newPassword") String newPassword, @Param("userId") Long userId);
+
+    @Insert("INSERT INTO customer(phone, password, status) VALUES(#{phone}, #{password}, 'INACTIVE' )")
+    void registNewCustomer(RegisterForm registerForm);
 }
