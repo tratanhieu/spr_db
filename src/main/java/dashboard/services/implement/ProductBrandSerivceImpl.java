@@ -2,6 +2,7 @@ package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
 import dashboard.commons.FileIOUtils;
+import dashboard.commons.ValidationUtils;
 import dashboard.dto.product.ProductBrandDto;
 import dashboard.dto.product.ProductBrandForm;
 import dashboard.entities.product.Product;
@@ -13,8 +14,6 @@ import dashboard.repositories.ProductBrandMapper;
 import dashboard.repositories.ProductBrandRepository;
 import dashboard.services.ProductBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,6 @@ import java.util.Map;
 @Service
 public class ProductBrandSerivceImpl implements ProductBrandService {
 
-    public static final String EMPTY_VALUE = "";
     @Autowired
     ProductBrandRepository productBrandRepository;
 
@@ -59,7 +57,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             }
 
             // Make slug name
-            if (EMPTY_VALUE.equals(productBrandForm.getSlugName())) {
+            if (ValidationUtils.isBlank(productBrandForm.getSlugName())) {
                 productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
             }
 
@@ -81,13 +79,17 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
     }
 
     @Override
+    @Transactional(
+            propagation = Propagation.REQUIRED,
+            rollbackFor = {Exception.class}
+    )
     public List update(ProductBrandForm productBrandForm) {
 
         if (productBrandForm.getProductBrandId() == null) {
             throw new ValidationException("Product brand id cannot empty");
         }
 
-        if (EMPTY_VALUE.equals(productBrandForm.getSlugName())) {
+        if (ValidationUtils.isBlank(productBrandForm.getSlugName())) {
             productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
         }
 
