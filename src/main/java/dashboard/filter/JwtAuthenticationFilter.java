@@ -29,15 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             // Lấy jwt từ request
-            String jwt = getJwtFromRequest(request);
+            String jwt = tokenProvider.getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 // Lấy id user từ chuỗi jwt
-                String userName = tokenProvider.getUserPhoneFromJWT(jwt);
-                // Lấy thông tin người dùng từ id
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
+                Long userId = tokenProvider.getUserIdFromJWT(jwt);
+                UserDetails userDetails = customUserDetailsService.loadUserByUserId(userId);
                 if(userDetails != null) {
-                    // Nếu người dùng hợp lệ, set thông tin cho Seturity Context
                     UsernamePasswordAuthenticationToken
                             authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -49,14 +47,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error("failed on set user authentication", ex);
         }
         filterChain.doFilter(request, response);
-    }
-
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        // Kiểm tra xem header Authorization có chứa thông tin jwt không
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 }

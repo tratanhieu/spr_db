@@ -44,12 +44,32 @@ public interface UserMapper {
             "last_name AS lastName, " +
             "phone, " +
             "email, " +
+            "province_id AS provinceId, " +
+            "district_id AS districtId, " +
+            "ward_id AS wardId, " +
+            "address AS address, " +
             "user_group_id AS userGroupId, " +
             "status " +
         "FROM user " +
         "WHERE user_id = #{userId}"
     )
     Optional<UserDto> findById(@Param("userId") Long userId);
+
+    @Select(
+        "SELECT " +
+            "user_id AS userId, " +
+            "first_name AS firstName, " +
+            "middle_name AS middleName, " +
+            "last_name AS lastName, " +
+            "phone, " +
+            "email, " +
+            "password, " +
+            "user_group_id AS userGroupId, " +
+            "status " +
+        "FROM user " +
+        "WHERE phone = #{userId}"
+    )
+    Optional<User> findByUserId(@Param("userId") Long userId);
 
     @Select(
         "SELECT " +

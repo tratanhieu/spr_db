@@ -8,8 +8,12 @@ import dashboard.dto.user.UserDto;
 import dashboard.dto.user.UserForm;
 import dashboard.dto.user.UserPasswordForm;
 import dashboard.entities.user.CustomUserDetails;
+import dashboard.entities.user.User;
 import dashboard.enums.EntityStatus;
+import dashboard.enums.UserStatus;
+import dashboard.exceptions.customs.InvalidException;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.exceptions.customs.ValidationException;
 import dashboard.provider.JwtTokenProvider;
 import dashboard.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +56,12 @@ public class UserController {
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
         return ResponseEntity.ok(new HashMap<String, String>() {{ put("token", jwt); }});
     }
+
+//    @PostMapping("/logout")
+//    public ResponseEntity logout() {
+//        String jwt = tokenProvider.
+//        return ResponseEntity.ok(new HashMap<String, String>() {{ put("token", jwt); }});
+//    }
 
     @GetMapping
     public ResponseEntity index() {
@@ -93,16 +104,53 @@ public class UserController {
         return index();
     }
 
+    @GetMapping(value = "profile")
+    public ResponseEntity getUpdateProfile(
+            HttpServletRequest request
+    ) throws ResourceNotFoundException {
+        String token = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromJWT(token);
+        Map map =  userService.getUserProfile(userId);
+        UserDto user = (UserDto) map.get("user");
+        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new InvalidException("User not valid");
+        }
+        return ResponseEntity.ok(map);
+    }
+
     @PatchMapping(value = "profile", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateProfile(@RequestBody UserForm userForm) throws ResourceNotFoundException {
-        userService.getOne(userForm.getUserId());
+    public ResponseEntity updateProfile(
+            @RequestBody UserForm userForm,
+            HttpServletRequest request
+    ) throws ResourceNotFoundException {
+        String token = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromJWT(token);
+        UserDto user =  userService.getOne(userId);
+        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new InvalidException("User not valid");
+        }
         userService.updateProfile(userForm);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PatchMapping(value = "change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity changePassword(@RequestBody UserPasswordForm userPasswordForm) {
-        userService.updatePassword(1L, userPasswordForm.getNewPassword());
+    public ResponseEntity changePassword(
+            @RequestBody UserPasswordForm userPasswordForm,
+            HttpServletRequest request
+    ) {
+        String token = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromJWT(token);
+        Map<String, String> errors = new HashMap<>();
+        if (!userPasswordForm.getNewPassword().equals(userPasswordForm.getConfirmPassword())) {
+            errors.put("confirmPassword", "Confirm Password not match");
+        }
+        if (!userPasswordForm.getNewPassword().equals(userPasswordForm.getConfirmPassword())) {
+            errors.put("newPassword", "New Password must different Old Password");
+        }
+        if (errors.size() > 0) {
+            throw new ValidationException(errors);
+        }
+        userService.updatePassword(userId, userPasswordForm.getNewPassword());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

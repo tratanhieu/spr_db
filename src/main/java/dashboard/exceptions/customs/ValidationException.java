@@ -1,19 +1,17 @@
 package dashboard.exceptions.customs;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.util.Set;
+import java.util.Map;
 
-public class ValidationException extends ConstraintViolationException {
-    public ValidationException() {
-        super(null);
+public class ValidationException extends RuntimeException {
+    private Map<String, String> errors;
+
+    public ValidationException() {}
+
+    public ValidationException(Map<String, String> errors) {
+        this.errors = errors;
     }
 
-    public ValidationException(String message, Set<? extends ConstraintViolation<?>> constraintViolations) {
-        super(message, constraintViolations);
-    }
-
-    public ValidationException(Set<? extends ConstraintViolation<?>> constraintViolations) {
-        super(constraintViolations);
+    public Map getErrors() {
+        return errors;
     }
 }

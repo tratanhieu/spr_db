@@ -10,6 +10,7 @@ import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.UserGroupMapper;
 import dashboard.repositories.UserMapper;
 import dashboard.repositories.UserRepository;
+import dashboard.services.ProvinceService;
 import dashboard.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    ProvinceService provinceService;
+
     @Override
     public List getAll() {
         return userMapper.findAll();
@@ -47,6 +51,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getOne(Long userId) throws ResourceNotFoundException {
         return userMapper.findById(userId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public Map getUserProfile(Long userId) throws ResourceNotFoundException {
+        UserDto user = userMapper.findById(userId).orElseThrow(ResourceNotFoundException::new);
+        Map<String, Object> map = new HashMap<>();
+        map.put("user", user);
+        map.put("provinceList", provinceService.listProvince());
+        return map;
     }
 
     @Override

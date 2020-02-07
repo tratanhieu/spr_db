@@ -3,6 +3,7 @@ package dashboard.dto.user;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dashboard.dto.BaseEntityDto;
 import dashboard.enums.EntityStatus;
+import dashboard.enums.UserStatus;
 
 import java.util.Date;
 
@@ -51,7 +52,7 @@ public class UserDto extends BaseEntityDto {
 
     private String userGroupName;
 
-    private EntityStatus status;
+    private UserStatus status;
 
     public Long getUserId() {
         return userId;
@@ -181,11 +182,11 @@ public class UserDto extends BaseEntityDto {
         this.userGroupName = userGroupName;
     }
 
-    public EntityStatus getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(EntityStatus status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 }

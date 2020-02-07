@@ -27,7 +27,6 @@ public class FileIOUtils {
     }
 
     public Map createImageViaBase64Encode(String encodedString, String fileName) throws IOException {
-        // Check if is image file
         String[] encodedArr = encodedString.split(",");
         String fileExtension = "jpg";
         String encoded = encodedString;
@@ -42,8 +41,13 @@ public class FileIOUtils {
         // Update file name
         String dirPath = String.format(STATIC_FOLDER, dir, "images/" + datePath + "/");
         File outputPath = new File(dirPath);
+
         if (!outputPath.exists()) {
-            Files.createDirectory(FileSystems.getDefault().getPath(dirPath));
+            try {
+                outputPath.mkdir();
+            } catch (SecurityException ex) {
+                throw new SecurityException(ex);
+            }
         }
         // Get current path
         Path currentPath = FileSystems.getDefault().getPath(dirPath + "/" + fileName);

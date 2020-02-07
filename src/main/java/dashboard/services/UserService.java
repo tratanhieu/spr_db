@@ -19,6 +19,8 @@ public interface UserService {
 
     UserDto getOne(Long userId) throws ResourceNotFoundException;
 
+    Map getUserProfile(Long userId) throws ResourceNotFoundException;
+
     void create(UserForm userForm);
 
     void update(UserForm userForm);
