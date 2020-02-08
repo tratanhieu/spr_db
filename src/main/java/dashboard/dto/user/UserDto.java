@@ -30,6 +30,8 @@ public class UserDto extends BaseEntityDto {
 
     private String email;
 
+    private String avatar;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long provinceId;
 
@@ -120,6 +122,14 @@ public class UserDto extends BaseEntityDto {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public void setEmail(String email) {

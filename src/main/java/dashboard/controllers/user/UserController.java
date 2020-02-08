@@ -27,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,7 +112,7 @@ public class UserController {
         String token = tokenProvider.getJwtFromRequest(request);
         Long userId = tokenProvider.getUserIdFromJWT(token);
         Map map =  userService.getUserProfile(userId);
-        UserDto user = (UserDto) map.get("user");
+        UserDto user = (UserDto) map.get("userProfile");
         if (!user.getStatus().equals(UserStatus.ACTIVE)) {
             throw new InvalidException("User not valid");
         }
@@ -122,7 +123,7 @@ public class UserController {
     public ResponseEntity updateProfile(
             @RequestBody UserForm userForm,
             HttpServletRequest request
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, IOException {
         String token = tokenProvider.getJwtFromRequest(request);
         Long userId = tokenProvider.getUserIdFromJWT(token);
         UserDto user =  userService.getOne(userId);

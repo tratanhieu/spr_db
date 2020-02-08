@@ -44,6 +44,7 @@ public interface UserMapper {
             "last_name AS lastName, " +
             "phone, " +
             "email, " +
+            "avatar, " +
             "province_id AS provinceId, " +
             "district_id AS districtId, " +
             "ward_id AS wardId, " +
@@ -67,7 +68,7 @@ public interface UserMapper {
             "user_group_id AS userGroupId, " +
             "status " +
         "FROM user " +
-        "WHERE phone = #{userId}"
+        "WHERE user_id = #{userId}"
     )
     Optional<User> findByUserId(@Param("userId") Long userId);
 
@@ -125,6 +126,7 @@ public interface UserMapper {
             "middle_name = #{middleName}, " +
             "last_name = #{lastName}, " +
             "email = #{email}, " +
+            "avatar = #{avatar}, " +
             "province_id = #{provinceId}, " +
             "district_id = #{districtId}, " +
             "ward_id = #{wardId}, " +

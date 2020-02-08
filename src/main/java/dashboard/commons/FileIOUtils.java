@@ -62,6 +62,11 @@ public class FileIOUtils {
         return map;
     }
 
+    public String createImageViaBase64EncodeWithoutSystemPath(String encodedString, String fileName) throws IOException {
+        Map map = createImageViaBase64Encode(encodedString, fileName);
+        return (String) map.get(PATH);
+    }
+
     public void rollBackUploadedImages() {
         if (this.uploadedFiles.size() > 0) {
             this.uploadedFiles.forEach(FileUtils::deleteQuietly);
@@ -103,5 +108,25 @@ public class FileIOUtils {
             this.rollBackUploadedImages();
         }
         return contentBuilder.toString();
+    }
+
+    private static Path getStaticUploadFolderPath(String str) {
+        String[] strArr = str.split("/");
+        StringBuilder replaceTarget = new StringBuilder();
+        int strArrLength = strArr.length;
+        for (int i = 5; i < strArrLength; i++) {
+            replaceTarget.append(strArr[i]);
+            if (i != strArrLength - 1) {
+                replaceTarget.append("/");
+            }
+        }
+
+        Path dir = FileSystems.getDefault().getPath("").toAbsolutePath();
+        return Paths.get(String.format(STATIC_FOLDER, dir, replaceTarget.toString()));
+    }
+
+    public void removeImageFromURL(String url) {
+        Path path = getStaticUploadFolderPath(url);
+        FileUtils.deleteQuietly(path.toFile());
     }
 }

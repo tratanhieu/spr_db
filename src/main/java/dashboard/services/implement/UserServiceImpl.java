@@ -1,5 +1,6 @@
 package dashboard.services.implement;
 
+import dashboard.commons.FileIOUtils;
 import dashboard.dto.user.UserDto;
 import dashboard.dto.user.UserForm;
 import dashboard.entities.user.User;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +59,7 @@ public class UserServiceImpl implements UserService {
     public Map getUserProfile(Long userId) throws ResourceNotFoundException {
         UserDto user = userMapper.findById(userId).orElseThrow(ResourceNotFoundException::new);
         Map<String, Object> map = new HashMap<>();
-        map.put("user", user);
+        map.put("userProfile", user);
         map.put("provinceList", provinceService.listProvince());
         return map;
     }
@@ -75,7 +77,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(UserForm userForm) {
+    public void updateProfile(UserForm userForm) throws IOException {
+        if (!userForm.getAvatar().contains("http")) {
+            FileIOUtils fileIOUtils = new FileIOUtils();
+            fileIOUtils.createImageViaBase64EncodeWithoutSystemPath(userForm.getAvatar(), userForm.getPhone());
+        }
         userMapper.updateById(userForm);
     }
 

@@ -8,6 +8,7 @@ import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public interface UserService {
 
     void update(UserForm userForm);
 
-    void updateProfile(UserForm userForm);
+    void updateProfile(UserForm userForm) throws IOException;
 
     void updatePassword(Long userId, String password);
 
