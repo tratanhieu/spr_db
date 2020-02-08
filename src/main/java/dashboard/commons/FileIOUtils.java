@@ -111,7 +111,9 @@ public class FileIOUtils {
 
         if (!ValidationUtils.isBlank(url)) {
 
-            String imageSubFolder = url.substring(IP.length() + IMAGE_FOLDER.length());
+            String [] imageArray = url .split("/");
+
+            String imageSubFolder = imageArray[5] + imageArray[6] + imageArray[7] + imageArray[8];
             Path dir = FileSystems.getDefault().getPath("").toAbsolutePath();
             String dirPath = String.format(STATIC_FOLDER, dir, imageSubFolder);
 
