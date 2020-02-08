@@ -63,7 +63,7 @@ public class ProductBrandController {
     @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(
             @RequestBody ProductBrandForm productBrandForm
-    ){
+    ) throws ResourceNotFoundException {
         ValidationUtils.validate(productBrandForm);
         List response = productBrandService.update(productBrandForm);
         return ResponseEntity.ok(response);

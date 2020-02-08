@@ -23,6 +23,7 @@ import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ProductBrandSerivceImpl implements ProductBrandService {
@@ -61,12 +62,12 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
                 productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
             }
 
-            // Convert image form Base64 file to image file and log file
-            //Map mapUpload = fileIOUtils.createImageViaBase64Encode(productBrandForm.getImage()
-            //       , productBrandForm.getSlugName());
+             // Convert image form Base64 file to image file and log file
+             Map mapUpload = fileIOUtils.createImageViaBase64Encode(productBrandForm.getImage()
+                  , productBrandForm.getSlugName());
 
             // Set data for image
-            //productBrandForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
+            productBrandForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
 
             ProductBrand productBrand = new ProductBrand(productBrandForm);
 
@@ -83,19 +84,42 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             propagation = Propagation.REQUIRED,
             rollbackFor = {Exception.class}
     )
-    public List update(ProductBrandForm productBrandForm) {
+    public List update(ProductBrandForm productBrandForm) throws ResourceNotFoundException {
 
-        if (productBrandForm.getProductBrandId() == null) {
-            throw new ValidationException("Product brand id cannot empty");
+        FileIOUtils fileIOUtils = new FileIOUtils();
+        ProductBrandDto productBrandDto;
+        try {
+            if (productBrandForm.getProductBrandId() == null) {
+                throw new ValidationException("Product brand id cannot empty");
+            }
+
+            if (ValidationUtils.isBlank(productBrandForm.getSlugName())) {
+                productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
+            }
+
+            try {
+                productBrandDto = getOne(productBrandForm.getProductBrandId());
+            } catch (Exception e) {
+                throw new ResourceNotFoundException();
+            }
+
+            if (ValidationUtils.isBlank(productBrandDto.getImage())) {
+                Map mapUpload =  fileIOUtils.createImageViaBase64Encode(productBrandForm.getImage()
+                        , productBrandForm.getSlugName());
+                productBrandForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
+            } else {
+
+                fileIOUtils.removeFileViaURL(productBrandDto.getImage());
+                Map mapUpload =  fileIOUtils.createImageViaBase64Encode(productBrandForm.getImage(),productBrandForm.getSlugName());
+                productBrandForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
+            }
+
+            ProductBrand productBrand = new ProductBrand(productBrandForm);
+            productBrandMapper.update(productBrand);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            fileIOUtils.rollBackUploadedImages();
         }
-
-        if (ValidationUtils.isBlank(productBrandForm.getSlugName())) {
-            productBrandForm.setSlugName(DataUtils.makeSlug(productBrandForm.getName()));
-        }
-
-        //update ảnh update sau
-        ProductBrand productBrand = new ProductBrand(productBrandForm);
-        productBrandMapper.update(productBrand);
         return getAllWithPagination();
     }
 

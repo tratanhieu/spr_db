@@ -16,7 +16,7 @@ public interface ProductBrandService {
 
     List create(ProductBrandForm productBrandForm);
 
-    List update(ProductBrandForm productBrandForm);
+    List update(ProductBrandForm productBrandForm) throws ResourceNotFoundException;
 
     List delete(Long productBrandId);
 

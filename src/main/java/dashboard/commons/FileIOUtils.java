@@ -41,9 +41,14 @@ public class FileIOUtils {
         String datePath = new SimpleDateFormat("yyyy/MM/dd").format(DataUtils.getSystemDate());
         // Update file name
         String dirPath = String.format(STATIC_FOLDER, dir, "images/" + datePath + "/");
+
         File outputPath = new File(dirPath);
-        if (!outputPath.exists() && !outputPath.mkdir()) {
-            throw new DirectoryNotEmptyException("Can create Folder");
+        if (!outputPath.exists()) {
+            try {
+                outputPath.mkdir();
+            } catch (SecurityException ex) {
+                throw new SecurityException(ex);
+            }
         }
         // Get current path
         Path currentPath = FileSystems.getDefault().getPath(dirPath + "/" + fileName);
@@ -99,5 +104,25 @@ public class FileIOUtils {
             this.rollBackUploadedImages();
         }
         return contentBuilder.toString();
+    }
+
+    public void removeFileViaURL(String url) {
+
+
+        if (!ValidationUtils.isBlank(url)) {
+
+            String imageSubFolder = url.substring(IP.length() + IMAGE_FOLDER.length());
+            Path dir = FileSystems.getDefault().getPath("").toAbsolutePath();
+            String dirPath = String.format(STATIC_FOLDER, dir, imageSubFolder);
+
+            File outputPath = new File(dirPath);
+            if (outputPath.exists()) {
+                try {
+                    outputPath.delete();
+                } catch (SecurityException ex) {
+                    throw new SecurityException(ex);
+                }
+            }
+        }
     }
 }
