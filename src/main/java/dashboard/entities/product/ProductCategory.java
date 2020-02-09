@@ -2,6 +2,7 @@ package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.product.ProductCategoryForm;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 
@@ -61,6 +62,13 @@ public class ProductCategory extends BaseEntity implements Serializable {
 		this.name = name;
 		this.slugName = slugName;
 		this.status = status;
+	}
+
+	public ProductCategory(ProductCategoryForm productCategoryForm) {
+    	this.productCategoryId = productCategoryForm.getProductCategoryId();
+    	this.name = productCategoryForm.getName();
+    	this.slugName = productCategoryForm.getSlugName();
+    	this.status = productCategoryForm.getStatus();
 	}
 
 	public Long getProductCategoryId() {

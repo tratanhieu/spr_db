@@ -30,7 +30,7 @@ public interface ProductBrandMapper {
 
     @Select(
             "SELECT " +
-                    "product_brand_Id AS productBrandId, " +
+                    "product_brand_id AS productBrandId, " +
                     "name, " +
                     "slug_name AS slugName, " +
                     "image, " +
