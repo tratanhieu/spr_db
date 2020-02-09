@@ -6,6 +6,7 @@ import dashboard.dto.user.UserForm;
 import dashboard.entities.user.User;
 import dashboard.enums.EntityStatus;
 import dashboard.enums.UserStatus;
+import dashboard.exceptions.customs.InvalidException;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.UserGroupMapper;
@@ -19,12 +20,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -56,11 +55,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map getUserProfile(Long userId) throws ResourceNotFoundException {
+    public Map getUserProfile(Long userId) throws ResourceNotFoundException, IOException {
         UserDto user = userMapper.findById(userId).orElseThrow(ResourceNotFoundException::new);
+        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new InvalidException("User not valid");
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("userProfile", user);
         map.put("provinceList", provinceService.listProvince());
+        map.put("districtList", provinceService.listDistrict(user.getProvinceId()));
+        map.put("wardList", provinceService.listWard(
+            user.getProvinceId(),
+            user.getDistrictId()
+        ));
         return map;
     }
 
@@ -77,12 +84,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(UserForm userForm) throws IOException {
-        if (!userForm.getAvatar().contains("http")) {
-            FileIOUtils fileIOUtils = new FileIOUtils();
-            fileIOUtils.createImageViaBase64EncodeWithoutSystemPath(userForm.getAvatar(), userForm.getPhone());
+    public void updateProfile(UserForm userForm) throws ResourceNotFoundException, IOException {
+        UserDto user =  getOne(userForm.getUserId());
+        FileIOUtils fileIOUtils = new FileIOUtils();
+        String avatarPath = "";
+        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
+            throw new InvalidException("User not valid");
         }
-        userMapper.updateById(userForm);
+        if (!userForm.getAvatar().contains("http")) {
+            avatarPath = fileIOUtils.createImageViaBase64EncodeWithoutSystemPath(
+                userForm.getAvatar(),userForm.getPhone() + "-" + UUID.randomUUID()
+            );
+            userForm.setAvatar(avatarPath);
+        }
+        userMapper.updateProfileByUserId(userForm);
+        if (!StringUtils.isEmpty(avatarPath)) {
+            fileIOUtils.removeImageFromURL(userForm.getAvatar());
+        }
     }
 
     @Override

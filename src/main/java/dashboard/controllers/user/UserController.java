@@ -53,9 +53,14 @@ public class UserController {
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        return ResponseEntity.ok(new HashMap<String, String>() {{ put("token", jwt); }});
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = customUserDetails.getUser();
+        String jwt = tokenProvider.generateToken(customUserDetails);
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", jwt);
+        map.put("avatar", user.getAvatar());
+        map.put("fullName", user.getFullName());
+        return ResponseEntity.ok(map);
     }
 
 //    @PostMapping("/logout")
@@ -108,14 +113,10 @@ public class UserController {
     @GetMapping(value = "profile")
     public ResponseEntity getUpdateProfile(
             HttpServletRequest request
-    ) throws ResourceNotFoundException {
+    ) throws ResourceNotFoundException, IOException {
         String token = tokenProvider.getJwtFromRequest(request);
         Long userId = tokenProvider.getUserIdFromJWT(token);
         Map map =  userService.getUserProfile(userId);
-        UserDto user = (UserDto) map.get("userProfile");
-        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-            throw new InvalidException("User not valid");
-        }
         return ResponseEntity.ok(map);
     }
 
@@ -126,10 +127,7 @@ public class UserController {
     ) throws ResourceNotFoundException, IOException {
         String token = tokenProvider.getJwtFromRequest(request);
         Long userId = tokenProvider.getUserIdFromJWT(token);
-        UserDto user =  userService.getOne(userId);
-        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-            throw new InvalidException("User not valid");
-        }
+        userForm.setUserId(userId);
         userService.updateProfile(userForm);
         return ResponseEntity.ok(HttpStatus.OK);
     }

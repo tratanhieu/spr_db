@@ -80,6 +80,7 @@ public interface UserMapper {
             "last_name AS lastName, " +
             "phone, " +
             "email, " +
+            "avatar, " +
             "password, " +
             "user_group_id AS userGroupId, " +
             "status " +

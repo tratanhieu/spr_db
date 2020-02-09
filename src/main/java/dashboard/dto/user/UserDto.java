@@ -33,13 +33,13 @@ public class UserDto extends BaseEntityDto {
     private String avatar;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long provinceId;
+    private String provinceId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long districtId;
+    private String districtId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long wardId;
+    private String wardId;
 
     private String address;
 
@@ -136,27 +136,27 @@ public class UserDto extends BaseEntityDto {
         this.email = email;
     }
 
-    public Long getProvinceId() {
+    public String getProvinceId() {
         return provinceId;
     }
 
-    public void setProvinceId(Long provinceId) {
+    public void setProvinceId(String provinceId) {
         this.provinceId = provinceId;
     }
 
-    public Long getDistrictId() {
+    public String getDistrictId() {
         return districtId;
     }
 
-    public void setDistrictId(Long districtId) {
+    public void setDistrictId(String districtId) {
         this.districtId = districtId;
     }
 
-    public Long getWardId() {
+    public String getWardId() {
         return wardId;
     }
 
-    public void setWardId(Long wardId) {
+    public void setWardId(String wardId) {
         this.wardId = wardId;
     }
 

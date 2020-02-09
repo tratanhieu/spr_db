@@ -20,11 +20,11 @@ public class UserForm {
 
     private String password;
 
-    private Long provinceId;
+    private String provinceId;
 
-    private Long districtId;
+    private String districtId;
 
-    private Long wardId;
+    private String wardId;
 
     private String address;
 
@@ -96,27 +96,27 @@ public class UserForm {
         this.password = password;
     }
 
-    public Long getProvinceId() {
+    public String getProvinceId() {
         return provinceId;
     }
 
-    public void setProvinceId(Long provinceId) {
+    public void setProvinceId(String provinceId) {
         this.provinceId = provinceId;
     }
 
-    public Long getDistrictId() {
+    public String getDistrictId() {
         return districtId;
     }
 
-    public void setDistrictId(Long districtId) {
+    public void setDistrictId(String districtId) {
         this.districtId = districtId;
     }
 
-    public Long getWardId() {
+    public String getWardId() {
         return wardId;
     }
 
-    public void setWardId(Long wardId) {
+    public void setWardId(String wardId) {
         this.wardId = wardId;
     }
 

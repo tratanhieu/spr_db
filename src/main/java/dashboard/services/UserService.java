@@ -20,13 +20,13 @@ public interface UserService {
 
     UserDto getOne(Long userId) throws ResourceNotFoundException;
 
-    Map getUserProfile(Long userId) throws ResourceNotFoundException;
+    Map getUserProfile(Long userId) throws ResourceNotFoundException, IOException;
 
     void create(UserForm userForm);
 
     void update(UserForm userForm);
 
-    void updateProfile(UserForm userForm) throws IOException;
+    void updateProfile(UserForm userForm) throws ResourceNotFoundException, IOException;
 
     void updatePassword(Long userId, String password);
 

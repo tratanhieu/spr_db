@@ -27,8 +27,6 @@ public class DataUtils {
 		return new Date();
 	}
 
-
-
 	public static int findArrayIndex(String arr[], String t)
 	{
 		int len = arr.length;
