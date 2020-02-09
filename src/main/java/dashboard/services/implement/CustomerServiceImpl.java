@@ -81,4 +81,10 @@ public class CustomerServiceImpl implements CustomerService {
         customerMapper.registNewCustomer(registerForm);
         return 1;
     }
+
+    @Override
+    public int completeRegistCustomer(String phone) {
+        customerMapper.completeRegistCustomer(phone);
+        return 1;
+    }
 }

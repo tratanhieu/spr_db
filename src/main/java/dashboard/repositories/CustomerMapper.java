@@ -70,4 +70,7 @@ public interface CustomerMapper {
 
     @Insert("INSERT INTO customer(phone, password, status) VALUES(#{phone}, #{password}, 'INACTIVE' )")
     void registNewCustomer(RegisterForm registerForm);
+
+    @Update("UPDATE customer SET status = 'ACTIVE' WHERE phone = #{phone}")
+    void completeRegistCustomer(String phone);
 }

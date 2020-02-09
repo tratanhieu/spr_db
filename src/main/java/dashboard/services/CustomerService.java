@@ -17,4 +17,6 @@ public interface CustomerService {
     int changePassword(PasswordForm passwordForm, Long userId);
 
     int registNewCustomer(RegisterForm registerForm);
+
+    int completeRegistCustomer(String phone);
 }
