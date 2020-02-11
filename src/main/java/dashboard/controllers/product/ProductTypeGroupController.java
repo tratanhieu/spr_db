@@ -1,6 +1,7 @@
 package dashboard.controllers.product;
 
 import dashboard.constants.PusherConstants;
+import dashboard.dto.product.ProductTypeGroupForm;
 import dashboard.entities.product.ProductTypeGroup;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/product/type_group")
@@ -33,10 +36,8 @@ public class ProductTypeGroupController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
             @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
-        Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
-        page = 1 >= page ? 0 : (page - 1);
-        Pageable pageable = PageRequest.of(page, size, sortable);
-        return ResponseEntity.ok(productTypeGroupService.getAllWithPagination(pageable));
+
+        return ResponseEntity.ok(productTypeGroupService.getAll());
     }
 
     @GetMapping("{productTypeGroupId}")
@@ -46,32 +47,25 @@ public class ProductTypeGroupController {
     }
 
     @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody ProductTypeGroup productTypeGroup) {
+    public ResponseEntity create(@RequestBody ProductTypeGroupForm productTypeGroupForm) {
         // Save
-        productTypeGroupService.create(productTypeGroup);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
-        return HttpStatus.OK;
+        List response =  productTypeGroupService.create(productTypeGroupForm);
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "{productTypeGroupId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(
-            @PathVariable(name = "productTypeGroupId") Long productTypeGroupId,
-            @RequestBody ProductTypeGroup productTypeGroup
+    @PutMapping(value = "{productTypeGroupId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity update(
+            @RequestBody ProductTypeGroupForm productTypeGroupForm
     ) {
-        productTypeGroup.setProductTypeGroupId(productTypeGroupId);
-        productTypeGroupService.update(productTypeGroup);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
-        return HttpStatus.OK;
+        List response =  productTypeGroupService.update(productTypeGroupForm);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "{productTypeGroupId}/delete")
-    public HttpStatus delete(@PathVariable(name = "productTypeGroupId") Long productCategoryId) throws ResourceNotFoundException {
-        productTypeGroupService.delete(productCategoryId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_DATA_PRODUCT_CATEGORY);
-        return HttpStatus.OK;
+    @DeleteMapping(value = "{productTypeGroupId}")
+    public ResponseEntity delete(@PathVariable(name = "productTypeGroupId") Long productCategoryId) throws ResourceNotFoundException {
+        List response = productTypeGroupService.delete(productCategoryId);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)

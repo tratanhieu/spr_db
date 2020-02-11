@@ -1,11 +1,15 @@
 package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
+import dashboard.commons.ValidationUtils;
+import dashboard.dto.product.ProductTypeGroupDto;
+import dashboard.dto.product.ProductTypeGroupForm;
 import dashboard.entities.product.ProductTypeGroup;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.ProductTypeGroupRepository;
+import dashboard.repositories.impl.ProductTypeGroupMapper;
 import dashboard.services.ProductTypeGroupService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.validation.ValidationException;
 import java.util.List;
 
 @Service
@@ -22,53 +27,58 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	@Autowired
 	ProductTypeGroupRepository productTypeGroupRepository;
 
+	@Autowired
+    ProductTypeGroupMapper productTypeGroupMapper;
+
 	@Override
-	public ListEntityResponse<ProductTypeGroup> getAllWithPagination(Pageable pageable) {
-		Page<ProductTypeGroup> result = productTypeGroupRepository.findWithPageable(pageable);
+	public List<ProductTypeGroupDto> getAll() {
 
-		ListEntityResponse<ProductTypeGroup> productTypeGroupResponse = new ListEntityResponse<>();
-
-        productTypeGroupResponse.setPage(result.getNumber() + 1);
-        productTypeGroupResponse.setPageSize(result.getSize());
-        productTypeGroupResponse.setTotalPage(result.getTotalPages());
-        productTypeGroupResponse.setListData(result.getContent());
-
-		return productTypeGroupResponse;
+		return productTypeGroupMapper.findAllActiveProductTypeGroup();
 	}
 
     @Override
-    public ProductTypeGroup getOne(Long productCategoryId) throws ResourceNotFoundException {
-        ProductTypeGroup productTypeGroup = productTypeGroupRepository.findById(productCategoryId).orElse(null);
-
-        if (productTypeGroup == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        return productTypeGroup;
+    public ProductTypeGroupDto getOne(Long productCategoryId) throws ResourceNotFoundException {
+        return productTypeGroupMapper.findById(productCategoryId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
-	public void create(ProductTypeGroup productTypeGroup) {
-	    if (StringUtils.isEmpty(productTypeGroup.getSlugName())) {
-            productTypeGroup.setSlugName(DataUtils.makeSlug(productTypeGroup.getName()));
+	public List create(ProductTypeGroupForm productTypeGroupForm) {
+
+	    if (productTypeGroupForm.getProductTypeGroupId() != null) {
+	        throw new ValidationException("Product type group id is not null");
         }
-	    productTypeGroupRepository.save(productTypeGroup);
+
+	    if (ValidationUtils.isBlank(productTypeGroupForm.getSlugName())) {
+
+	        productTypeGroupForm.setSlugName(DataUtils.makeSlug(productTypeGroupForm.getName()));
+        }
+
+	    productTypeGroupMapper.save(productTypeGroupForm);
+
+	    return getAll();
 	}
 
 	@Override
-	public void update(ProductTypeGroup productTypeGroup) {
-	    productTypeGroupRepository.save(productTypeGroup);
+	public List update(ProductTypeGroupForm productTypeGroupForm) {
+        if (productTypeGroupForm.getProductTypeGroupId() == null) {
+            throw new ValidationException("Product type group id is null");
+        }
+
+        if (ValidationUtils.isBlank(productTypeGroupForm.getSlugName())) {
+
+            productTypeGroupForm.setSlugName(DataUtils.makeSlug(productTypeGroupForm.getName()));
+        }
+
+        productTypeGroupMapper.update(productTypeGroupForm);
+
+        return getAll();
 	}
 
     @Override
-    public void delete(Long productCategoryId) throws ResourceNotFoundException {
-        ProductTypeGroup productTypeGroup = productTypeGroupRepository.findById(productCategoryId).orElse(null);
-        if (productTypeGroup == null) {
-            throw new ResourceNotFoundException();
-        }
-        productTypeGroup.setStatus(EntityStatus.DELETED);
-        productTypeGroup.setDeleteDate(DataUtils.getSystemDate());
-        productTypeGroupRepository.save(productTypeGroup);
+    public List delete(Long productCategoryId) throws ResourceNotFoundException {
+
+	    productTypeGroupMapper.deleteById(productCategoryId);
+	    return getAll();
     }
 
     @Override

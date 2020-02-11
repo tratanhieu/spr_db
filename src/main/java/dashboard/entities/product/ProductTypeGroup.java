@@ -2,6 +2,7 @@ package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.product.ProductTypeGroupForm;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -53,6 +54,14 @@ public class ProductTypeGroup extends BaseEntity implements Serializable {
     @NotNull(message = "Status is not null")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    public ProductTypeGroup(ProductTypeGroupForm productTypeGroupForm) {
+
+        this.productTypeGroupId = productTypeGroupForm.getProductTypeGroupId();
+        this.name = productTypeGroupForm.getName();
+        this.slugName = productTypeGroupForm.getSlugName();
+        this.status = productTypeGroupForm.getStatus();
+    }
 
     public Long getProductTypeGroupId() {
         return productTypeGroupId;
