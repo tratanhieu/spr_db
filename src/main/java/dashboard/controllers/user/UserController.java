@@ -136,14 +136,14 @@ public class UserController {
     public ResponseEntity changePassword(
             @RequestBody UserPasswordForm userPasswordForm,
             HttpServletRequest request
-    ) {
+    ) throws ResourceNotFoundException {
         String token = tokenProvider.getJwtFromRequest(request);
         Long userId = tokenProvider.getUserIdFromJWT(token);
         Map<String, String> errors = new HashMap<>();
         if (!userPasswordForm.getNewPassword().equals(userPasswordForm.getConfirmPassword())) {
             errors.put("confirmPassword", "Confirm Password not match");
         }
-        if (!userPasswordForm.getNewPassword().equals(userPasswordForm.getConfirmPassword())) {
+        if (userPasswordForm.getNewPassword().equals(userPasswordForm.getOldPassword())) {
             errors.put("newPassword", "New Password must different Old Password");
         }
         if (errors.size() > 0) {

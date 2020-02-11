@@ -8,6 +8,7 @@ import dashboard.enums.EntityStatus;
 import dashboard.enums.UserStatus;
 import dashboard.exceptions.customs.InvalidException;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.exceptions.customs.ValidationException;
 import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.UserGroupMapper;
 import dashboard.repositories.UserMapper;
@@ -55,11 +56,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void create(UserForm userForm) {
+        String encodedPassword = passwordEncoder.encode("123");
+        userForm.setPassword(encodedPassword);
+        userMapper.save(userForm);
+    }
+
+    @Override
     public Map getUserProfile(Long userId) throws ResourceNotFoundException, IOException {
         UserDto user = userMapper.findById(userId).orElseThrow(ResourceNotFoundException::new);
-        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-            throw new InvalidException("User not valid");
-        }
+        this.checkUserStatus(user.getStatus());
         Map<String, Object> map = new HashMap<>();
         map.put("userProfile", user);
         map.put("provinceList", provinceService.listProvince());
@@ -72,13 +78,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(UserForm userForm) {
-        String encodedPassword = passwordEncoder.encode("123");
-        userForm.setPassword(encodedPassword);
-        userMapper.save(userForm);
-    }
-
-    @Override
     public void update(UserForm userForm) {
         userMapper.updateById(userForm);
     }
@@ -88,24 +87,29 @@ public class UserServiceImpl implements UserService {
         UserDto user =  getOne(userForm.getUserId());
         FileIOUtils fileIOUtils = new FileIOUtils();
         String avatarPath = "";
-        if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-            throw new InvalidException("User not valid");
-        }
+        this.checkUserStatus(user.getStatus());
         if (!userForm.getAvatar().contains("http")) {
             avatarPath = fileIOUtils.createImageViaBase64EncodeWithoutSystemPath(
-                userForm.getAvatar(),userForm.getPhone() + "-" + UUID.randomUUID()
+                userForm.getAvatar(),user.getPhone() + "-" + UUID.randomUUID()
             );
             userForm.setAvatar(avatarPath);
         }
         userMapper.updateProfileByUserId(userForm);
         if (!StringUtils.isEmpty(avatarPath)) {
-            fileIOUtils.removeImageFromURL(userForm.getAvatar());
+            fileIOUtils.removeImageFromURL(user.getAvatar());
         }
     }
 
     @Override
-    public void updatePassword(Long userId, String password) {
-
+    public void updatePassword(Long userId, String password)
+            throws ValidationException, ResourceNotFoundException{
+        User user = userMapper.selectPassword(userId).orElseThrow(ResourceNotFoundException::new);
+        this.checkUserStatus(user.getStatus());
+        // Check match old password
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            throw new ValidationException("oldPassword", "Old password not match");
+        }
+        userMapper.updatePasswordByUserId(userId, passwordEncoder.encode(password));
     }
 
     @Override
@@ -116,5 +120,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Long userId) {
         userMapper.deleteById(userId);
+    }
+
+    private void checkUserStatus(UserStatus status) throws InvalidException{
+        if (!status.equals(UserStatus.ACTIVE)) {
+            throw new InvalidException("User not valid");
+        }
     }
 }

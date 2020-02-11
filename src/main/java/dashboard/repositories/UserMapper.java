@@ -74,6 +74,15 @@ public interface UserMapper {
 
     @Select(
         "SELECT " +
+            "password AS password, " +
+            "status " +
+        "FROM user " +
+        "WHERE user_id = #{userId}"
+    )
+    Optional<User> selectPassword(@Param("userId") Long userId);
+
+    @Select(
+        "SELECT " +
             "user_id AS userId, " +
             "first_name AS firstName, " +
             "middle_name AS middleName, " +
@@ -140,11 +149,11 @@ public interface UserMapper {
     @Update(
         "UPDATE user " +
         "SET " +
-            "password = #{password}, " +
+            "password = #{newPassword}, " +
             "update_date = NOW() " +
         "WHERE user_id = #{userId}"
     )
-    void updatePasswordByUserId(@Param("userId") Long userId, @Param("password") String password);
+    void updatePasswordByUserId(@Param("userId") Long userId, @Param("newPassword") String password);
 
     @Update(
         "UPDATE user " +

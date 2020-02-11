@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.exceptions.customs.ValidationException;
 import dashboard.services.CommonService;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -78,6 +79,18 @@ public class ExceptionResolver {
 			}
 		});
 
+		Map<String, Map> response = new HashMap<>();
+		response.put("formErrors", mapErrors);
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	}
+
+	@ExceptionHandler(ValidationException.class)
+	public @ResponseBody ResponseEntity handleValidationException(
+			HttpServletRequest request,
+			ValidationException ex
+	) {
+		Map mapErrors = ex.getErrors();
 		Map<String, Map> response = new HashMap<>();
 		response.put("formErrors", mapErrors);
 
