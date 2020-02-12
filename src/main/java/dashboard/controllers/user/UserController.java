@@ -149,7 +149,11 @@ public class UserController {
         if (errors.size() > 0) {
             throw new ValidationException(errors);
         }
-        userService.updatePassword(userId, userPasswordForm.getNewPassword());
+        userService.updatePassword(
+            userId,
+            userPasswordForm.getOldPassword(),
+            userPasswordForm.getNewPassword()
+        );
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

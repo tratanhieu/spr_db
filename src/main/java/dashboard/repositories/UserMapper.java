@@ -74,7 +74,7 @@ public interface UserMapper {
 
     @Select(
         "SELECT " +
-            "password AS password, " +
+            "password, " +
             "status " +
         "FROM user " +
         "WHERE user_id = #{userId}"

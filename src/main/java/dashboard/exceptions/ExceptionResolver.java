@@ -17,12 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 public class ExceptionResolver {
+	private final String FORM_ERRORS = "formErrors";
+	private final String ERROR_MESSAGE = "errorMessage";
 
 	@Autowired
 	CommonService commonService;
@@ -31,7 +34,7 @@ public class ExceptionResolver {
 	public @ResponseBody ResponseEntity handleException(Exception ex) {
 		ex.printStackTrace();
 		Map<String, String> response = new HashMap<>();
-		response.put("errorMessage", commonService.getMessageSource("system.error.undefined"));
+		response.put(ERROR_MESSAGE, commonService.getMessageSource("system.error.undefined"));
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	}
     
@@ -47,14 +50,14 @@ public class ExceptionResolver {
 			ex.printStackTrace();
 		}
 		Map<String, Map> response = new HashMap<>();
-		response.put("formErrors", errorsReturn);
+		response.put(FORM_ERRORS, errorsReturn);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public @ResponseBody ResponseEntity resourceNotFoundException() {
 		Map<String, String> response = new HashMap<>();
-		response.put("errorMessage", commonService.getMessageSource("message.entity.notFound"));
+		response.put(ERROR_MESSAGE, commonService.getMessageSource("message.entity.notFound"));
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 	}
 
@@ -80,20 +83,27 @@ public class ExceptionResolver {
 		});
 
 		Map<String, Map> response = new HashMap<>();
-		response.put("formErrors", mapErrors);
+		response.put(FORM_ERRORS, mapErrors);
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 
 	@ExceptionHandler(ValidationException.class)
 	public @ResponseBody ResponseEntity handleValidationException(
-			HttpServletRequest request,
 			ValidationException ex
 	) {
 		Map mapErrors = ex.getErrors();
 		Map<String, Map> response = new HashMap<>();
-		response.put("formErrors", mapErrors);
+		response.put(FORM_ERRORS, mapErrors);
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
+	public @ResponseBody ResponseEntity handleBadCredentialsException() {
+		Map<String, String> map = new HashMap<String, String>() {{
+			put(ERROR_MESSAGE, "Username or Password invalid");
+		}};
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
 	}
 }

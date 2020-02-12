@@ -101,14 +101,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatePassword(Long userId, String password)
+    public void updatePassword(Long userId, String oldPassword, String password)
             throws ValidationException, ResourceNotFoundException{
         User user = userMapper.selectPassword(userId).orElseThrow(ResourceNotFoundException::new);
-        this.checkUserStatus(user.getStatus());
         // Check match old password
-        if (passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new ValidationException("oldPassword", "Old password not match");
         }
+        this.checkUserStatus(user.getStatus());
         userMapper.updatePasswordByUserId(userId, passwordEncoder.encode(password));
     }
 

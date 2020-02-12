@@ -29,7 +29,7 @@ public interface UserService {
 
     void updateProfile(UserForm userForm) throws ResourceNotFoundException, IOException;
 
-    void updatePassword(Long userId, String password)
+    void updatePassword(Long userId, String oldPassword, String password)
             throws ValidationException, ResourceNotFoundException;
 
     void active(Long userId, EntityStatus status);
