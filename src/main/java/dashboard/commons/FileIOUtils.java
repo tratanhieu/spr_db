@@ -27,7 +27,6 @@ public class FileIOUtils {
     }
 
     public Map createImageViaBase64Encode(String encodedString, String fileName) throws IOException {
-        // Check if is image file
         String[] encodedArr = encodedString.split(",");
         String fileExtension = "jpg";
         String encoded = encodedString;
@@ -42,8 +41,13 @@ public class FileIOUtils {
         // Update file name
         String dirPath = String.format(STATIC_FOLDER, dir, "images/" + datePath + "/");
         File outputPath = new File(dirPath);
-        if (!outputPath.exists() && !outputPath.mkdir()) {
-            throw new DirectoryNotEmptyException("Can create Folder");
+
+        if (!outputPath.exists()) {
+            try {
+                outputPath.mkdir();
+            } catch (SecurityException ex) {
+                throw new SecurityException(ex);
+            }
         }
         // Get current path
         Path currentPath = FileSystems.getDefault().getPath(dirPath + "/" + fileName);
@@ -56,6 +60,11 @@ public class FileIOUtils {
         map.put(PATH, IP + IMAGE_FOLDER + datePath + "/" + fileName);
         map.put(SYSTEM_PATH, outputPath);
         return map;
+    }
+
+    public String createImageViaBase64EncodeWithoutSystemPath(String encodedString, String fileName) throws IOException {
+        Map map = createImageViaBase64Encode(encodedString, fileName);
+        return (String) map.get(PATH);
     }
 
     public void rollBackUploadedImages() {
@@ -99,5 +108,25 @@ public class FileIOUtils {
             this.rollBackUploadedImages();
         }
         return contentBuilder.toString();
+    }
+
+    private static Path getStaticUploadFolderPath(String str) {
+        String[] strArr = str.split("/");
+        StringBuilder replaceTarget = new StringBuilder();
+        int strArrLength = strArr.length;
+        for (int i = 5; i < strArrLength; i++) {
+            replaceTarget.append(strArr[i]);
+            if (i != strArrLength - 1) {
+                replaceTarget.append("/");
+            }
+        }
+
+        Path dir = FileSystems.getDefault().getPath("").toAbsolutePath();
+        return Paths.get(String.format(STATIC_FOLDER, dir, replaceTarget.toString()));
+    }
+
+    public void removeImageFromURL(String url) {
+        Path path = getStaticUploadFolderPath(url);
+        FileUtils.deleteQuietly(path.toFile());
     }
 }

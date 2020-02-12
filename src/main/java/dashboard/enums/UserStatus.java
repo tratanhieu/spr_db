@@ -16,7 +16,7 @@ public enum UserStatus {
 	INACTIVE("INACTIVE") {
 		@Override
 		public String getLabel() {
-			return "Không hoạt động";
+			return "Chưa kích hoạt";
 		}
 	},
 	DELETED("DELETED") {

@@ -12,9 +12,9 @@ import java.util.Map;
 @Service
 public class ProvinceServiceImpl implements ProvinceService {
 
-    final String NAME = "name";
-    final String DISTRICT = "quan-huyen";
-    final String WARD = "xa-phuong";
+    private final String NAME = "name";
+    private final String DISTRICT = "quan-huyen";
+    private final String WARD = "xa-phuong";
 
     private File jsonFile = new File("src/main/resources/province-list.json");
 
@@ -23,11 +23,14 @@ public class ProvinceServiceImpl implements ProvinceService {
     private Map<String, String> mapProvince = new HashMap<>();
 
     @Override
-    public Map<String, String> listProvince() throws IOException {
-
-        if(mapAll == null || mapAll.size() != 63) {
-            mapAll = JsonPath.read(jsonFile, "$");
-            mapAll.forEach((k,v) -> mapProvince.put(k, (String) ((Map<String, Object>) mapAll.get(k)).get(NAME)));
+    public Map<String, String> listProvince() {
+        try {
+            if(mapAll == null || mapAll.size() != 63) {
+                mapAll = JsonPath.read(jsonFile, "$");
+                mapAll.forEach((k,v) -> mapProvince.put(k, (String) ((Map<String, Object>) mapAll.get(k)).get(NAME)));
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         return mapProvince;

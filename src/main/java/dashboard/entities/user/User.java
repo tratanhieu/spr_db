@@ -57,6 +57,8 @@ public class User extends BaseEntity implements Serializable {
     @JsonProperty("email")
     private String email;
 
+    private String avatar;
+
     @Column(name = "province_id")
     @NotNull(message = "Province ID is not null")
     @JsonProperty("provinceId")
@@ -197,6 +199,14 @@ public class User extends BaseEntity implements Serializable {
         this.email = email;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public Long getProvinceId() {
         return provinceId;
     }
@@ -275,6 +285,10 @@ public class User extends BaseEntity implements Serializable {
 
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.middleName + " " + this.lastName;
     }
 
 }
