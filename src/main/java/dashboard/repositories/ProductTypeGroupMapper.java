@@ -60,7 +60,7 @@ public interface ProductTypeGroupMapper {
     Long save(ProductTypeGroupForm productTypeGroupForm);
 
     @Update(
-            "UPDATE product_brand " +
+            "UPDATE product_type_group " +
                     "SET " +
                     "name = #{name}, " +
                     "slug_name = #{slugName}, " +

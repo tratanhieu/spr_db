@@ -1,5 +1,7 @@
 package dashboard.services;
 
+import dashboard.dto.product.ProductTypeDto;
+import dashboard.dto.product.ProductTypeForm;
 import dashboard.entities.product.ProductType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -11,15 +13,15 @@ import java.util.List;
 
 public interface ProductTypeService {
 
-    ListEntityResponse<ProductType> getAllWithPagination(Pageable pageable);
+    List<ProductTypeDto> getAll();
 
-    ProductType getOne(Long productTypeId) throws ResourceNotFoundException;
+    ProductTypeDto getOne(Long productTypeId) throws ResourceNotFoundException;
 
-    int create(ProductType productType);
+    void create(ProductTypeForm productTypeForm);
 
-    int update(ProductType productType) throws ResourceNotFoundException;
+    void update(ProductTypeForm productTypeForm) throws ResourceNotFoundException;
 
-    int delete(Long productTypeId) throws ResourceNotFoundException;
+    void delete(Long productTypeId) throws ResourceNotFoundException;
 
     int updateStatusByListId(List<Long> listId, EntityStatus entityStatus) throws ResourceNotFoundException;
 

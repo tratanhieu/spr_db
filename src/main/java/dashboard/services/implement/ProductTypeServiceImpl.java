@@ -1,16 +1,23 @@
 package dashboard.services.implement;
 
+import dashboard.commons.ValidationUtils;
+import dashboard.dto.product.ProductTypeDto;
+import dashboard.dto.product.ProductTypeForm;
 import dashboard.entities.product.ProductType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.ListEntityResponse;
+import dashboard.repositories.ProductTypeMapper;
 import dashboard.repositories.ProductTypeRepository;
 import dashboard.services.ProductTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.List;
 
@@ -20,63 +27,61 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     @Autowired
     ProductTypeRepository productTypeRepository;
 
+    @Autowired
+    ProductTypeMapper productTypeMapper;
+
+
     @Override
-    public ListEntityResponse<ProductType> getAllWithPagination(Pageable pageable) {
-        Page<ProductType> result = productTypeRepository.findWithPageable(pageable);
-
-        ListEntityResponse<ProductType> productTypeResponse = new ListEntityResponse<>();
-
-        productTypeResponse.setPage(result.getNumber() + 1);
-        productTypeResponse.setPageSize(result.getSize());
-        productTypeResponse.setTotalPage(result.getTotalPages());
-        productTypeResponse.setListData(result.getContent());
-
-        return productTypeResponse;
+    public List<ProductTypeDto> getAll() {
+      return productTypeMapper.findAllActiveProductType();
     }
 
     @Override
-    public ProductType getOne(Long productTypeId) throws ResourceNotFoundException {
-        ProductType productType = productTypeRepository.findById(productTypeId).orElse(null);
+    public ProductTypeDto getOne(Long productTypeId) throws ResourceNotFoundException {
+        return productTypeMapper.findById(productTypeId).orElseThrow(ResourceNotFoundException::new);
+    }
 
-        if(productType == null) {
-            throw new ResourceNotFoundException();
+    @Override
+    @Transactional(
+            propagation = Propagation.REQUIRED,
+            rollbackFor = {Exception.class}
+    )
+    public void create(ProductTypeForm productTypeForm) {
+
+        if (productTypeForm.getProductTypeId() != null) {
+            throw new ValidationException("Product type id is not null");
         }
 
-        return productType;
-    }
-
-    @Override
-    public int create(ProductType productType) {
-        productTypeRepository.save(productType);
-        return 1;
-    }
-
-    @Override
-    public int update(ProductType productType) throws ResourceNotFoundException {
-        ProductType productTypeFind = productTypeRepository.findById(productType.getProductTypeId()).orElse(null);
-
-        if (productTypeFind == null) {
-            throw new ResourceNotFoundException();
+        if (ValidationUtils.isBlank(productTypeForm.getSlugName())) {
+            productTypeForm.setSlugName(productTypeForm.getName());
         }
 
-        productTypeRepository.save(productType);
-
-        return 1;
+        productTypeMapper.save(productTypeForm);
     }
 
     @Override
-    public int delete(Long productTypeId) throws ResourceNotFoundException {
-        ProductType productType = productTypeRepository.findById(productTypeId).orElse(null);
+    @Transactional(
+            propagation = Propagation.REQUIRED,
+            rollbackFor = {Exception.class}
+    )
+    public void update(ProductTypeForm productTypeForm) throws ResourceNotFoundException {
 
-        if (productType == null) {
-            throw new ResourceNotFoundException();
+        if (productTypeForm.getProductTypeId() == null) {
+            throw new ValidationException("Product type id is null");
         }
 
-        productType.setStatus(EntityStatus.DELETED);
-        productType.setDeleteDate(new Date());
-        productTypeRepository.save(productType);
+        if (ValidationUtils.isBlank(productTypeForm.getSlugName())) {
+            productTypeForm.setSlugName(productTypeForm.getName());
+        }
 
-        return 1;
+        productTypeMapper.update(productTypeForm);
+
+    }
+
+    @Override
+    public void delete(Long productTypeId) throws ResourceNotFoundException {
+
+        productTypeMapper.deleteById(productTypeId);
     }
 
     @Override
