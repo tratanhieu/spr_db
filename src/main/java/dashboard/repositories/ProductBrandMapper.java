@@ -15,13 +15,14 @@ public interface ProductBrandMapper {
 
     @Select(
             "SELECT " +
-                    "product_brand_id AS productBrandId, " +
-                    "name, " +
-                    "slug_name AS slugName, " +
-                    "image, " +
-                    "create_date AS createDate, " +
-                    "update_date AS updateDate, " +
-                    "status " +
+                    "pbr.product_brand_id AS productBrandId, " +
+                    "pbr.name, " +
+                    "pbr.slug_name AS slugName, " +
+                    "pbr.image, " +
+                    "(SELECT COUNT(*) FROM product WHERE product_brand_id = pbr.product_brand_id) AS totalProduct, "+
+                    "pbr.create_date AS createDate, " +
+                    "pbr.update_date AS updateDate, " +
+                    "pbr.status " +
                     "FROM product_brand pbr " +
                     "WHERE pbr.status <> 'DELETE' " +
                     "ORDER BY pbr.create_date DESC"
@@ -30,15 +31,16 @@ public interface ProductBrandMapper {
 
     @Select(
             "SELECT " +
-                    "product_brand_id AS productBrandId, " +
-                    "name, " +
-                    "slug_name AS slugName, " +
-                    "image, " +
-                    "create_date AS createDate, " +
-                    "update_date AS updateDate, " +
-                    "status " +
-                    "FROM product_brand " +
-                    "WHERE product_brand_id = #{productBrandId}"
+                    "pbr.product_brand_id AS productBrandId, " +
+                    "pbr.name, " +
+                    "pbr.slug_name AS slugName, " +
+                    "pbr.image, " +
+                    "(SELECT COUNT(*) FROM product WHERE product_brand_id = pbr.product_brand_id) AS totalProduct, "+
+                    "pbr.create_date AS createDate, " +
+                    "pbr.update_date AS updateDate, " +
+                    "pbr.status " +
+                    "FROM product_brand pbr " +
+                    "WHERE pbr.product_brand_id = #{productBrandId} "
     )
     Optional<ProductBrandDto> findById(@Param("productBrandId") Long productBrandId);
 
@@ -52,12 +54,7 @@ public interface ProductBrandMapper {
                     "#{status}" +
                     ")"
     )
-    @SelectKey(
-            statement = "SELECT LAST_INSERT_ID() AS productBrandId",
-            keyProperty = "productBrandId",
-            before = true,
-            resultType = Long.class
-    )
+    @Options(useGeneratedKeys = true, keyProperty = "productBrandId")
     Long save(ProductBrand productBrand);
 
     @Update(

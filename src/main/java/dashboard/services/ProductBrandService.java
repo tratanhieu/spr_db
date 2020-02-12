@@ -10,15 +10,15 @@ import java.util.List;
 
 public interface ProductBrandService {
 
-    List<ProductBrandDto> getAllWithPagination();
+    List<ProductBrandDto> getAll();
 
     ProductBrandDto getOne(Long productBrandId) throws ResourceNotFoundException;
 
-    List create(ProductBrandForm productBrandForm);
+    void create(ProductBrandForm productBrandForm);
 
-    List update(ProductBrandForm productBrandForm) throws ResourceNotFoundException;
+    void  update(ProductBrandForm productBrandForm) throws ResourceNotFoundException;
 
-    List delete(Long productBrandId);
+    void  delete(Long productBrandId);
 
     int updateStatusWithMultipleId(List<Long> ListId, EntityStatus status) throws ResourceNotFoundException;
 }

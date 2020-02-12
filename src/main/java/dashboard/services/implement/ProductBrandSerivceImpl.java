@@ -34,7 +34,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
     @Autowired
     ProductBrandMapper productBrandMapper;
     @Override
-    public List<ProductBrandDto> getAllWithPagination() {
+    public List<ProductBrandDto> getAll() {
         return productBrandMapper.findAllActiveProductBrand();
     }
 
@@ -49,7 +49,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             propagation = Propagation.REQUIRED,
             rollbackFor = {Exception.class}
     )
-    public List create(ProductBrandForm productBrandForm) {
+    public void create(ProductBrandForm productBrandForm) {
 
         FileIOUtils fileIOUtils = new FileIOUtils();
         try {
@@ -76,7 +76,6 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             ex.printStackTrace();
             fileIOUtils.rollBackUploadedImages();
         }
-        return getAllWithPagination();
     }
 
     @Override
@@ -84,7 +83,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             propagation = Propagation.REQUIRED,
             rollbackFor = {Exception.class}
     )
-    public List update(ProductBrandForm productBrandForm) throws ResourceNotFoundException {
+    public void update(ProductBrandForm productBrandForm) throws ResourceNotFoundException {
 
         FileIOUtils fileIOUtils = new FileIOUtils();
         ProductBrandDto productBrandDto;
@@ -120,15 +119,13 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
             ex.printStackTrace();
             fileIOUtils.rollBackUploadedImages();
         }
-        return getAllWithPagination();
     }
 
     @Override
-    public List delete(Long productBrandId){
+    public void delete(Long productBrandId){
 
         productBrandMapper.deleteById(productBrandId);
 
-        return getAllWithPagination();
     }
 
     @Override

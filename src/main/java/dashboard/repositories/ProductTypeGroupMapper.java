@@ -1,4 +1,4 @@
-package dashboard.repositories.impl;
+package dashboard.repositories;
 
 import dashboard.dto.product.ProductBrandDto;
 import dashboard.dto.product.ProductTypeGroupDto;

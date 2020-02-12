@@ -1,5 +1,6 @@
 package dashboard.entities.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dashboard.dto.product.ProductBrandForm;
 import dashboard.entities.base.BaseEntity;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_brand")
@@ -40,6 +42,10 @@ public class ProductBrand extends BaseEntity implements Serializable {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    @OneToMany(mappedBy = "productBrand", cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private Set<Product> products;
 
     public ProductBrand() {}
 

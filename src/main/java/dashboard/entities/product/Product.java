@@ -42,6 +42,10 @@ public class Product extends BaseEntity implements Serializable {
 	@JsonIgnore
 	private Set<ProductTag> productTags;
 
+    @ManyToOne
+	@JoinColumn(name ="product_brand_id")
+	private  ProductBrand productBrand;
+
 	public Long getProduct_id() {
 		return product_id;
 	}

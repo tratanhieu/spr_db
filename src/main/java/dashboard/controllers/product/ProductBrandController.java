@@ -43,7 +43,7 @@ public class ProductBrandController {
             ) {
 
         Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        return ResponseEntity.ok(productBrandService.getAllWithPagination());
+        return ResponseEntity.ok(productBrandService.getAll());
     }
 
     @GetMapping("/{id}")
@@ -51,29 +51,29 @@ public class ProductBrandController {
         return ResponseEntity.ok(productBrandService.getOne(productBrandId));
     }
 
-    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody ProductBrandForm productBrandForm) {
 
         ValidationUtils.validate(productBrandForm);
-       List reponse =  productBrandService.create(productBrandForm);
+         productBrandService.create(productBrandForm);
 
-        return ResponseEntity.ok(reponse);
+        return ResponseEntity.ok(productBrandService.getAll());
     }
 
-    @PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(
             @RequestBody ProductBrandForm productBrandForm
     ) throws ResourceNotFoundException {
         ValidationUtils.validate(productBrandForm);
-        List response = productBrandService.update(productBrandForm);
-        return ResponseEntity.ok(response);
+        productBrandService.update(productBrandForm);
+        return ResponseEntity.ok(productBrandService.getAll());
     }
 
     @DeleteMapping(value = "{productBrandId}")
     public ResponseEntity delete(@PathVariable(name = "productBrandId") Long productBrandId){
-        List respone =  productBrandService.delete(productBrandId);
+        productBrandService.delete(productBrandId);
 
-        return ResponseEntity.ok(respone);
+        return ResponseEntity.ok(productBrandService.getAll());
     }
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)

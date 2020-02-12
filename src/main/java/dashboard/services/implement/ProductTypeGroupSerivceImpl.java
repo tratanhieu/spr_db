@@ -4,19 +4,14 @@ import dashboard.commons.DataUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.dto.product.ProductTypeGroupDto;
 import dashboard.dto.product.ProductTypeGroupForm;
-import dashboard.entities.product.ProductTypeGroup;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
 import dashboard.repositories.ProductTypeGroupRepository;
-import dashboard.repositories.impl.ProductTypeGroupMapper;
+import dashboard.repositories.ProductTypeGroupMapper;
 import dashboard.services.ProductTypeGroupService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.validation.ValidationException;
 import java.util.List;
