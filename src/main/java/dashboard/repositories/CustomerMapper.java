@@ -18,9 +18,9 @@ public interface CustomerMapper {
             "dob, " +
             "email, " +
             "phone, " +
-            "province AS provinceId, " +
-            "district AS districtId, " +
-            "ward AS wardId, " +
+            "province_id AS provinceId, " +
+            "district_id AS districtId, " +
+            "ward_id AS wardId, " +
             "address, " +
             "status " +
         "FROM " +
@@ -40,9 +40,9 @@ public interface CustomerMapper {
             "dob = #{dob}, " +
             "email = #{email}, " +
             "phone = #{phone}, " +
-            "province = #{provinceId}, " +
-            "district = #{districtId}, " +
-            "ward = #{wardId}, " +
+            "province_id = #{provinceId}, " +
+            "district_id = #{districtId}, " +
+            "ward_id = #{wardId}, " +
             "address = #{address} " +
         "WHERE " +
             "user_id = #{userId}"
@@ -55,7 +55,7 @@ public interface CustomerMapper {
         "FROM " +
             "customer " +
         "WHERE " +
-            "userId = #{userId}"
+            "user_id = #{userId}"
     )
     String getCustomerPassword(@Param("userId")Long userId);
 
@@ -65,11 +65,14 @@ public interface CustomerMapper {
         "SET " +
             "password = #{newPassword} " +
         "WHERE " +
-            "userId = #{userId}")
+            "user_id = #{userId}")
     void changePassword(@Param("newPassword") String newPassword, @Param("userId") Long userId);
 
     @Insert("INSERT INTO customer(phone, password, status) VALUES(#{phone}, #{password}, 'INACTIVE' )")
     void registNewCustomer(RegisterForm registerForm);
+
+    @Insert("INSERT INTO otp_store(phone, otp_code) VALUES(#{phone}, #{otpCode}")
+    void addOTP(String phone, String otpCode);
 
     @Update("UPDATE customer SET status = 'ACTIVE' WHERE phone = #{phone}")
     void completeRegistCustomer(String phone);

@@ -18,5 +18,7 @@ public interface CustomerService {
 
     int registNewCustomer(RegisterForm registerForm);
 
+    void addOTP(String phone, String otpCode);
+
     int completeRegistCustomer(String phone);
 }

@@ -10,6 +10,7 @@ import dashboard.services.CustomerService;
 import dashboard.services.ProvinceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     ProvinceService provinceService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public CustomerDto getCustomerInfo(Long userId) throws IOException, ResourceNotFoundException {
@@ -61,13 +65,18 @@ public class CustomerServiceImpl implements CustomerService {
             return 2;
         }
 
-        if(BCrypt.checkpw(passwordForm.getOldPassword(), oldPassword)) {
-            String newHashedPassword = BCrypt.hashpw(passwordForm.getNewPassword(), BCrypt.gensalt());
+        if(passwordForm.getNewPassword().equals(passwordForm.getOldPassword())) {
+            // pass moi trung pass cu
+            return 3;
+        }
+
+        if(passwordEncoder.matches(passwordForm.getOldPassword(), oldPassword)) {
+            String newHashedPassword = passwordEncoder.encode(passwordForm.getNewPassword());
             customerMapper.changePassword(newHashedPassword, userId);
             // ok
             return 1;
         }
-        // pass cu sai
+
         return -1;
     }
 
@@ -78,9 +87,17 @@ public class CustomerServiceImpl implements CustomerService {
             return -1;
         }
 
+        registerForm.setPassword(passwordEncoder.encode(registerForm.getPassword()));
+
         customerMapper.registNewCustomer(registerForm);
         return 1;
     }
+
+    @Override
+    public void addOTP(String phone, String otpCode) {
+        customerMapper.addOTP(phone, otpCode);
+    }
+
 
     @Override
     public int completeRegistCustomer(String phone) {
