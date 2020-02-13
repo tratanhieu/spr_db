@@ -50,7 +50,13 @@ public class ProductCategoryController {
 	    return ResponseEntity.ok(productCategoryService.getOne(productCategoryId));
     }
 
-	@PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("create")
+    public ResponseEntity getCreate() throws ResourceNotFoundException {
+
+	    return  ResponseEntity.ok(productCategoryService.getAll());
+    }
+
+	@PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody ProductCategoryForm productCategoryForm) {
 
         ValidationUtils.validate(productCategoryForm);
@@ -59,7 +65,7 @@ public class ProductCategoryController {
     	return ResponseEntity.ok(response) ;
     }
 
-	@PutMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping (value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity update(
 	        @RequestBody ProductCategoryForm productCategoryForm
     ) throws ResourceNotFoundException {

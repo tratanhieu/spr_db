@@ -9,6 +9,7 @@ import dashboard.generics.ListEntityResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface ProductTypeService {
@@ -16,6 +17,8 @@ public interface ProductTypeService {
     List<ProductTypeDto> getAll();
 
     ProductTypeDto getOne(Long productTypeId) throws ResourceNotFoundException;
+
+    List getCreate() throws  ResourceNotFoundException;
 
     void create(ProductTypeForm productTypeForm);
 

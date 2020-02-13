@@ -6,6 +6,7 @@ import dashboard.dto.product.ProductTypeGroupDto;
 import dashboard.dto.product.ProductTypeGroupForm;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.repositories.ProductCategoryMapper;
 import dashboard.repositories.ProductTypeGroupRepository;
 import dashboard.repositories.ProductTypeGroupMapper;
 import dashboard.services.ProductTypeGroupService;
@@ -25,6 +26,9 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	@Autowired
     ProductTypeGroupMapper productTypeGroupMapper;
 
+	@Autowired
+    ProductCategoryMapper productCategoryMapper;
+
 	@Override
 	public List<ProductTypeGroupDto> getAll() {
 
@@ -34,6 +38,11 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
     @Override
     public ProductTypeGroupDto getOne(Long productCategoryId) throws ResourceNotFoundException {
         return productTypeGroupMapper.findById(productCategoryId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public List getCreate() throws ResourceNotFoundException {
+	    return productCategoryMapper.findAllActiveProductCategory();
     }
 
     @Override
@@ -48,7 +57,12 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	        productTypeGroupForm.setSlugName(DataUtils.makeSlug(productTypeGroupForm.getName()));
         }
 
-	    productTypeGroupMapper.save(productTypeGroupForm);
+        if (productTypeGroupMapper.checkExistKey(productTypeGroupForm.getProductCategoryId()) == 1){
+            productTypeGroupMapper.save(productTypeGroupForm);
+        } else {
+            throw new ValidationException("Product category id is not exists");
+        }
+
 
 	    return getAll();
 	}
@@ -64,7 +78,11 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
             productTypeGroupForm.setSlugName(DataUtils.makeSlug(productTypeGroupForm.getName()));
         }
 
-        productTypeGroupMapper.update(productTypeGroupForm);
+        if (productTypeGroupMapper.checkExistKey(productTypeGroupForm.getProductCategoryId()) == 1){
+            productTypeGroupMapper.update(productTypeGroupForm);
+        } else {
+            throw new ValidationException("Product category id is not exists");
+        }
 
         return getAll();
 	}

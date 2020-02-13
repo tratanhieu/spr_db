@@ -75,4 +75,7 @@ public interface ProductTypeGroupMapper {
             "DELETE FROM product_type_group WHERE product_type_group_id= #{productTypeGroupID}"
     )
     void deleteById(@Param("productTypeGroupId") Long productTypeGroupId);
+
+    @Select("SELECT EXISTS(SELECT 1 FROM product_type_group WHERE product_type_group.product_type_group_id = #{id} LIMIT 1)")
+    int checkExistKey(@Param("id") Long id);
 }

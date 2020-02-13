@@ -46,7 +46,7 @@ public class ProductTypeGroupController {
         return ResponseEntity.ok(productTypeGroupService.getOne(productTypeGroupId));
     }
 
-    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody ProductTypeGroupForm productTypeGroupForm) {
         // Save
         List response =  productTypeGroupService.create(productTypeGroupForm);
@@ -54,7 +54,7 @@ public class ProductTypeGroupController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(value = "{productTypeGroupId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity update(
             @RequestBody ProductTypeGroupForm productTypeGroupForm
     ) {

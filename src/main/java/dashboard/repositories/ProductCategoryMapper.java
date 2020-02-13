@@ -71,4 +71,8 @@ public interface ProductCategoryMapper {
             "DELETE FROM product_category WHERE product_category_id = #{productCategoryId}"
     )
     void deleteById(@Param("productCategoryId") Long productCategoryId);
+
+    @Select("SELECT EXISTS(SELECT 1 FROM product_category WHERE product_category.product_category_id = #{id} LIMIT 1)")
+    int checkExistKey(@Param("id") Long id);
+
 }

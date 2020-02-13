@@ -3,23 +3,22 @@ package dashboard.services.implement;
 import dashboard.commons.ValidationUtils;
 import dashboard.dto.product.ProductTypeDto;
 import dashboard.dto.product.ProductTypeForm;
-import dashboard.entities.product.ProductType;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.generics.ListEntityResponse;
+import dashboard.repositories.ProductTypeGroupMapper;
 import dashboard.repositories.ProductTypeMapper;
 import dashboard.repositories.ProductTypeRepository;
 import dashboard.services.ProductTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductTypeServiceImpl implements ProductTypeService {
@@ -30,6 +29,9 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     @Autowired
     ProductTypeMapper productTypeMapper;
 
+    @Autowired
+    ProductTypeGroupMapper productTypeGroupMapper;
+
 
     @Override
     public List<ProductTypeDto> getAll() {
@@ -39,6 +41,11 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     @Override
     public ProductTypeDto getOne(Long productTypeId) throws ResourceNotFoundException {
         return productTypeMapper.findById(productTypeId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public List getCreate() throws ResourceNotFoundException {
+        return productTypeGroupMapper.findAllActiveProductTypeGroup();
     }
 
     @Override
@@ -56,7 +63,12 @@ public class ProductTypeServiceImpl implements ProductTypeService {
             productTypeForm.setSlugName(productTypeForm.getName());
         }
 
-        productTypeMapper.save(productTypeForm);
+        if (productTypeGroupMapper.checkExistKey(productTypeForm.getProductTypeGroupId()) == 1){
+            productTypeMapper.save(productTypeForm);
+        } else {
+            throw new ValidationException("Product type id is not null");
+        }
+
     }
 
     @Override
@@ -74,7 +86,12 @@ public class ProductTypeServiceImpl implements ProductTypeService {
             productTypeForm.setSlugName(productTypeForm.getName());
         }
 
-        productTypeMapper.update(productTypeForm);
+        if (productTypeGroupMapper.checkExistKey(productTypeForm.getProductTypeGroupId()) == 1){
+            productTypeMapper.update(productTypeForm);
+        } else {
+            throw new ValidationException("Product type group id is not exist");
+        }
+
 
     }
 

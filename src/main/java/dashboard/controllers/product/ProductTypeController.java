@@ -44,6 +44,11 @@ public class ProductTypeController {
         return ResponseEntity.ok(productTypeService.getOne(productTypeId));
     }
 
+    @GetMapping("create")
+    public ResponseEntity getCreate() throws ResourceNotFoundException {
+        return ResponseEntity.ok(productTypeService.getCreate());
+    }
+
     @PostMapping (value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody ProductTypeForm productTypeForm) {
 

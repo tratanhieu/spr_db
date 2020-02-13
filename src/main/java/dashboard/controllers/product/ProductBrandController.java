@@ -51,6 +51,7 @@ public class ProductBrandController {
         return ResponseEntity.ok(productBrandService.getOne(productBrandId));
     }
 
+
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(@RequestBody ProductBrandForm productBrandForm) {
 

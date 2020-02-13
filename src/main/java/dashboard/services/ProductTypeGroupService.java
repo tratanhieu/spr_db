@@ -16,6 +16,8 @@ public interface ProductTypeGroupService {
 
     ProductTypeGroupDto getOne(Long productTypeGroupId) throws ResourceNotFoundException;
 
+    List getCreate() throws ResourceNotFoundException;
+
     List create( ProductTypeGroupForm productTypeGroupForm );
 
     List update(ProductTypeGroupForm productTypeGroupForm);
