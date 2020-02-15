@@ -1,5 +1,6 @@
 package dashboard.controllers.client;
 
+import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.dto.user.customer.*;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -46,31 +47,14 @@ public class CustomerController {
     public HttpStatus changePassword(@RequestBody PasswordForm passwordForm){
         Long userId = 4L;
 
-        Map<String, String> errors = new HashMap<>();
-
-        if(customerService.changePassword(passwordForm, userId) == 2){
-            errors.put("confirmPassword", "Confirm password is not matched");
-        }
-
-        if(customerService.changePassword(passwordForm, userId) == 3){
-            errors.put("newPassword", "New password must be different from old password");
-        }
-
-        if(customerService.changePassword(passwordForm, userId) == -1){
-            errors.put("oldPassword", "Old password is not corrected");
-        }
-
-        if (errors.size() > 0) {
-            throw new ValidationException(errors);
-        }
-
         customerService.changePassword(passwordForm, userId);
+
         return HttpStatus.OK;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus registNew(@RequestBody RegisterForm registerForm) {
-        String otpCode = "123456";
+        String otpCode = ActionUtils.genOtp();
 
         if(customerService.registNewCustomer(registerForm) == 1) {
             Map<String, String> result = (Map) smsService.sendSms(registerForm.getPhone(), otpCode);
@@ -83,24 +67,69 @@ public class CustomerController {
         return HttpStatus.NOT_MODIFIED;
     }
 
-    @PostMapping(value = "verify", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus verifyOTP(@RequestBody CustomerOTPForm customerOTPForm) {
+    @PostMapping(value = "/verifyRegist", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus verifyOTPRegist(@RequestBody CustomerOTPForm customerOTPForm) throws ResourceNotFoundException {
 
-        if (1 == 1) {
+        CustomerOTPDto customerOTPDto = customerService.getOTP(customerOTPForm.getPhone());
+
+        if (customerOTPDto.getOTP().equals(customerOTPForm.getOTP())) {
+            customerService.completeRegistCustomer(customerOTPForm.getPhone());
+            customerService.deleteOTP(customerOTPForm.getPhone());
             return HttpStatus.OK;
         }
-        return HttpStatus.NOT_MODIFIED;
+        Map<String, String> error = new HashMap<>();
+        error.put("Error", "OTP is not correct");
+        throw new ValidationException(error);
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity login(@RequestBody CustomerLoginForm customerLoginForm) {
-        // thay leader co code roi nen sau nay tham khao sau :))
+        // THUC SU LA VAN CHUA HIEU CAI LOGIN NAY
         return ResponseEntity.ok(new String("OK"));
     }
 
     @PatchMapping(value = "/password/forget", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus forgetPassword(@RequestBody ForgetPasswordForm forgetPasswordForm) {
-        // lam gi de suy nghi da
-        return HttpStatus.OK;
+    public HttpStatus forgetPassword(@RequestBody ForgetPasswordForm forgetPasswordForm) throws ResourceNotFoundException {
+
+        if(customerService.getCustomerPhoneByPhone(forgetPasswordForm.getPhone())) {
+            String otp = ActionUtils.genOtp();
+            Map<String, String> result = (Map) smsService.sendSms(forgetPasswordForm.getPhone(), otp);
+            if ("100".equals(result.get("CodeResult"))) {
+                customerService.addOTP(forgetPasswordForm.getPhone(), otp);
+                return HttpStatus.OK;
+            }
+            throw new ValidationException(result);
+        }
+        return HttpStatus.NOT_MODIFIED;
+    }
+
+    @PostMapping(value = "/verifyForget", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus verifyOTPForget(@RequestBody CustomerOTPForm customerOTPForm) throws ResourceNotFoundException {
+
+        CustomerOTPDto customerOTPDto = customerService.getOTP(customerOTPForm.getPhone());
+
+        if (customerOTPDto.getOTP().equals(customerOTPForm.getOTP())) {
+            return HttpStatus.OK;
+        }
+        Map<String, String> error = new HashMap<>();
+        error.put("Error", "OTP is not correct");
+        throw new ValidationException(error);
+    }
+
+    @PatchMapping(value = "/password/forget/change", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public HttpStatus changePasswordForget(@RequestBody ChangeForgetPasswordForm changeForgetPasswordForm) throws ResourceNotFoundException {
+
+        CustomerOTPDto customerOTPDto = customerService.getOTP(changeForgetPasswordForm.getPhone());
+
+        if (customerOTPDto.getOTP().equals(changeForgetPasswordForm.getOtp())) {
+            if (customerService.changePassword(changeForgetPasswordForm) == 1) {
+                customerService.deleteOTP(changeForgetPasswordForm.getPhone());
+                return HttpStatus.OK;
+            }
+        }
+
+        Map<String, String> error = new HashMap<>();
+        error.put("Error", "Unknown error");
+        throw new ValidationException(error);
     }
 }

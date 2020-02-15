@@ -2,6 +2,7 @@ package dashboard.repositories;
 
 import dashboard.dto.user.customer.CustomerDto;
 import dashboard.dto.user.customer.CustomerForm;
+import dashboard.dto.user.customer.CustomerOTPDto;
 import dashboard.dto.user.customer.RegisterForm;
 import org.apache.ibatis.annotations.*;
 
@@ -74,6 +75,26 @@ public interface CustomerMapper {
     @Insert("INSERT INTO otp_store(phone, otp_code) VALUES(#{phone}, #{otpCode}")
     void addOTP(String phone, String otpCode);
 
+    @Select("SELECT phone, otp_code FROM otp_store WHERE phone = #{phone}")
+    CustomerOTPDto getOTP(String phone);
+
     @Update("UPDATE customer SET status = 'ACTIVE' WHERE phone = #{phone}")
     void completeRegistCustomer(String phone);
+
+    @Delete("DELETE FROM otp_store WHERE phone = #{phone}")
+    void deleteOTP(String phone);
+
+    @Select(
+            "SELECT phone FROM customer WHERE phone = #{phone}"
+    )
+    String getCustomerPhoneByPhone(String phone);
+
+    @Update(
+            "UPDATE " +
+                    "customer " +
+                    "SET " +
+                    "password = #{newPassword} " +
+                    "WHERE " +
+                    "phone = #{phone}")
+    void changePassword(@Param("newPassword") String newPassword, @Param("phone") String phone);
 }

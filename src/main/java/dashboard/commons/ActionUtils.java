@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 public class ActionUtils {
     public static Pageable preparePageable(String sort, Integer page, Integer size) {
@@ -29,5 +30,12 @@ public class ActionUtils {
         }
 
         return sb.toString();
+    }
+
+    public static String genOtp() {
+        Random rnd = new Random();
+        int otp = 100000 + rnd.nextInt(900000);
+
+        return String.valueOf(otp);
     }
 }

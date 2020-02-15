@@ -1,10 +1,8 @@
 package dashboard.services.implement;
 
-import dashboard.dto.user.customer.CustomerDto;
-import dashboard.dto.user.customer.CustomerForm;
-import dashboard.dto.user.customer.PasswordForm;
-import dashboard.dto.user.customer.RegisterForm;
+import dashboard.dto.user.customer.*;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.exceptions.customs.ValidationException;
 import dashboard.repositories.CustomerMapper;
 import dashboard.services.CustomerService;
 import dashboard.services.ProvinceService;
@@ -60,24 +58,29 @@ public class CustomerServiceImpl implements CustomerService {
     public int changePassword(PasswordForm passwordForm, Long userId) {
         String oldPassword = customerMapper.getCustomerPassword(userId);
 
+        Map<String, String> error = new HashMap<>();
+
         if(!passwordForm.getNewPassword().equals(passwordForm.getConfirmNewPassword())) {
             // pass moi khong khop
-            return 2;
+            error.put("confirmPassword", "Confirm password is not matched");
+            throw new ValidationException(error);
         }
 
         if(passwordForm.getNewPassword().equals(passwordForm.getOldPassword())) {
             // pass moi trung pass cu
-            return 3;
+            error.put("newPassword", "New password must be different from old password");
+            throw new ValidationException(error);
         }
 
-        if(passwordEncoder.matches(passwordForm.getOldPassword(), oldPassword)) {
-            String newHashedPassword = passwordEncoder.encode(passwordForm.getNewPassword());
-            customerMapper.changePassword(newHashedPassword, userId);
-            // ok
-            return 1;
+        if(!passwordEncoder.matches(passwordForm.getOldPassword(), oldPassword)) {
+            error.put("oldPassword", "Old password is not corrected");
+            throw new ValidationException(error);
         }
 
-        return -1;
+        String newHashedPassword = passwordEncoder.encode(passwordForm.getNewPassword());
+        customerMapper.changePassword(newHashedPassword, userId);
+        // ok
+        return 1;
     }
 
     @Override
@@ -98,10 +101,52 @@ public class CustomerServiceImpl implements CustomerService {
         customerMapper.addOTP(phone, otpCode);
     }
 
+    @Override
+    public CustomerOTPDto getOTP(String phone) throws ResourceNotFoundException {
+        CustomerOTPDto customerOTPDto = customerMapper.getOTP(phone);
+
+        if(customerOTPDto == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return customerOTPDto;
+    }
 
     @Override
     public int completeRegistCustomer(String phone) {
         customerMapper.completeRegistCustomer(phone);
+        return 1;
+    }
+
+    @Override
+    public void deleteOTP(String phone) {
+        customerMapper.deleteOTP(phone);
+    }
+
+    @Override
+    public boolean getCustomerPhoneByPhone(String phone) throws ResourceNotFoundException {
+        String phoneNumber = customerMapper.getCustomerPhoneByPhone(phone);
+
+        if(phoneNumber == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return true;
+    }
+
+    @Override
+    public int changePassword(ChangeForgetPasswordForm changeForgetPasswordForm) {
+
+        if(!changeForgetPasswordForm.getPassword().equals(changeForgetPasswordForm.getConfirmPassword())) {
+            // pass moi khong khop
+            Map<String, String> error = new HashMap<>();
+            error.put("confirmPassword", "Confirm password is not matched");
+            throw new ValidationException(error);
+        }
+
+        String newHashedPassword = passwordEncoder.encode(changeForgetPasswordForm.getPassword());
+        customerMapper.changePassword(newHashedPassword, changeForgetPasswordForm.getPhone());
+        // ok
         return 1;
     }
 }
