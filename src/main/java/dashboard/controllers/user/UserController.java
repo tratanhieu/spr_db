@@ -1,19 +1,35 @@
 package dashboard.controllers.user;
 
 import dashboard.commons.ActionUtils;
+import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
+import dashboard.dto.user.LoginForm;
+import dashboard.dto.user.UserDto;
+import dashboard.dto.user.UserForm;
+import dashboard.dto.user.UserPasswordForm;
+import dashboard.entities.user.CustomUserDetails;
 import dashboard.entities.user.User;
+import dashboard.enums.EntityStatus;
+import dashboard.enums.UserStatus;
+import dashboard.exceptions.customs.InvalidException;
 import dashboard.exceptions.customs.ResourceNotFoundException;
-import dashboard.services.PusherService;
+import dashboard.exceptions.customs.ValidationException;
+import dashboard.provider.JwtTokenProvider;
 import dashboard.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -21,55 +37,138 @@ public class UserController {
 
     @Autowired
     UserService userService;
-    @Autowired
-    PusherService pusherService;
 
-    @GetMapping("")
-    public ResponseEntity index (
-            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
-            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
-    ) {
-        Pageable pageable = ActionUtils.preparePageable(sort, page, size);
-        return ResponseEntity.ok(userService.getAllWithPagination(pageable));
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    @PostMapping("/login")
+    public ResponseEntity authenticateUser(@RequestBody LoginForm loginForm) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+            loginForm.getUserName(),
+            loginForm.getPassword()
+        );
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = customUserDetails.getUser();
+        String jwt = tokenProvider.generateToken(customUserDetails);
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", jwt);
+        map.put("avatar", user.getAvatar());
+        map.put("fullName", user.getFullName());
+        return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getOne(@PathVariable(name = "id") Long userId) throws ResourceNotFoundException {
+//    @PostMapping("/logout")
+//    public ResponseEntity logout() {
+//        String jwt = tokenProvider.
+//        return ResponseEntity.ok(new HashMap<String, String>() {{ put("token", jwt); }});
+//    }
+
+    @GetMapping
+    public ResponseEntity index() {
+        return ResponseEntity.ok(userService.getAll());
+    }
+
+    @GetMapping("{userId}")
+    public ResponseEntity getOne(@PathVariable(name = "userId") Long userId) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.getOne(userId));
     }
 
-    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody User user) throws NoSuchAlgorithmException {
-        String hashedPassWord = ActionUtils.hashPassWordMD5(user.getPassword());
-        user.setPassword(hashedPassWord);
-
-        userService.create(user);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_CHANNEL_USER);
-        return HttpStatus.OK;
+    @GetMapping("create")
+    public ResponseEntity getCreate() {
+        return ResponseEntity.ok(userService.getCreate());
     }
 
-    @PostMapping(value = "{userId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(
-            @PathVariable(name = "userId") Long userId,
-            @RequestBody User user
-    ) throws ResourceNotFoundException, NoSuchAlgorithmException{
-        String hashedPassWord = ActionUtils.hashPassWordMD5(user.getPassword());
-        user.setPassword(hashedPassWord);
-
-        user.setUserId(userId);
-        userService.update(user);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_CHANNEL_USER);
-        return HttpStatus.OK;
+    @GetMapping("update/{userId}")
+    public ResponseEntity getUpdate(
+        @PathVariable(name = "userId") Long userId
+    ) throws ResourceNotFoundException {
+        Map<String, Object> map = userService.getCreate();
+        map.put("user", userService.getOne(userId));
+        return ResponseEntity.ok(map);
     }
 
-    @GetMapping(value = "{userId}/delete")
-    public HttpStatus delete(@PathVariable(name = "userId") Long userId) throws ResourceNotFoundException {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity create(@RequestBody UserForm userForm) {
+        ValidationUtils.validate(userForm);
+        userService.create(userForm);
+        return index();
+    }
+
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity update(@RequestBody UserForm userForm) throws ResourceNotFoundException {
+        UserDto userDto = userService.getOne(userForm.getUserId());
+        if (!userDto.getUserGroupId().equals(userForm.getUserGroupId()) ||
+                !userDto.getStatus().equals(userForm.getStatus())) {
+            userService.update(userForm);
+        }
+        return index();
+    }
+
+    @GetMapping(value = "profile")
+    public ResponseEntity getUpdateProfile(
+            HttpServletRequest request
+    ) throws ResourceNotFoundException, IOException {
+        String token = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromJWT(token);
+        Map map =  userService.getUserProfile(userId);
+        return ResponseEntity.ok(map);
+    }
+
+    @PatchMapping(value = "profile", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updateProfile(
+            @RequestBody UserForm userForm,
+            HttpServletRequest request
+    ) throws ResourceNotFoundException, IOException {
+        String token = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromJWT(token);
+        userForm.setUserId(userId);
+        userService.updateProfile(userForm);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity changePassword(
+            @RequestBody UserPasswordForm userPasswordForm,
+            HttpServletRequest request
+    ) throws ResourceNotFoundException {
+        String token = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromJWT(token);
+        Map<String, String> errors = new HashMap<>();
+        if (!userPasswordForm.getNewPassword().equals(userPasswordForm.getConfirmPassword())) {
+            errors.put("confirmPassword", "Confirm Password not match");
+        }
+        if (userPasswordForm.getNewPassword().equals(userPasswordForm.getOldPassword())) {
+            errors.put("newPassword", "New Password must different Old Password");
+        }
+        if (errors.size() > 0) {
+            throw new ValidationException(errors);
+        }
+        userService.updatePassword(
+            userId,
+            userPasswordForm.getOldPassword(),
+            userPasswordForm.getNewPassword()
+        );
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "active")
+    public ResponseEntity active(@PathVariable("token") String token) {
+        if (token != null) {
+            userService.active(1L, EntityStatus.ACTIVE);
+            return ResponseEntity.ok(HttpStatus.OK);
+        }
+        return (ResponseEntity) ResponseEntity.badRequest();
+    }
+
+    @DeleteMapping(value = "{userId}")
+    public ResponseEntity delete(@PathVariable(name = "userId") Long userId) {
         userService.delete(userId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_RELOAD_LIST,
-                PusherConstants.PUSHER_CHANNEL_USER);
-        return HttpStatus.OK;
+        return index();
     }
 }

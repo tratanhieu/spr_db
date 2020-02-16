@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface ProvinceService {
 
-    Map<String, String> listProvince() throws IOException;
+    Map<String, String> listProvince();
 
     Map<String, String> listDistrict(String provinceId) throws IOException;
 

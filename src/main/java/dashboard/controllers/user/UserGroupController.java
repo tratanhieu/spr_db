@@ -25,12 +25,6 @@ public class UserGroupController {
 
     @Autowired
     UserGroupService userGroupService;
-    @Autowired
-    PusherService pusherService;
-    @Autowired
-    UserGroupRepository userGroupRepository;
-    @Autowired
-    UserGroupFeaturesRepository userGroupFeaturesRepository;
 
     private static final String CHANNEL = "USER_GROUP_FEATURES";
 
