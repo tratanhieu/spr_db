@@ -1,6 +1,8 @@
 package dashboard.controllers.product;
 
+import dashboard.commons.ValidationUtils;
 import dashboard.constants.PusherConstants;
+import dashboard.dto.product.ProductTypeForm;
 import dashboard.entities.product.ProductBrand;
 import dashboard.entities.product.ProductType;
 import dashboard.enums.EntityStatus;
@@ -34,10 +36,7 @@ public class ProductTypeController {
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
             @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
-        Sort sortable = sort.equals("ASC") ? Sort.by("createDate").ascending() : Sort.by("createDate").descending();
-        page = 1 >= page ? 0 : (page - 1);
-        Pageable pageable = PageRequest.of(page, size, sortable);
-        return ResponseEntity.ok(productTypeService.getAllWithPagination(pageable));
+        return ResponseEntity.ok(productTypeService.getAll());
     }
 
     @GetMapping("/{id}")
@@ -45,28 +44,32 @@ public class ProductTypeController {
         return ResponseEntity.ok(productTypeService.getOne(productTypeId));
     }
 
-    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus create(@RequestBody ProductType productType) {
-        productTypeService.create(productType);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_TYPE,
-                PusherConstants.PUSHER_ACTION_CREATE);
-        return HttpStatus.OK;
+    @GetMapping("create")
+    public ResponseEntity getCreate() throws ResourceNotFoundException {
+        return ResponseEntity.ok(productTypeService.getCreate());
     }
 
-    @PostMapping(value = "update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus update(@RequestBody ProductType productType) throws ResourceNotFoundException{
-        productTypeService.update(productType);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_TYPE,
-                PusherConstants.PUSHER_ACTION_UPDATE);
-        return HttpStatus.OK;
+    @PostMapping (value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity create(@RequestBody ProductTypeForm productTypeForm) {
+
+        ValidationUtils.validate(productTypeForm);
+        productTypeService.create(productTypeForm);
+
+        return ResponseEntity.ok(productTypeService.getAll());
     }
 
-    @GetMapping(value = "delete/{id}")
-    public HttpStatus delete(@PathVariable(name = "id") Long productTypeId) throws ResourceNotFoundException {
+    @PatchMapping (value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity update(@RequestBody ProductTypeForm productTypeForm) throws ResourceNotFoundException{
+        ValidationUtils.validate(productTypeForm);
+        productTypeService.update(productTypeForm);
+        return ResponseEntity.ok(productTypeService.getAll());
+    }
+
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity delete(@PathVariable(name = "id") Long productTypeId) throws ResourceNotFoundException {
+
         productTypeService.delete(productTypeId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_PRODUCT_TYPE,
-                PusherConstants.PUSHER_ACTION_DELETE);
-        return HttpStatus.OK;
+        return ResponseEntity.ok(productTypeService.getAll());
     }
 
     @PostMapping(value = "bulk-update", consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -1,5 +1,7 @@
 package dashboard.services;
 
+import dashboard.dto.product.ProductCategoryDto;
+import dashboard.dto.product.ProductCategoryForm;
 import dashboard.entities.product.ProductCategory;
 import dashboard.generics.ListEntityResponse;
 import dashboard.enums.EntityStatus;
@@ -10,15 +12,15 @@ import java.util.List;
 
 public interface ProductCategoryService {
 
-    ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable, String search, EntityStatus status);
+    List<ProductCategoryDto> getAll();
 
-    ProductCategory getOne(Long productCategoryId) throws ResourceNotFoundException;
+    ProductCategoryDto getOne(Long productCategoryId) throws ResourceNotFoundException;
 
-    void create(ProductCategory productCategory);
+    List create(ProductCategoryForm productCategoryForm);
 
-    void update(ProductCategory productCategory);
+    List update(ProductCategoryForm productCategoryForm);
 
-    void delete(Long productCategoryId) throws ResourceNotFoundException;
+    List delete(Long productCategoryId) throws ResourceNotFoundException;
 
     void updateStatusWithMultipleId(List<Long> productCategoryListId, EntityStatus status) throws ResourceNotFoundException;
 }

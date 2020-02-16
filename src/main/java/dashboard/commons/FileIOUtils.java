@@ -40,8 +40,9 @@ public class FileIOUtils {
         String datePath = new SimpleDateFormat("yyyy/MM/dd").format(DataUtils.getSystemDate());
         // Update file name
         String dirPath = String.format(STATIC_FOLDER, dir, "images/" + datePath + "/");
-        File outputPath = new File(dirPath);
 
+        File outputPath = new File(dirPath);
+      
         if (!outputPath.exists()) {
             try {
                 outputPath.mkdir();

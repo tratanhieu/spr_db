@@ -6,6 +6,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class ValidationUtils {
 
@@ -16,5 +17,10 @@ public class ValidationUtils {
         if (violations.size()  > 0) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
         }
+    }
+
+    // Method check null String
+    public static boolean isBlank(String string ) {
+        return string == null || string.trim().isEmpty();
     }
 }

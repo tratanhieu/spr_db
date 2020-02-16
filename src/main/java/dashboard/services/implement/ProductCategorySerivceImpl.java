@@ -1,12 +1,14 @@
 package dashboard.services.implement;
 
 import dashboard.commons.DataUtils;
-import dashboard.generics.ListEntityResponse;
+import dashboard.commons.ValidationUtils;
+import dashboard.dto.product.ProductCategoryDto;
+import dashboard.dto.product.ProductCategoryForm;
+
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
+import dashboard.repositories.ProductCategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import dashboard.entities.product.ProductCategory;
@@ -14,6 +16,7 @@ import dashboard.repositories.ProductCategoryRepository;
 import dashboard.services.ProductCategoryService;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.List;
 
@@ -22,54 +25,57 @@ public class ProductCategorySerivceImpl implements ProductCategoryService{
 	
 	@Autowired
 	ProductCategoryRepository productCategoryRepository;
+
+	@Autowired
+    ProductCategoryMapper productCategoryMapper;
 	
 	@Override
-	public ListEntityResponse<ProductCategory> getAllWithPagination(Pageable pageable, String search, EntityStatus status) {
-        Page<ProductCategory> result = productCategoryRepository.findWithPageableAndSearch(pageable, search, status);
-
-		ListEntityResponse<ProductCategory> productCategoryResponse = new ListEntityResponse<>();
-
-		productCategoryResponse.setPage(result.getNumber() + 1);
-		productCategoryResponse.setPageSize(result.getSize());
-		productCategoryResponse.setTotalPage(result.getTotalPages());
-		productCategoryResponse.setListData(result.getContent());
-		
-		return productCategoryResponse;
+	public List<ProductCategoryDto> getAll() { return productCategoryMapper.findAllActiveProductCategory();
 	}
 
     @Override
-    public ProductCategory getOne(Long productCategoryId) throws ResourceNotFoundException {
-        ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
-
-        if (productCategory == null || productCategory.getStatus().equals(EntityStatus.DELETED)) {
-            throw new ResourceNotFoundException();
-        }
-
-        return productCategory;
+    public ProductCategoryDto getOne(Long productCategoryId) throws ResourceNotFoundException {
+        return productCategoryMapper.findById(productCategoryId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
-	public void create(@Valid ProductCategory productCategory) {
-	    if (productCategory.getSlugName() == null) {
-	        productCategory.setSlugName(DataUtils.makeSlug(productCategory.getName()));
+	public List create(@Valid ProductCategoryForm productCategoryForm) {
+
+	    if (productCategoryForm.getProductCategoryId() != null ) {
+            throw new ValidationException("product brand id not null");
         }
-		productCategoryRepository.save(productCategory);
+
+	    if (ValidationUtils.isBlank(productCategoryForm.getSlugName())) {
+	        productCategoryForm.setSlugName(DataUtils.makeSlug(productCategoryForm.getName()));
+        }
+
+        ProductCategory productCategory = new ProductCategory(productCategoryForm);
+	    productCategoryMapper.save(productCategory);
+
+	    return getAll();
 	}
 
 	@Override
-	public void update(@Valid ProductCategory productCategory) {
-		productCategoryRepository.save(productCategory);
+	public List  update(@Valid ProductCategoryForm productCategoryForm) {
+
+	    if (productCategoryForm.getProductCategoryId() == null) {
+	        throw new ValidationException("Product category id is null");
+        }
+
+	    if (ValidationUtils.isBlank(productCategoryForm.getSlugName())){
+	        productCategoryForm.setSlugName(DataUtils.makeSlug(productCategoryForm.getName()));
+        }
+
+	    ProductCategory productCategory = new ProductCategory(productCategoryForm);
+	    productCategoryMapper.update(productCategory);
+	    return getAll();
 	}
 
     @Override
-    public void delete(Long productCategoryId) throws ResourceNotFoundException {
-        ProductCategory productCategory = productCategoryRepository.findById(productCategoryId).orElse(null);
-        if (productCategory == null) {
-            throw new ResourceNotFoundException();
-        }
-        productCategory.setStatus(EntityStatus.DELETED);
-        productCategory.setDeleteDate(new Date());
-	    productCategoryRepository.save(productCategory);
+    public List delete(Long productCategoryId) throws ResourceNotFoundException {
+        productCategoryMapper.deleteById(productCategoryId);
+
+        return getAll();
     }
 
     @Override
