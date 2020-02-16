@@ -108,7 +108,7 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
                 productBrandForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
             } else {
 
-                fileIOUtils.removeFileViaURL(productBrandDto.getImage());
+                fileIOUtils.removeImageFromURL(productBrandDto.getImage());
                 Map mapUpload =  fileIOUtils.createImageViaBase64Encode(productBrandForm.getImage(),productBrandForm.getSlugName());
                 productBrandForm.setImage((String) mapUpload.get(FileIOUtils.PATH));
             }
