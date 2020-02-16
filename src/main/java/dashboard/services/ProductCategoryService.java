@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface ProductCategoryService {
 
-    List<ProductCategoryDto> getAll();
+    List getAll();
+
+    List getAllActives();
 
     ProductCategoryDto getOne(Long productCategoryId) throws ResourceNotFoundException;
 
@@ -20,7 +22,5 @@ public interface ProductCategoryService {
 
     List update(ProductCategoryForm productCategoryForm);
 
-    List delete(Long productCategoryId) throws ResourceNotFoundException;
-
-    void updateStatusWithMultipleId(List<Long> productCategoryListId, EntityStatus status) throws ResourceNotFoundException;
+    List delete(Long productCategoryId);
 }

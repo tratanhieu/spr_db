@@ -1,18 +1,14 @@
 package dashboard.controllers.post;
 
-import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
-import dashboard.constants.PusherConstants;
 import dashboard.dto.post.PostForm;
 import dashboard.entities.post.Post;
 import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.generics.MultipleExecute;
 import dashboard.services.PostService;
-import dashboard.services.PusherService;
 import dashboard.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("post")
 public class PostController {
 
     @Autowired
@@ -30,24 +26,16 @@ public class PostController {
 
     @Autowired
     TagService tagService;
-    @Autowired
-    PusherService pusherService;
 
-    @GetMapping("")
-    public ResponseEntity index(
-            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer size,
-            @RequestParam(name = "sort", required = false, defaultValue = "createDate,ASC") String sort,
-            @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "status", required = false) EntityStatus status
-    ) {
-        Pageable pageable = ActionUtils.preparePageable(sort, page, size);
+    @GetMapping
+    public ResponseEntity index() {
         return ResponseEntity.ok(postService.getAll());
     }
 
     @GetMapping("{postId}")
-    public ResponseEntity<Post> getOne(@PathVariable(name = "postId") Long postId)
-            throws ResourceNotFoundException {
+    public ResponseEntity<Post> getOne(
+        @PathVariable(name = "postId") Long postId
+    ) throws ResourceNotFoundException {
         return ResponseEntity.ok(postService.getOne(postId));
     }
 
@@ -58,7 +46,7 @@ public class PostController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity create(
-            @RequestBody PostForm postForm
+        @RequestBody PostForm postForm
     ) {
         ValidationUtils.validate(postForm);
         List response = postService.create(postForm);
@@ -67,8 +55,8 @@ public class PostController {
 
     @PostMapping(value = "{postId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus update(
-            @PathVariable(name = "postId") Long postId,
-            @RequestBody Post postParams
+        @PathVariable(name = "postId") Long postId,
+        @RequestBody Post postParams
     ) throws ResourceNotFoundException {
 
         Post post = postService.getOne(postId);
@@ -84,11 +72,7 @@ public class PostController {
         post.setStatus(postParams.getStatus());
         post.setUpdateDate(new Date());
 //        post.setTags(postParams.getTags());
-
 //        postService.update(post);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
-                PusherConstants.PUSHER_ACTION_UPDATE);
-
         return HttpStatus.OK;
     }
 
@@ -99,16 +83,12 @@ public class PostController {
 
         tagService.deletePostTag(postId);
         postService.delete(postId);
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
-                PusherConstants.PUSHER_ACTION_DELETE);
         return HttpStatus.OK;
     }
 
     @PostMapping(value = "execute", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus execute(@RequestBody MultipleExecute<Long, EntityStatus> multipleExecute) throws ResourceNotFoundException {
         postService.updateStatusWithMultipleId(multipleExecute.getListId(), multipleExecute.getStatus());
-        pusherService.createAction(PusherConstants.PUSHER_CHANNEL_POST,
-                PusherConstants.PUSHER_ACTION_UPDATE_STATUS_MULTIPLE);
         return HttpStatus.OK;
     }
 

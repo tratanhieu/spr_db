@@ -9,28 +9,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/api/province", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "api/province", produces = "application/json;charset=UTF-8")
 public class ProvinceController {
 
     @Autowired
     ProvinceService provinceService;
 
-    @GetMapping("")
-    public ResponseEntity listProvince() throws IOException {
+    @GetMapping
+    public ResponseEntity listProvince() {
         return ResponseEntity.ok(provinceService.listProvince());
     }
 
     @GetMapping("{provinceId}")
-    public ResponseEntity listDistrict(@PathVariable(name = "provinceId") String provinceId) throws IOException{
+    public ResponseEntity listDistrict(
+        @PathVariable(name = "provinceId") String provinceId
+    ) throws IOException{
         return ResponseEntity.ok(provinceService.listDistrict(provinceId));
     }
 
     @GetMapping("{provinceId}/{districtId}")
-    public ResponseEntity listWard(@PathVariable(name = "provinceId") String provinceId,
-                                       @PathVariable(name = "districtId") String districtId) throws IOException{
+    public ResponseEntity listWard(
+        @PathVariable(name = "provinceId") String provinceId,
+        @PathVariable(name = "districtId") String districtId
+    ) throws IOException{
         return ResponseEntity.ok(provinceService.listWard(provinceId, districtId));
     }
 }

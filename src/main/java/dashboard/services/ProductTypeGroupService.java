@@ -12,17 +12,17 @@ import java.util.List;
 
 public interface ProductTypeGroupService {
 
-    List<ProductTypeGroupDto> getAll();
+    List getAll();
+
+    List getAllActiveByProductCategoryId(Long productCategoryId);
 
     ProductTypeGroupDto getOne(Long productTypeGroupId) throws ResourceNotFoundException;
 
     List getCreate() throws ResourceNotFoundException;
 
-    List create( ProductTypeGroupForm productTypeGroupForm );
+    List create(ProductTypeGroupForm productTypeGroupForm);
 
     List update(ProductTypeGroupForm productTypeGroupForm);
 
-    List delete(Long productTypeGroupId) throws ResourceNotFoundException;
-
-    void updateStatusWithMultipleId(List<Long> productTypeGroupListId, EntityStatus status) throws ResourceNotFoundException;
+    List delete(Long productTypeGroupId);
 }

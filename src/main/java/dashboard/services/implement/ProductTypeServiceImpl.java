@@ -7,7 +7,6 @@ import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.repositories.ProductTypeGroupMapper;
 import dashboard.repositories.ProductTypeMapper;
-import dashboard.repositories.ProductTypeRepository;
 import dashboard.services.ProductTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +14,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProductTypeServiceImpl implements ProductTypeService {
-
-    @Autowired
-    ProductTypeRepository productTypeRepository;
 
     @Autowired
     ProductTypeMapper productTypeMapper;
@@ -34,8 +27,13 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
 
     @Override
-    public List<ProductTypeDto> getAll() {
-      return productTypeMapper.findAllActiveProductType();
+    public List getAll() {
+      return productTypeMapper.findAll();
+    }
+
+    @Override
+    public List getAllActiveByCategoryAndGroupType(Long productCategoryId, Long productGroupTypeId) {
+        return productTypeMapper.findAllActiveByCategoryAndGroupType(productCategoryId, productGroupTypeId);
     }
 
     @Override
@@ -45,7 +43,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     @Override
     public List getCreate() throws ResourceNotFoundException {
-        return productTypeGroupMapper.findAllActiveProductTypeGroup();
+        return productTypeGroupMapper.findAll();
     }
 
     @Override
@@ -99,11 +97,5 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     public void delete(Long productTypeId) throws ResourceNotFoundException {
 
         productTypeMapper.deleteById(productTypeId);
-    }
-
-    @Override
-    public int updateStatusByListId(List<Long> listId, EntityStatus entityStatus) throws ResourceNotFoundException {
-        int result = productTypeRepository.updateStatusByListId(entityStatus, listId);
-        return result;
     }
 }

@@ -14,20 +14,29 @@ import java.util.Optional;
 public interface ProductBrandMapper {
 
     @Select(
-            "SELECT " +
-                    "pbr.product_brand_id AS productBrandId, " +
-                    "pbr.name, " +
-                    "pbr.slug_name AS slugName, " +
-                    "pbr.image, " +
-                    "(SELECT COUNT(*) FROM product WHERE product_brand_id = pbr.product_brand_id) AS totalProduct, "+
-                    "pbr.create_date AS createDate, " +
-                    "pbr.update_date AS updateDate, " +
-                    "pbr.status " +
-                    "FROM product_brand pbr " +
-                    "WHERE pbr.status <> 'DELETE' " +
-                    "ORDER BY pbr.create_date DESC"
+        "SELECT " +
+            "pbr.product_brand_id AS productBrandId, " +
+            "pbr.name, " +
+            "pbr.slug_name AS slugName, " +
+            "pbr.image, " +
+            "(SELECT COUNT(*) FROM product WHERE product_brand_id = pbr.product_brand_id) AS totalProduct, "+
+            "pbr.create_date AS createDate, " +
+            "pbr.update_date AS updateDate, " +
+            "pbr.status " +
+        "FROM product_brand pbr " +
+        "ORDER BY pbr.create_date DESC"
     )
     List<ProductBrandDto> findAllActiveProductBrand();
+
+    @Select(
+        "SELECT " +
+            "product_brand_id AS productBrandId, " +
+            "name " +
+        "FROM product_brand " +
+        "WHERE status = 'ACTIVE' " +
+        "ORDER BY name ASC"
+    )
+    List<ProductBrand> findAllActives();
 
     @Select(
             "SELECT " +

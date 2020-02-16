@@ -14,7 +14,9 @@ import java.util.Map;
 
 public interface ProductTypeService {
 
-    List<ProductTypeDto> getAll();
+    List getAll();
+
+    List getAllActiveByCategoryAndGroupType(Long productCategoryId, Long productGroupTypeId);
 
     ProductTypeDto getOne(Long productTypeId) throws ResourceNotFoundException;
 
@@ -25,7 +27,4 @@ public interface ProductTypeService {
     void update(ProductTypeForm productTypeForm) throws ResourceNotFoundException;
 
     void delete(Long productTypeId) throws ResourceNotFoundException;
-
-    int updateStatusByListId(List<Long> listId, EntityStatus entityStatus) throws ResourceNotFoundException;
-
 }
