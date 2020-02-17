@@ -4,10 +4,8 @@ import dashboard.commons.DataUtils;
 import dashboard.commons.ValidationUtils;
 import dashboard.dto.product.ProductTypeGroupDto;
 import dashboard.dto.product.ProductTypeGroupForm;
-import dashboard.enums.EntityStatus;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.repositories.ProductCategoryMapper;
-import dashboard.repositories.ProductTypeGroupRepository;
 import dashboard.repositories.ProductTypeGroupMapper;
 import dashboard.services.ProductTypeGroupService;
 
@@ -18,10 +16,7 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 @Service
-public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
-	
-	@Autowired
-	ProductTypeGroupRepository productTypeGroupRepository;
+public class ProductTypeGroupServiceImpl implements ProductTypeGroupService {
 
 	@Autowired
     ProductTypeGroupMapper productTypeGroupMapper;
@@ -30,10 +25,14 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
     ProductCategoryMapper productCategoryMapper;
 
 	@Override
-	public List<ProductTypeGroupDto> getAll() {
-
-		return productTypeGroupMapper.findAllActiveProductTypeGroup();
+	public List getAll() {
+		return productTypeGroupMapper.findAll();
 	}
+
+    @Override
+    public List getAllActiveByProductCategoryId(Long productCategoryId) {
+        return productTypeGroupMapper.findActiveByProductCategoryId(productCategoryId);
+    }
 
     @Override
     public ProductTypeGroupDto getOne(Long productCategoryId) throws ResourceNotFoundException {
@@ -53,7 +52,6 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
         }
 
 	    if (ValidationUtils.isBlank(productTypeGroupForm.getSlugName())) {
-
 	        productTypeGroupForm.setSlugName(DataUtils.makeSlug(productTypeGroupForm.getName()));
         }
 
@@ -62,7 +60,6 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
         } else {
             throw new ValidationException("Product category id is not exists");
         }
-
 
 	    return getAll();
 	}
@@ -88,14 +85,9 @@ public class ProductTypeGroupSerivceImpl implements ProductTypeGroupService {
 	}
 
     @Override
-    public List delete(Long productCategoryId) throws ResourceNotFoundException {
+    public List delete(Long productCategoryId) {
 
 	    productTypeGroupMapper.deleteById(productCategoryId);
 	    return getAll();
-    }
-
-    @Override
-    public void updateStatusWithMultipleId(List<Long> listId, EntityStatus status) {
-        int res = productTypeGroupRepository.updateStatusByListId(listId, status);
     }
 }

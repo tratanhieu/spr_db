@@ -1,8 +1,6 @@
 package dashboard.controllers.user;
 
-import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
-import dashboard.constants.PusherConstants;
 import dashboard.dto.user.LoginForm;
 import dashboard.dto.user.UserDto;
 import dashboard.dto.user.UserForm;
@@ -10,8 +8,6 @@ import dashboard.dto.user.UserPasswordForm;
 import dashboard.entities.user.CustomUserDetails;
 import dashboard.entities.user.User;
 import dashboard.enums.EntityStatus;
-import dashboard.enums.UserStatus;
-import dashboard.exceptions.customs.InvalidException;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.exceptions.customs.ValidationException;
 import dashboard.provider.JwtTokenProvider;

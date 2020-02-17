@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface ProductBrandService {
 
-    List<ProductBrandDto> getAll();
+    List getAll();
+
+    List getAllActives();
 
     ProductBrandDto getOne(Long productBrandId) throws ResourceNotFoundException;
 
@@ -19,6 +21,4 @@ public interface ProductBrandService {
     void  update(ProductBrandForm productBrandForm) throws ResourceNotFoundException;
 
     void  delete(Long productBrandId);
-
-    int updateStatusWithMultipleId(List<Long> ListId, EntityStatus status) throws ResourceNotFoundException;
 }

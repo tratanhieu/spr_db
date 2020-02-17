@@ -29,13 +29,15 @@ import java.util.Optional;
 public class ProductBrandSerivceImpl implements ProductBrandService {
 
     @Autowired
-    ProductBrandRepository productBrandRepository;
-
-    @Autowired
     ProductBrandMapper productBrandMapper;
     @Override
-    public List<ProductBrandDto> getAll() {
+    public List getAll() {
         return productBrandMapper.findAllActiveProductBrand();
+    }
+
+    @Override
+    public List getAllActives() {
+        return productBrandMapper.findAllActives();
     }
 
     @Override
@@ -126,11 +128,5 @@ public class ProductBrandSerivceImpl implements ProductBrandService {
 
         productBrandMapper.deleteById(productBrandId);
 
-    }
-
-    @Override
-    public int updateStatusWithMultipleId(List<Long> ListId, EntityStatus status) throws ResourceNotFoundException {
-        int res = productBrandRepository.updateStatusByListId(ListId, status);
-        return res;
     }
 }

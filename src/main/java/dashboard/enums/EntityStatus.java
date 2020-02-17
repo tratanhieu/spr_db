@@ -1,23 +1,22 @@
 package dashboard.enums;
 
 public enum EntityStatus {
-	
 	ACTIVE("ACTIVE") {
 		@Override
 		public String getLabel() {
 			return "Hiển thị";
 		}
 	},
-	HIDDEN("HIDDEN") {
+	SUSPENSION("SUSPENSION") {
 		@Override
 		public String getLabel() {
-			return "Bị ẩn";
+			return "Ngừng kinh doanh";
 		}
 	},
-	DELETED("DELETED") {
+	STOP("STOP") {
 		@Override
 		public String getLabel() {
-			return "Đã xóa";
+			return "Đã dừng";
 		}
 	};
 	

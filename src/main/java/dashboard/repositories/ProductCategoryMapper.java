@@ -13,40 +13,49 @@ import java.util.Optional;
 public interface ProductCategoryMapper {
 
     @Select(
-            "SELECT " +
-                    "product_category_id AS productCategoryId, " +
-                    "name, " +
-                    "slug_name AS slugName, " +
-                    "create_date AS createDate, " +
-                    "update_date AS updateDate, " +
-                    "status " +
-                    "FROM product_category pc " +
-                    "WHERE pc.status <> 'DELETE' " +
-                    "ORDER BY pc.create_date DESC"
+        "SELECT " +
+            "product_category_id AS productCategoryId, " +
+            "name, " +
+            "slug_name AS slugName, " +
+            "create_date AS createDate, " +
+            "update_date AS updateDate, " +
+            "status " +
+        "FROM product_category pc " +
+        "ORDER BY pc.create_date DESC"
     )
-    List<ProductCategoryDto> findAllActiveProductCategory();
+    List<ProductCategoryDto> findAll();
 
     @Select(
-            "SELECT " +
-                    "product_category_id AS productCategoryId, " +
-                    "name, " +
-                    "slug_name AS slugName, " +
-                    "create_date AS createDate, " +
-                    "update_date AS updateDate, " +
-                    "status " +
-                    "FROM product_category " +
-                    "WHERE product_category_id = #{productCategoryId}"
+        "SELECT " +
+            "product_category_id AS productCategoryId, " +
+            "name " +
+        "FROM product_category  " +
+        "WHERE status = 'ACTIVE' " +
+        "ORDER BY create_date DESC"
+    )
+    List<ProductCategory> findAllActiveProductCategory();
+
+    @Select(
+        "SELECT " +
+            "product_category_id AS productCategoryId, " +
+            "name, " +
+            "slug_name AS slugName, " +
+            "create_date AS createDate, " +
+            "update_date AS updateDate, " +
+            "status " +
+        "FROM product_category " +
+        "WHERE product_category_id = #{productCategoryId}"
     )
     Optional<ProductCategoryDto> findById(@Param("productCategoryId") Long productCategoryId);
 
     @Insert(
-            "INSERT INTO product_category (name, slug_name, create_date,status) " +
-                    "VALUE(" +
-                    "#{name}, " +
-                    "#{slugName}, " +
-                    "NOW()," +
-                    "#{status}" +
-                    ")"
+        "INSERT INTO product_category (name, slug_name, create_date,status) " +
+        "VALUE(" +
+            "#{name}, " +
+            "#{slugName}, " +
+            "NOW()," +
+            "#{status}" +
+        ")"
     )
     @SelectKey(
             statement = "SELECT LAST_INSERT_ID() AS productCategoryId",
@@ -57,22 +66,28 @@ public interface ProductCategoryMapper {
     Long save(ProductCategory productCategory);
 
     @Update(
-            "UPDATE product_category " +
-                    "SET " +
-                    "name = #{name}, " +
-                    "slug_name = #{slugName}, " +
-                    "update_date = NOW(), " +
-                    "status = #{status} " +
-                    "WHERE product_category_id = #{productCategoryId}"
+        "UPDATE product_category " +
+        "SET " +
+            "name = #{name}, " +
+            "slug_name = #{slugName}, " +
+            "update_date = NOW(), " +
+            "status = #{status} " +
+        "WHERE product_category_id = #{productCategoryId}"
     )
     void update(ProductCategory productCategory);
 
     @Select(
-            "DELETE FROM product_category WHERE product_category_id = #{productCategoryId}"
+        "DELETE FROM product_category WHERE product_category_id = #{productCategoryId}"
     )
     void deleteById(@Param("productCategoryId") Long productCategoryId);
 
-    @Select("SELECT EXISTS(SELECT 1 FROM product_category WHERE product_category.product_category_id = #{id} LIMIT 1)")
+    @Select(
+        "SELECT EXISTS(" +
+            "SELECT 1 " +
+            "FROM product_category" +
+            "WHERE product_category.product_category_id = #{id} " +
+            "LIMIT 1" +
+        ")"
+    )
     int checkExistKey(@Param("id") Long id);
-
 }
