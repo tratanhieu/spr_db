@@ -1,22 +1,17 @@
-package dashboard.entities.product;
+package dashboard.dto.product;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import dashboard.entities.base.BaseEntity;
+import dashboard.dto.BaseEntityDto;
 import dashboard.enums.EntityStatus;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
-        allowGetters = true)
-public class ProductSupplierBrand extends BaseEntity {
+public class ProductSupplierBranchDto extends BaseEntityDto {
 
-    private static final long serialVersionUID = 1L;
 
-    private Long productSupplierBrandId;
+    private Long productSupplierId;
+
+    private String productSupplierName;
 
     private String name;
 
@@ -37,12 +32,20 @@ public class ProductSupplierBrand extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    public Long getProductSupplierBrandId() {
-        return productSupplierBrandId;
+    public Long getProductSupplierId() {
+        return productSupplierId;
     }
 
-    public void setProductSupplierBrandId(Long productSupplierBrandId) {
-        this.productSupplierBrandId = productSupplierBrandId;
+    public void setProductSupplierId(Long productSupplierId) {
+        this.productSupplierId = productSupplierId;
+    }
+
+    public String getProductSupplierName() {
+        return productSupplierName;
+    }
+
+    public void setProductSupplierName(String productSupplierName) {
+        this.productSupplierName = productSupplierName;
     }
 
     public String getName() {

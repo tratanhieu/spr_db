@@ -7,10 +7,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createDate", "updateDate", "deleleDate"},
-        allowGetters = true)
 public class ProductSupplier extends BaseEntity{
 
     private static final long serialVersionUID = 1L;
