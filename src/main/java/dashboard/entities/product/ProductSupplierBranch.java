@@ -12,7 +12,7 @@ public class ProductSupplierBranch extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    private Long productSupplierBrandId;
+    private Long productSupplierBranchId;
 
     private String name;
 
@@ -26,19 +26,19 @@ public class ProductSupplierBranch extends BaseEntity {
 
     private String districtId;
 
-    private String ward;
+    private String wardId;
 
     private String address;
 
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    public Long getProductSupplierBrandId() {
-        return productSupplierBrandId;
+    public Long getProductSupplierBranchId() {
+        return productSupplierBranchId;
     }
 
-    public void setProductSupplierBrandId(Long productSupplierBrandId) {
-        this.productSupplierBrandId = productSupplierBrandId;
+    public void setProductSupplierBranchId(Long productSupplierBranchId) {
+        this.productSupplierBranchId = productSupplierBranchId;
     }
 
     public String getName() {
@@ -89,12 +89,12 @@ public class ProductSupplierBranch extends BaseEntity {
         this.districtId = districtId;
     }
 
-    public String getWard() {
-        return ward;
+    public String getWardId() {
+        return wardId;
     }
 
-    public void setWard(String ward) {
-        this.ward = ward;
+    public void setWardId(String wardId) {
+        this.wardId = wardId;
     }
 
     public String getAddress() {

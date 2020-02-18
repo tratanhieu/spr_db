@@ -1,11 +1,13 @@
 package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import dashboard.dto.product.ProductSupplierDto;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
 public class ProductSupplier extends BaseEntity{
 
@@ -32,6 +34,14 @@ public class ProductSupplier extends BaseEntity{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public EntityStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EntityStatus status) {
+        this.status = status;
     }
 }
 

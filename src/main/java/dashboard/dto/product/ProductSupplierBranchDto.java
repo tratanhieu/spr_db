@@ -9,7 +9,7 @@ import javax.persistence.Enumerated;
 public class ProductSupplierBranchDto extends BaseEntityDto {
 
 
-    private Long productSupplierId;
+    private Long productSupplierBranchId;
 
     private String productSupplierName;
 
@@ -23,21 +23,27 @@ public class ProductSupplierBranchDto extends BaseEntityDto {
 
     private String provinceId;
 
+    private String provinceName;
+
     private String districtId;
 
-    private String ward;
+    private String districtName;
+
+    private String wardId;
+
+    private String wardName;
 
     private String address;
 
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
-    public Long getProductSupplierId() {
-        return productSupplierId;
+    public Long getProductSupplierBranchId() {
+        return productSupplierBranchId;
     }
 
-    public void setProductSupplierId(Long productSupplierId) {
-        this.productSupplierId = productSupplierId;
+    public void setProductSupplierBranchId(Long productSupplierBranchId) {
+        this.productSupplierBranchId = productSupplierBranchId;
     }
 
     public String getProductSupplierName() {
@@ -88,20 +94,44 @@ public class ProductSupplierBranchDto extends BaseEntityDto {
         this.provinceId = provinceId;
     }
 
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
     public String getDistrictId() {
         return districtId;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
     }
 
     public void setDistrictId(String districtId) {
         this.districtId = districtId;
     }
 
-    public String getWard() {
-        return ward;
+    public String getWardId() {
+        return wardId;
     }
 
-    public void setWard(String ward) {
-        this.ward = ward;
+    public void setWardId(String wardId) {
+        this.wardId = wardId;
+    }
+
+    public String getWardName() {
+        return wardName;
+    }
+
+    public void setWardName(String wardName) {
+        this.wardName = wardName;
     }
 
     public String getAddress() {

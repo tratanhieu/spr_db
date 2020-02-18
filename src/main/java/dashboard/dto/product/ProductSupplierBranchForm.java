@@ -21,7 +21,7 @@ public class ProductSupplierBranchForm {
 
     private String districtId;
 
-    private String ward;
+    private String wardId;
 
     private String address;
 
@@ -84,12 +84,12 @@ public class ProductSupplierBranchForm {
         this.districtId = districtId;
     }
 
-    public String getWard() {
-        return ward;
+    public String getWardId() {
+        return wardId;
     }
 
-    public void setWard(String ward) {
-        this.ward = ward;
+    public void setWardId(String wardId) {
+        this.wardId = wardId;
     }
 
     public String getAddress() {
