@@ -49,6 +49,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Long getUserIdByPhone(String phone) throws ResourceNotFoundException {
+        Long userId = customerMapper.getUserIdByPhone(phone);
+
+        if(userId == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return userId;
+    }
+
+    @Override
     public void updateCustomerInfo(CustomerForm customerForm) throws ResourceNotFoundException {
         customerMapper.getCustomerInfo(customerForm.getUserId()).orElseThrow(ResourceNotFoundException::new);
         customerMapper.updateCustomerInfo(customerForm);
@@ -145,7 +156,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         String newHashedPassword = passwordEncoder.encode(changeForgetPasswordForm.getPassword());
-        customerMapper.changePassword(newHashedPassword, changeForgetPasswordForm.getPhone());
+        customerMapper.changeForgetPassword(newHashedPassword, changeForgetPasswordForm.getPhone());
         // ok
         return 1;
     }

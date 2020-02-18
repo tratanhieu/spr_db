@@ -58,9 +58,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable();
 
         http.authorizeRequests()
-            .antMatchers("/user/login").permitAll()
-            .antMatchers("/**").permitAll()
-            .anyRequest().authenticated();
+            .antMatchers("/api/client/customer/register").permitAll()
+            .antMatchers("/api/client/customer/register/verify").permitAll()
+            .antMatchers("/api/client/customer/login").permitAll()
+            .antMatchers("/api/client/customer/password/forget").permitAll()
+            .antMatchers("/api/client/customer/password/verifyForget").permitAll()
+            .antMatchers("/api/client/customer/password/forget/change").permitAll()
+            .antMatchers("/api/client/customer/**").authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

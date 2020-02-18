@@ -4,6 +4,7 @@ import dashboard.dto.user.customer.CustomerDto;
 import dashboard.dto.user.customer.CustomerForm;
 import dashboard.dto.user.customer.CustomerOTPDto;
 import dashboard.dto.user.customer.RegisterForm;
+import dashboard.entities.user.Customer;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Optional;
@@ -29,7 +30,10 @@ public interface CustomerMapper {
         "WHERE " +
             "user_id = #{userId}"
     )
-    Optional<CustomerDto> getCustomerInfo(@Param("userId") Long userId);
+    Optional<CustomerDto> getCustomerInfo(Long userId);
+
+    @Select("SELECT user_id FROM customer WHERE phone = #{phone}")
+    Long getUserIdByPhone(String phone);
 
     @Update(
         "UPDATE " +
@@ -75,7 +79,7 @@ public interface CustomerMapper {
     @Insert("INSERT INTO otp_store(phone, otp_code) VALUES(#{phone}, #{otpCode}")
     void addOTP(String phone, String otpCode);
 
-    @Select("SELECT phone, otp_code FROM otp_store WHERE phone = #{phone}")
+    @Select("SELECT phone, otp_code as OTP FROM otp_store WHERE phone = #{phone}")
     CustomerOTPDto getOTP(String phone);
 
     @Update("UPDATE customer SET status = 'ACTIVE' WHERE phone = #{phone}")
@@ -96,5 +100,11 @@ public interface CustomerMapper {
                     "password = #{newPassword} " +
                     "WHERE " +
                     "phone = #{phone}")
-    void changePassword(@Param("newPassword") String newPassword, @Param("phone") String phone);
+    void changeForgetPassword(@Param("newPassword") String newPassword, @Param("phone") String phone);
+
+    @Select("SELECT phone, password FROM customer WHERE phone = #{phone}")
+    Optional<Customer> findByPhone(String phone);
+
+    @Select("SELECT phone, password FROM customer WHERE user_id = #{userId}")
+    Optional<Customer> findByUserId(Long userId);
 }

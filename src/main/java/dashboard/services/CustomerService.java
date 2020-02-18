@@ -9,6 +9,8 @@ public interface CustomerService {
 
     CustomerDto getCustomerInfo(Long userId) throws IOException, ResourceNotFoundException;
 
+    Long getUserIdByPhone(String phone) throws ResourceNotFoundException;
+
     void updateCustomerInfo(CustomerForm customerForm) throws ResourceNotFoundException;
 
     int changePassword(PasswordForm passwordForm, Long userId);
@@ -26,6 +28,8 @@ public interface CustomerService {
     boolean getCustomerPhoneByPhone(String phone) throws ResourceNotFoundException;
 
     int changePassword(ChangeForgetPasswordForm changeForgetPasswordForm);
+
+
 
 
 }

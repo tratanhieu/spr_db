@@ -1,6 +1,7 @@
 package dashboard.filter;
 
 import dashboard.provider.JwtTokenProvider;
+import dashboard.services.CustomerService;
 import dashboard.services.implement.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private CustomerService customerService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain)
@@ -33,7 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 // Lấy id user từ chuỗi jwt
-                Long userId = tokenProvider.getUserIdFromJWT(jwt);
+                String phone = tokenProvider.getUserIdFromJWT(jwt);
+                Long userId = customerService.getUserIdByPhone(phone);
                 UserDetails userDetails = customUserDetailsService.loadUserByUserId(userId);
                 if(userDetails != null) {
                     UsernamePasswordAuthenticationToken

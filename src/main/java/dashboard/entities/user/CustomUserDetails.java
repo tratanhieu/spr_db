@@ -9,18 +9,18 @@ import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private Customer customer;
 
-    public CustomUserDetails(User user) {
-        this.user = user;
+    public CustomUserDetails(Customer customer) {
+        this.customer = customer;
     }
 
-    public User getUser() {
-        return user;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override
@@ -30,12 +30,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return customer.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getPhone();
+        return customer.getPhone();
     }
 
     @Override

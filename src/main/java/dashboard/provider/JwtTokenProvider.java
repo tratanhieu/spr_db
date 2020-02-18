@@ -21,25 +21,25 @@ public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     // Tạo ra jwt từ thông tin user
-    public String generateToken(CustomUserDetails userDetails) {
+    public String generateToken(CustomUserDetails customerDetails) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         // Tạo chuỗi json web token từ id của user.
         return Jwts.builder()
-                .setSubject(userDetails.getUser().getUserId().toString())
+                .setSubject(customerDetails.getCustomer().getPhone().toString())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
                 .compact();
     }
 
-    public Long getUserIdFromJWT(String token) {
+    public String getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody();
         if (claims.getSubject() != null) {
-            return Long.parseLong(claims.getSubject());
+            return claims.getSubject();
         } else {
             throw new MalformedJwtException("In valid JWT");
         }

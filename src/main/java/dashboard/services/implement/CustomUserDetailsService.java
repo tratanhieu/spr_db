@@ -1,7 +1,9 @@
 package dashboard.services.implement;
 
 import dashboard.entities.user.CustomUserDetails;
+import dashboard.entities.user.Customer;
 import dashboard.entities.user.User;
+import dashboard.repositories.CustomerMapper;
 import dashboard.repositories.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +17,16 @@ import javax.persistence.EntityNotFoundException;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserMapper userMapper;
+    private CustomerMapper customerMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userMapper.findByPhone(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        return new CustomUserDetails(user);
+        Customer customer = customerMapper.findByPhone(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        return new CustomUserDetails(customer);
     }
 
     public UserDetails loadUserByUserId(Long userId) {
-        User user = userMapper.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException(userId.toString()));
-        return new CustomUserDetails(user);
+        Customer customer = customerMapper.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException(userId.toString()));
+        return new CustomUserDetails(customer);
     }
 }

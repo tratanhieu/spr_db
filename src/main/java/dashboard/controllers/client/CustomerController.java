@@ -2,24 +2,34 @@ package dashboard.controllers.client;
 
 import dashboard.commons.ActionUtils;
 import dashboard.commons.ValidationUtils;
+import dashboard.dto.user.LoginForm;
 import dashboard.dto.user.customer.*;
+import dashboard.entities.user.CustomUserDetails;
+import dashboard.entities.user.Customer;
+import dashboard.entities.user.User;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.exceptions.customs.ValidationException;
+import dashboard.provider.JwtTokenProvider;
 import dashboard.services.CustomerService;
 import dashboard.services.SmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/client/api/customer")
+@RequestMapping("/api/client/customer")
 
 @Transactional
 public class CustomerController {
@@ -30,21 +40,30 @@ public class CustomerController {
     @Autowired
     SmsService smsService;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
     @GetMapping("")
-    public ResponseEntity getOne () throws IOException, ResourceNotFoundException {
-        return ResponseEntity.ok(customerService.getCustomerInfo(1L));
+    public ResponseEntity getOne (HttpServletRequest request) throws IOException, ResourceNotFoundException {
+        String token = tokenProvider.getJwtFromRequest(request);
+        String phone = tokenProvider.getUserIdFromJWT(token);
+        Long userId = customerService.getUserIdByPhone(phone);
+        return ResponseEntity.ok(customerService.getCustomerInfo(userId));
     }
 
     @PatchMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity update(@RequestBody CustomerForm customerForm) throws ResourceNotFoundException, IOException {
+    public ResponseEntity update(HttpServletRequest request, @RequestBody CustomerForm customerForm) throws ResourceNotFoundException, IOException {
         ValidationUtils.validate(customerForm);
         customerForm.setUserId(1L);
         customerService.updateCustomerInfo(customerForm);
-        return getOne();
+        return getOne(request);
     }
 
     @PatchMapping(value = "/password/change", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus changePassword(@RequestBody PasswordForm passwordForm){
+    public HttpStatus changePassword(HttpServletRequest request, @RequestBody PasswordForm passwordForm){
         Long userId = 4L;
 
         customerService.changePassword(passwordForm, userId);
@@ -52,7 +71,7 @@ public class CustomerController {
         return HttpStatus.OK;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus registNew(@RequestBody RegisterForm registerForm) {
         String otpCode = ActionUtils.genOtp();
 
@@ -67,7 +86,7 @@ public class CustomerController {
         return HttpStatus.NOT_MODIFIED;
     }
 
-    @PostMapping(value = "/verifyRegist", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus verifyOTPRegist(@RequestBody CustomerOTPForm customerOTPForm) throws ResourceNotFoundException {
 
         CustomerOTPDto customerOTPDto = customerService.getOTP(customerOTPForm.getPhone());
@@ -82,10 +101,20 @@ public class CustomerController {
         throw new ValidationException(error);
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity login(@RequestBody CustomerLoginForm customerLoginForm) {
-        // THUC SU LA VAN CHUA HIEU CAI LOGIN NAY
-        return ResponseEntity.ok(new String("OK"));
+    @PostMapping("/login")
+    public ResponseEntity authenticateUser(@RequestBody LoginForm loginForm) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                loginForm.getUserName(),
+                loginForm.getPassword()
+        );
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        String jwt = tokenProvider.generateToken(customUserDetails);
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", jwt);
+        return ResponseEntity.ok(map);
     }
 
     @PatchMapping(value = "/password/forget", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -103,7 +132,7 @@ public class CustomerController {
         return HttpStatus.NOT_MODIFIED;
     }
 
-    @PostMapping(value = "/verifyForget", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/password/verifyForget", consumes = MediaType.APPLICATION_JSON_VALUE)
     public HttpStatus verifyOTPForget(@RequestBody CustomerOTPForm customerOTPForm) throws ResourceNotFoundException {
 
         CustomerOTPDto customerOTPDto = customerService.getOTP(customerOTPForm.getPhone());
