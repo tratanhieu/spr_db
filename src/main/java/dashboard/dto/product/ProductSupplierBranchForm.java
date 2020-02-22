@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 
 public class ProductSupplierBranchForm {
 
+    private Long productSupplierBranchId;
+
     private Long productSupplierId;
 
     private String name;
@@ -27,6 +29,14 @@ public class ProductSupplierBranchForm {
 
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    public Long getProductSupplierBranchId() {
+        return productSupplierBranchId;
+    }
+
+    public void setProductSupplierBranchId(Long productSupplierBranchId) {
+        this.productSupplierBranchId = productSupplierBranchId;
+    }
 
     public Long getProductSupplierId() {
         return productSupplierId;

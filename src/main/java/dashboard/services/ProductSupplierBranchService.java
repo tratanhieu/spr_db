@@ -1,6 +1,7 @@
 package dashboard.services;
 
 import dashboard.dto.product.ProductSupplierBranchDto;
+import dashboard.dto.product.ProductSupplierBranchForm;
 import dashboard.dto.product.ProductSupplierForm;
 import dashboard.entities.product.ProductSupplierBranch;
 import dashboard.exceptions.customs.ResourceNotFoundException;
@@ -9,13 +10,15 @@ import java.util.List;
 
 public interface ProductSupplierBranchService {
 
-    List<ProductSupplierBranch> getALL();
+    List<ProductSupplierBranchDto> getALL();
 
-    ProductSupplierBranchDto getOne(Long productSupplierBranchId);
+    ProductSupplierBranchDto getOne(Long productSupplierBranchId) throws ResourceNotFoundException;
 
-    void create(ProductSupplierForm productSupplierForm) throws ResourceNotFoundException;
+    List getCreate();
 
-    void update(ProductSupplierForm productSupplierForm) throws ResourceNotFoundException;
+    void create(ProductSupplierBranchForm productSupplierBranchForm) throws ResourceNotFoundException;
+
+    void update(ProductSupplierBranchForm productSupplierBranchForm) throws ResourceNotFoundException;
 
     void delete(Long productSupplierBranchId);
 }

@@ -1,5 +1,6 @@
 package dashboard.dto.product;
 
+import dashboard.entities.product.ProductSupplierBranch;
 import dashboard.enums.EntityStatus;
 
 import javax.persistence.EnumType;
@@ -10,6 +11,8 @@ public class ProductSupplierForm {
     private Long productSupplierId;
 
     private String name;
+
+    private ProductSupplierBranchForm[] productSupplierBranch;
 
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
@@ -28,6 +31,14 @@ public class ProductSupplierForm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ProductSupplierBranchForm[] getProductSupplierBranch() {
+        return productSupplierBranch;
+    }
+
+    public void setProductSupplierBranch(ProductSupplierBranchForm[] productSupplierBranch) {
+        this.productSupplierBranch = productSupplierBranch;
     }
 
     public EntityStatus getStatus() {

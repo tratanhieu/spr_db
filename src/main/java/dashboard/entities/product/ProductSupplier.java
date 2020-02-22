@@ -2,6 +2,7 @@ package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dashboard.dto.product.ProductSupplierDto;
+import dashboard.dto.product.ProductSupplierForm;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,6 +20,14 @@ public class ProductSupplier extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    public ProductSupplier() {};
+
+    public ProductSupplier(ProductSupplierForm productSupplierForm) {
+        this.productSupplierId = productSupplierForm.getProductSupplierId();
+        this.name = productSupplierForm.getName();
+        this.status = productSupplierForm.getStatus();
+    }
 
     public Long getProductSupplierId() {
         return productSupplierId;

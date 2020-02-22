@@ -19,10 +19,10 @@ public interface ProductSupplierService {
 
     List getCreate() throws ResourceNotFoundException;
 
-    List create(ProductSupplierForm productSupplierForm );
+    void create(ProductSupplierForm productSupplierForm );
 
-    List update(ProductSupplierForm productSupplierForm );
+    void update(ProductSupplierForm productSupplierForm );
 
-    List delete(Long productSupplier) throws ResourceNotFoundException;
+    void delete(Long productSupplierId) throws ResourceNotFoundException;
 
 }

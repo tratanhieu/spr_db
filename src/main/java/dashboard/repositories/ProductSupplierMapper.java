@@ -2,6 +2,7 @@ package dashboard.repositories;
 
 import dashboard.dto.product.ProductSupplierBranchDto;
 import dashboard.dto.product.ProductSupplierDto;
+import dashboard.entities.product.ProductSupplier;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -39,10 +40,43 @@ public interface ProductSupplierMapper {
                 "psb.district_id AS districtId," +
                 "psb.ward_id AS wardId," +
                 "psb.address," +
-                "psb.address " +
+                "psb.status " +
                 "FROM product_supplier_branch psb " +
                 "WHERE psb.product_supplier_id = #{productSupplierId}"
     )
     List<ProductSupplierBranchDto> findAllProductSupplierBranchByProductSupplierId(@Param("productSupplierId") Long productSupplierId);
+
+    @Insert(
+            "INSERT INTO product_supplier(name,status) values(#{name},#{status})"
+    )
+    @Options(useGeneratedKeys = true, keyProperty = "productSupplierId")
+    void save(ProductSupplier productSupplier);
+
+    @Update(
+            "UPDATE product_supplier " +
+                    "SET " +
+                    "name = #{name}, " +
+                    "status = #{status} " +
+                    "WHERE product_supplier_id = #{productSupplierId}"
+    )
+    void update(ProductSupplier productSupplier);
+
+    @Update(
+            "UPDATE " +
+                "product_supplier " +
+            "SET status = 'STOP' " +
+            "WHERE product_supplier_id = #{productSupplierId}"
+    )
+    void deleteById(@Param("productSupplierId") Long productSupplierId);
+
+    @Select(
+            "SELECT TRUE FROM product_supplier WHERE name = #{name} "
+    )
+    boolean checkExitsNameForInsert(@Param("name") String name);
+
+    @Select(
+            "SELECT TRUE FROM product_supplier WHERE name = #{name} AND product_supplier_id = #{productSupplierId}"
+    )
+    boolean checkExitsNameForUpdate(@Param("name") String name,@Param("productSupplierId") Long productSupplierId);
 
 }
