@@ -6,6 +6,7 @@ import dashboard.dto.product.ProductSupplierBranchForm;
 import dashboard.dto.product.ProductSupplierDto;
 import dashboard.dto.product.ProductSupplierForm;
 import dashboard.entities.product.ProductSupplier;
+import dashboard.entities.product.ProductSupplierBranch;
 import dashboard.exceptions.customs.ResourceNotFoundException;
 import dashboard.exceptions.customs.ValidationException;
 import dashboard.repositories.ProductSupplierBranchMapper;
@@ -95,7 +96,7 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
             throw new ValidationException("listProductSupplierBrand","is null");
         }
 
-        if(productSupplierMapper.checkExitsNameForInsert(productSupplierForm.getName())) {
+        if(productSupplierMapper.checkExitsNameForInsert(productSupplierForm.getName()) == 1) {
 
             throw new ValidationException("name","is exits");
         }
@@ -104,31 +105,69 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
         productSupplierMapper.save(productSupplier);
 
         int i =  0;
+        int j = 0;
+        int lengthEmail;
+        int lengthPhone;
+        int lengthFax;
+        String[] emailArray;
+        String[] phoneArray;
+        String[] faxArray;
+        StringBuilder emailCustom = new StringBuilder();
+        StringBuilder phoneCustom = new StringBuilder();
+        StringBuilder faxCustom = new StringBuilder();
+
         ProductSupplierBranchForm [] productSupplierBranchForms = productSupplierForm.getProductSupplierBranch();
         int length = productSupplierBranchForms.length;
 
         for (i = 0; i < length; i++) {
 
-            if(productSupplierBranchMapper.checkExitsNameForInsert(productSupplierBranchForms[i].getName())) {
+            if(productSupplierBranchMapper.checkExitsNameForInsert(productSupplierBranchForms[i].getName()) == 1) {
 
                 throw new ValidationException("productSupplierName", "is exist");
             }
 
-            if(!ValidationUtils.iEmail(productSupplierBranchForms[i].getEmail())){
-                throw new ValidationException("email","is not correct format");
+            if(productSupplierBranchForms[i].getProductSupplierId() == null){
+                throw new ValidationException("productSupplierId", "is null");
             }
 
-            if(!ValidationUtils.isPhone(productSupplierBranchForms[i].getPhone())){
-                throw new ValidationException("phone","is not correct format");
+            lengthEmail = productSupplierBranchForms[i].getEmail().length;
+            emailArray = productSupplierBranchForms[i].getEmail();
+            for(j = 0; i< lengthEmail; i++) {
+
+                if(!ValidationUtils.iEmail(emailArray[j])){
+                    throw new ValidationException("email","is not correct format");
+                }
+
+                emailCustom.append(emailArray[j]);
             }
 
-            if(!ValidationUtils.isFax(productSupplierBranchForms[i].getFax())){
-                throw new ValidationException("fax","is not correct format");
+            lengthPhone = productSupplierBranchForms[i].getPhone().length;
+            phoneArray = productSupplierBranchForms[i].getPhone();
+            for(j = 0; i< lengthPhone; i++) {
+
+                if(!ValidationUtils.isPhone(phoneArray[j])){
+                    throw new ValidationException("phone","is not correct format");
+                }
+
+                phoneCustom.append(phoneArray[j]);
             }
 
+            lengthFax = productSupplierBranchForms[i].getFax().length;
+            faxArray = productSupplierBranchForms[i].getPhone();
+            for(j = 0; i< lengthFax; i++) {
 
-            productSupplierBranchForms[i].setProductSupplierId(productSupplier.getProductSupplierId());
-            productSupplierBranchMapper.save(productSupplierBranchForms[i]);
+                if(!ValidationUtils.isFax(faxArray[j])){
+                    throw new ValidationException("fax","is not correct format");
+                }
+
+                phoneCustom.append(faxArray[j]);
+            }
+
+            ProductSupplierBranch productSupplierBranch = new ProductSupplierBranch(productSupplierBranchForms[i]);
+            productSupplierBranch.setEmail(emailCustom.toString());
+            productSupplierBranch.setPhone(phoneCustom.toString());
+            productSupplierBranch.setFax(faxCustom.toString());
+            productSupplierBranchMapper.save(productSupplierBranch);
         }
 
     }
@@ -148,7 +187,7 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
             throw new ValidationException("listProductSupplierBrand","is null");
         }
 
-        if(productSupplierMapper.checkExitsNameForUpdate(productSupplierForm.getName(), productSupplierForm.getProductSupplierId())) {
+        if(productSupplierMapper.checkExitsNameForUpdate(productSupplierForm.getName(), productSupplierForm.getProductSupplierId()) == 1) {
             throw new ValidationException("name","is exits");
         }
 
@@ -164,24 +203,17 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
 
             listInputItem.forEach(inputItem -> {
 
-                if(productSupplierBranchMapper.checkExitsNameForUpdate(inputItem.getName(),inputItem.getProductSupplierBranchId())){
+                if(productSupplierBranchMapper.checkExitsNameForUpdate(inputItem.getName(),inputItem.getProductSupplierBranchId()) ==1 ){
                     throw new ValidationException("productSupplierName", "is exist");
                 }
 
-                if(!ValidationUtils.iEmail(inputItem.getEmail())){
-                    throw new ValidationException("email","is not correct format");
-                }
-
-                if(!ValidationUtils.isPhone(inputItem.getPhone())){
-                    throw new ValidationException("phone","is not correct format");
-                }
-
-                if(!ValidationUtils.isFax(inputItem.getFax())){
-                    throw new ValidationException("fax","is not correct format");
-                }
-
                 if (inputItem.getProductSupplierBranchId() == null) {
-                    productSupplierBranchMapper.save(inputItem);
+
+                    if(inputItem.getProductSupplierId() == null) {
+                        inputItem.setProductSupplierId(productSupplierForm.getProductSupplierId());
+                    }
+
+                    //productSupplierBranchMapper.save(inputItem);
                     deleteFlg.set(true);
                 }
 

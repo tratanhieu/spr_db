@@ -111,6 +111,11 @@ public class ProductSupplierBranchServiceImpl implements ProductSupplierBranchSe
         if (productSupplierBranchForm.getProductSupplierBranchId() != null) {
             throw new ValidationException("productSupplierBranchId","is not null");
         }
+
+        if (productSupplierBranchForm.getProductSupplierId() == null) {
+            throw new ValidationException("productSupplierId","is null");
+        }
+
         if(!ValidationUtils.iEmail(productSupplierBranchForm.getEmail())){
             throw new ValidationException("email","is not correct format");
         }
@@ -137,9 +142,10 @@ public class ProductSupplierBranchServiceImpl implements ProductSupplierBranchSe
             throw new ValidationException("productSupplierBranchId","is null");
         }
 
-        if (productSupplierBranchForm.getProductSupplierBranchId() != null) {
-            throw new ValidationException("productSupplierBranchId","is not null");
+        if (productSupplierBranchForm.getProductSupplierId() == null) {
+            throw new ValidationException("productSupplierId","is null");
         }
+
         if(!ValidationUtils.iEmail(productSupplierBranchForm.getEmail())){
             throw new ValidationException("email","is not correct format");
         }

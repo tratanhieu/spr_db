@@ -4,6 +4,7 @@ package dashboard.repositories;
 import dashboard.dto.product.ProductSupplierBranchDto;
 import dashboard.dto.product.ProductSupplierBranchForm;
 import dashboard.dto.product.ProductSupplierForm;
+import dashboard.entities.product.ProductSupplierBranch;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -24,7 +25,10 @@ public interface ProductSupplierBranchMapper {
                     "psb.district_id AS districtId," +
                     "psb.ward_id AS wardId," +
                     "psb.address," +
-                    "psb.status " +
+                    "psb.status, " +
+                    "psb.create_date AS createDate, " +
+                    "psb.update_date AS updateDate, " +
+                    "psb.delete_date AS deleteDate " +
                     "FROM product_supplier_branch psb "
     )
     List<ProductSupplierBranchDto> findALL();
@@ -41,7 +45,10 @@ public interface ProductSupplierBranchMapper {
                     "psb.district_id AS districtId," +
                     "psb.ward_id AS wardId," +
                     "psb.address," +
-                    "psb.status " +
+                    "psb.status, " +
+                    "psb.create_date AS createDate, " +
+                    "psb.update_date AS updateDate, " +
+                    "psb.delete_date AS deleteDate " +
                     "FROM product_supplier_branch psb " +
                     "WHERE psb.product_supplier_branch_id = #{productSupplierBranchId}"
     )
@@ -60,7 +67,8 @@ public interface ProductSupplierBranchMapper {
                     "district_id," +
                     "ward_id," +
                     "address," +
-                    "status)" +
+                    "status," +
+                    "create_date)" +
                 "values(" +
                     "#{productSupplierId}," +
                     "#{name}," +
@@ -71,10 +79,11 @@ public interface ProductSupplierBranchMapper {
                     "#{districtId}," +
                     "#{wardId}," +
                     "#{address}," +
-                    "#{status})"
+                    "#{status}," +
+                    "NOW())"
     )
     @Options(useGeneratedKeys = true, keyProperty = "productSupplierBranchId")
-    void save(ProductSupplierBranchForm productSupplierBranchForm);
+    void save(ProductSupplierBranch productSupplierBranch);
 
     @Update(
         "UPDATE " +
@@ -88,7 +97,8 @@ public interface ProductSupplierBranchMapper {
             "district_id = #{districtId}," +
             "ward_id = #{wardId}," +
             "address = #{address}," +
-            "status = #{status} " +
+            "status = #{status}, " +
+            "update_date = NOW() " +
         "WHERE product_supplier_branch_id = #{productSupplierBranchId}"
     )
     void update(ProductSupplierBranchForm productSupplierBranchForm);
@@ -97,7 +107,8 @@ public interface ProductSupplierBranchMapper {
             "UPDATE " +
                 "product_supplier_branch " +
             "SET " +
-                "status =  'STOP' " +
+                "status =  'STOP', " +
+                "update_date = NOW()" +
             "WHERE product_supplier_id = #{productSupplierId}"
     )
     void updateStatusWhenDeleteProductSupplier(@Param("productSupplierId") Long productSupplierId);
@@ -106,20 +117,21 @@ public interface ProductSupplierBranchMapper {
             "UPDATE " +
                     "product_supplier_branch " +
                     "SET " +
-                    "status =  'STOP' " +
+                    "status =  'STOP', " +
+                    "delete_date = NOW()"+
                     "WHERE product_supplier_branch_id = #{productSupplierBranchId}"
     )
     void delete(@Param("productSupplierBranchId") Long productSupplierBranchId);
 
     @Select(
-            "SELECT TRUE FROM product_supplier_branch WHERE name = #{name} "
+            "SELECT EXISTS(SELECT 1  FROM product_supplier_branch psb WHERE psb.name = #{name} LIMIT 1)"
     )
-    boolean checkExitsNameForInsert(@Param("name") String name);
+    int checkExitsNameForInsert(@Param("name") String name);
 
     @Select(
-            "SELECT TRUE FROM product_supplier_branch WHERE name = #{name} AND product_supplier_branch_id = #{productSupplierBranchId}"
+            "SELECT EXISTS(SELECT 1  FROM product_supplier_branch psb WHERE psb.name = #{name}  AND psb.product_supplier_branch_id != #{productSupplierBranchId} LIMIT 1)"
     )
-    boolean checkExitsNameForUpdate(@Param("name") String name,@Param("productSupplierBranchId") Long productSupplierBranchId);
+    int checkExitsNameForUpdate(@Param("name") String name,@Param("productSupplierBranchId") Long productSupplierBranchId);
 
 
 }

@@ -13,11 +13,11 @@ public class ProductSupplierBranchForm {
 
     private String name;
 
-    private String email;
+    private String[] email;
 
-    private String phone;
+    private String[] phone;
 
-    private String fax;
+    private String[] fax;
 
     private String provinceId;
 
@@ -54,27 +54,27 @@ public class ProductSupplierBranchForm {
         this.name = name;
     }
 
-    public String getEmail() {
+    public String[] getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String[] email) {
         this.email = email;
     }
 
-    public String getPhone() {
+    public String[] getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(String[] phone) {
         this.phone = phone;
     }
 
-    public String getFax() {
+    public String[] getFax() {
         return fax;
     }
 
-    public void setFax(String fax) {
+    public void setFax(String[] fax) {
         this.fax = fax;
     }
 

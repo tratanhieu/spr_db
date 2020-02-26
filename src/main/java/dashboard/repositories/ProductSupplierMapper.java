@@ -14,7 +14,10 @@ public interface ProductSupplierMapper {
     @Select(
             "SELECT ps.product_supplier_id as productSupplierId, " +
                 "ps.name, " +
-                "ps.status " +
+                "ps.status, " +
+                "ps.create_date AS createDate, " +
+                "ps.update_date AS updateDate, " +
+                "ps.delete_date AS deleteDate " +
             "FROM product_supplier ps"
     )
     List<ProductSupplierDto> getALL();
@@ -22,7 +25,10 @@ public interface ProductSupplierMapper {
     @Select(
             "SELECT ps.product_supplier_id as productSupplierId, " +
                 "ps.name, " +
-                "ps.status " +
+                "ps.status," +
+                "ps.create_date AS createDate, " +
+                "ps.update_date AS updateDate, " +
+                "ps.delete_date AS deleteDate " +
             "FROM product_supplier ps " +
             "WHERE ps.product_supplier_id = #{productSupplierId}"
     )
@@ -40,14 +46,17 @@ public interface ProductSupplierMapper {
                 "psb.district_id AS districtId," +
                 "psb.ward_id AS wardId," +
                 "psb.address," +
-                "psb.status " +
+                "psb.status, " +
+                "psb.create_date AS createDate, " +
+                "psb.update_date AS updateDate, " +
+                "psb.delete_date AS deleteDate " +
                 "FROM product_supplier_branch psb " +
                 "WHERE psb.product_supplier_id = #{productSupplierId}"
     )
     List<ProductSupplierBranchDto> findAllProductSupplierBranchByProductSupplierId(@Param("productSupplierId") Long productSupplierId);
 
     @Insert(
-            "INSERT INTO product_supplier(name,status) values(#{name},#{status})"
+            "INSERT INTO product_supplier(name,status,create_date) values(#{name},#{status},NOW())"
     )
     @Options(useGeneratedKeys = true, keyProperty = "productSupplierId")
     void save(ProductSupplier productSupplier);
@@ -57,6 +66,7 @@ public interface ProductSupplierMapper {
                     "SET " +
                     "name = #{name}, " +
                     "status = #{status} " +
+                    "update_date = NOW() " +
                     "WHERE product_supplier_id = #{productSupplierId}"
     )
     void update(ProductSupplier productSupplier);
@@ -64,19 +74,20 @@ public interface ProductSupplierMapper {
     @Update(
             "UPDATE " +
                 "product_supplier " +
-            "SET status = 'STOP' " +
+            "SET status = 'STOP', " +
+                "delete_date = NOW() " +
             "WHERE product_supplier_id = #{productSupplierId}"
     )
     void deleteById(@Param("productSupplierId") Long productSupplierId);
 
     @Select(
-            "SELECT TRUE FROM product_supplier WHERE name = #{name} "
+            "SELECT EXISTS(SELECT 1  FROM product_supplier ps WHERE ps.name = #{name} LIMIT 1)"
     )
-    boolean checkExitsNameForInsert(@Param("name") String name);
+    int checkExitsNameForInsert(@Param("name") String name);
 
     @Select(
-            "SELECT TRUE FROM product_supplier WHERE name = #{name} AND product_supplier_id = #{productSupplierId}"
+            "SELECT EXISTS(SELECT 1  FROM product_supplier ps WHERE ps.name = #{name} AND ps.product_supplier_id != #{productSupplierId} LIMIT 1)"
     )
-    boolean checkExitsNameForUpdate(@Param("name") String name,@Param("productSupplierId") Long productSupplierId);
+    int checkExitsNameForUpdate(@Param("name") String name,@Param("productSupplierId") Long productSupplierId);
 
 }

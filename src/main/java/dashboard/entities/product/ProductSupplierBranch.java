@@ -2,6 +2,7 @@ package dashboard.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dashboard.dto.product.ProductSupplierBranchForm;
 import dashboard.entities.base.BaseEntity;
 import dashboard.enums.EntityStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +14,8 @@ public class ProductSupplierBranch extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     private Long productSupplierBranchId;
+
+    private Long productSupplierId;
 
     private String name;
 
@@ -33,12 +36,33 @@ public class ProductSupplierBranch extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
+    public ProductSupplierBranch() {}
+
+    public ProductSupplierBranch(ProductSupplierBranchForm productSupplierBranchForm) {
+        this.productSupplierBranchId = productSupplierBranchForm.getProductSupplierBranchId();
+        this.productSupplierId = productSupplierBranchForm.getProductSupplierId();
+        this.name = productSupplierBranchForm.getName();
+        this.provinceId = productSupplierBranchForm.getProvinceId();
+        this.districtId = productSupplierBranchForm.getDistrictId();
+        this.wardId = productSupplierBranchForm.getWardId();
+        this.address = productSupplierBranchForm.getAddress();
+        this.status = productSupplierBranchForm.getStatus();
+    }
+
     public Long getProductSupplierBranchId() {
         return productSupplierBranchId;
     }
 
     public void setProductSupplierBranchId(Long productSupplierBranchId) {
         this.productSupplierBranchId = productSupplierBranchId;
+    }
+
+    public Long getProductSupplierId() {
+        return productSupplierId;
+    }
+
+    public void setProductSupplierId(Long productSupplierId) {
+        this.productSupplierId = productSupplierId;
     }
 
     public String getName() {
