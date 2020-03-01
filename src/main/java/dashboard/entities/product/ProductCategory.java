@@ -21,6 +21,7 @@ public class ProductCategory extends BaseEntity implements Serializable {
     public ProductCategory() {}
 
 	public ProductCategory(ProductCategoryForm form) {
+    	this.productCategoryId = form.getProductCategoryId();
 		this.name = form.getName();
 		this.slugName = form.getSlugName();
 		this.status = form.getStatus();
